@@ -54,33 +54,42 @@ start:
     ; habilitar A20
     call habilitar_A20
     ; cargar la GDT
-    LGDT [GDT_DESC]
+    lgdt [GDT_DESC]
     
     ; setear el bit PE del registro CR0
-    xchg bx,bx
+  
     mov  eax, cr0       
     or eax, 1
     mov cr0, eax
-    xchg bx,bx  
+ 
     ; pasar a modo protegido
     jmp 0x98:modoprotegido
 
 BITS 32    
    modoprotegido:    
-    xchg bx,bx  
+   cli
+
     ; acomodar los segmentos
-    xor eax, eax
+    ;xor eax, eax
     mov ax, 0x88        
-    mov ds, ax
+    xchg bx,bx
     mov ss, ax
+
+    mov ds, ax
+    ;xchg bx,bx
     mov es, ax
+    ;xchg bx,bx
+  
+
     mov gs, ax
+    
+  
 
     ; setear la pila
     mov esp, 0x27000
 
     ; pintar pantalla, todos los colores, que bonito!
-    call limpiar_screen
+    ;call limpiar_screen
 
     ; inicializar el manejador de memoria
 
