@@ -31,6 +31,7 @@
 #define GDT_IDX_DATA_3				0x12
 #define GDT_IDX_CODE_0				0X13
 #define GDT_IDX_CODE_3				0X14
+#define GDT_IDX_PANTALLA_KERNEL		0x15
 
 
 /* Direcciones de memoria */
