@@ -19,6 +19,9 @@ extern idt_inicializar
 extern resetear_pic
 extern habilitar_pic
 
+;; SCREEN 
+extern limpiar_screen
+
 
 ;; Saltear seccion de datos
 jmp start
@@ -77,7 +80,7 @@ BITS 32
     mov esp, 0x27000
 
     ; pintar pantalla, todos los colores, que bonito!
-
+    call limpiar_screen
 
     ; inicializar el manejador de memoria
 
