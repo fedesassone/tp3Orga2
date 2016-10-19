@@ -63,33 +63,48 @@ start:
     mov cr0, eax
  
     ; pasar a modo protegido
-    jmp 0x98:modoprotegido
-
+    xchg bx, bx
+    jmp 0xa8:modoprotegido
+    ;10101|000 =a8 
 BITS 32    
-   modoprotegido:    
-   cli
+   modoprotegido: 
 
     ; acomodar los segmentos
-    ;xor eax, eax
-    mov ax, 0x88        
-    xchg bx,bx
-    mov ss, ax
+    xor eax, eax
+    ; 10001000 
+    mov ax, 0x98
+    ;;10011|000 =98     
+    mov ss, ax  
 
     mov ds, ax
     ;xchg bx,bx
     mov es, ax
     ;xchg bx,bx
   
-
     mov gs, ax
-    
-  
-
+    ;xchg bx, bx
+    ;index = 0000000001111=gdt15 video|0gdt|00rpl
+    mov ax, 0xb8
+    ;10111000
+    mov fs, ax 
+   ;video = 23 = 10111|000 = b8
     ; setear la pila
     mov esp, 0x27000
 
     ; pintar pantalla, todos los colores, que bonito!
-    ;call limpiar_screen
+  ;  .limpiar:
+  ;      .cicloVer:
+ ;       .cicloHor:
+
+; ;%macro limpiar_screen 0
+;    mov ecx, 0x7d0
+;    limpar:    
+;        mov byte [fs:ecx], 1  ;pongo la pantalla limpa con 0's
+;        loop limpar
+; ;%endmacro
+;         xchg bx,bx
+
+    
 
     ; inicializar el manejador de memoria
 
@@ -108,8 +123,23 @@ BITS 32
     ; inicializar el scheduler
 
     ; inicializar la IDT
+        xchg bx,bx
+
+    lidt[IDT_DESC]
+    
+    call idt_inicializar
+
+    xchg bx,bx
+    mov eax, 0xFFFF
+    xchg bx,bx
+
+    inc eax
+    xchg bx,bx
+
+
 
     ; configurar controlador de interrupciones
+    
 
     ; cargar la tarea inicial
 

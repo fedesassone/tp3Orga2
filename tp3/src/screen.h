@@ -11,7 +11,7 @@
 /* Definicion de la pantalla */
 #define VIDEO_FILS 25
 #define VIDEO_COLS 80
-#define VIDEO_SCREEN 0xB80000
+#define VIDEO_SCREEN 0xB8000
 
 #include "colors.h"
 
@@ -26,7 +26,5 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
 void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr);
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
-
-void limpiar_screen(); 
 
 #endif  /* !__SCREEN_H__ */

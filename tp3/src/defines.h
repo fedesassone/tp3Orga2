@@ -26,12 +26,12 @@
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_IDX_NULL_DESC           0
-#define GDT_IDX_DATA_0				0x11
-#define GDT_IDX_DATA_3				0x12
-#define GDT_IDX_CODE_0				0X13
-#define GDT_IDX_CODE_3				0X14
-#define GDT_IDX_PANTALLA_KERNEL		0x15
+#define GDT_IDX_NULL_DESC           0x12 
+#define GDT_IDX_DATA_0				0x13
+#define GDT_IDX_DATA_3				0x14
+#define GDT_IDX_CODE_0				0X15
+#define GDT_IDX_CODE_3				0X16
+#define GDT_IDX_PANTALLA_KERNEL		0x17
 
 
 /* Direcciones de memoria */
