@@ -35,8 +35,8 @@ idt_descriptor IDT_DESC = {
 
 #define IDT_ENTRY(numero)                                                                                        \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
-    idt[numero].segsel = (unsigned short) 0xa8;                                                                  \
-    idt[numero].attr = (unsigned short) 0x2700;                                                                  \
+    idt[numero].segsel = (unsigned short) 0x00a8;                                                                  \
+    idt[numero].attr = (unsigned short) 0x8e00;                                                                  \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
 void atender_int(unsigned short n){

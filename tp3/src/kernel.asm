@@ -7,7 +7,12 @@
 
 global start
 
-
+%macro limpiar_screen 0
+   mov ecx, 0x0fa0
+   limpar:    
+       mov byte [fs:ecx], 1  ;pongo la pantalla limpa con 0's
+       loop limpar
+%endmacro
 ;; GDT
 extern GDT_DESC
 
@@ -63,12 +68,13 @@ start:
     mov cr0, eax
  
     ; pasar a modo protegido
-    xchg bx, bx
     jmp 0xa8:modoprotegido
     ;10101|000 =a8 
 BITS 32    
    modoprotegido: 
+    xchg bx, bx
 
+   
     ; acomodar los segmentos
     xor eax, eax
     ; 10001000 
@@ -96,15 +102,17 @@ BITS 32
   ;      .cicloVer:
  ;       .cicloHor:
 
-; ;%macro limpiar_screen 0
-;    mov ecx, 0x7d0
-;    limpar:    
-;        mov byte [fs:ecx], 1  ;pongo la pantalla limpa con 0's
-;        loop limpar
-; ;%endmacro
-;         xchg bx,bx
 
-    
+;         xchg bx,bx
+; Imprimir mensaje de bienvenida
+    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
+
+    ; 
+    xchg bx,bx
+
+    limpiar_screen
+
+    xchg bx,bx
 
     ; inicializar el manejador de memoria
 

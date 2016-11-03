@@ -95,3 +95,25 @@ proximo_reloj:
 
     popad
     ret
+
+INT_0: db 'Interrupcion de division por 0. (Error 0)', 0
+INT_0_len equ    $ - INT_0
+INT_1: db 'Interrupcion reservada. (Error 1)', 0
+INT_2: db 'Interrupcion no enmascarable. (Error 2)', 0
+INT_3: db 'Interrupcion BreakPoint. (Error 3)', 0
+INT_4: db 'Interrupcion de overflow. (Error 4)', 0
+INT_5: db 'Interrupcion BOUND Range Exceeded. (Error 5)', 0
+INT_6: db 'Interrupcion Invalid Opcode. (Error 6)' , 0
+INT_7: db 'Interrupcion Coprocesador No Disponible. (Error 7)', 0
+INT_8: db 'Interrupcion Doble Fault. (Error 8)', 0
+INT_9: db 'Interrupcion Coprocessor Segment Overrun (reservada). (Error 9)', 0
+INT_10: db 'Interrupcion TSS Invalido. (Error 10)', 0
+INT_11: db 'Interrupcion Segmento no Presente. (Error 11)', 0
+INT_12: db 'Interrupcion de Falta en el Stack Segment. (Error 12)', 0
+INT_13: db 'Interrupcion de General Protection. (Error 13)', 0
+INT_14: db 'Interrupcion de Page Fault. (Error 14)', 0
+INT_15: db 'Interrupcion Reservada por Intel. (Error 15)', 0
+INT_16: db 'Interrupcion X-87 FPU Error de punto flotante. (Error 16)', 0
+INT_17: db 'Interrupcion de Alignment Check Fault. (Error 17)', 0
+INT_18: db 'Interrupcion de Machine Check abort. (Error 18)', 0
+INT_19: db 'Interrupcion SIMD Floating Point. (Error 19)', 0
