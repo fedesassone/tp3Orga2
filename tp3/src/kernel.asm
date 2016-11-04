@@ -7,11 +7,28 @@
 
 global start
 
-%macro limpiar_screen 0
-   mov ecx, 0x0fa0
+%macro limpiar_screenasm 0
+   mov ecx, 0x7cf 
+   mov ebx, 0x7d0 
    limpar:    
-       mov byte [fs:ecx], 1  ;pongo la pantalla limpa con 0's
+       mov word [fs:ecx+ ebx], 0x007F 
+       dec ebx
        loop limpar
+    mov ebx, 0x0f9e
+    sub ebx, 0xa0 
+    mov ecx, 0xa0
+    linea2:
+        mov word [fs:ebx+ecx], 0x000f ; pongo fondo negro
+        dec ecx
+        loop linea2
+
+    ;mov ebx, 0xa0
+    mov ecx, 0xa0
+    lineas:
+        dec ecx 
+        mov word [fs:ecx ], 0x000f ; pongo fondo negro
+        loop lineas
+
 %endmacro
 ;; GDT
 extern GDT_DESC
@@ -109,8 +126,9 @@ BITS 32
 
     ; 
     xchg bx,bx
+    ;call limpiar_screen
 
-    limpiar_screen
+    limpiar_screenasm
 
     xchg bx,bx
 
