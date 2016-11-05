@@ -43,6 +43,7 @@ extern habilitar_pic
 
 ;; SCREEN 
 extern limpiar_screen
+extern print
 
 
 ;; Saltear seccion de datos
@@ -56,6 +57,8 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
+
+
 
 ;;
 ;; Seccion de código.
@@ -89,7 +92,7 @@ start:
     ;10101|000 =a8 
 BITS 32    
    modoprotegido: 
-    xchg bx, bx
+    ;xchg bx, bx
 
    
     ; acomodar los segmentos
@@ -123,14 +126,19 @@ BITS 32
 ;         xchg bx,bx
 ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
+    ;imprimir_texto_mp INT_0, INT_0_len, 0x07, 1, 0
 
     ; 
     xchg bx,bx
     ;call limpiar_screen
 
+
+
     limpiar_screenasm
 
-    xchg bx,bx
+
+
+
 
     ; inicializar el manejador de memoria
 
@@ -154,7 +162,12 @@ BITS 32
     lidt[IDT_DESC]
     
     call idt_inicializar
+    xchg bx,bx
 
+    xchg bx,bx
+    xor eax,eax
+    xor ecx,ecx
+    div ecx
     xchg bx,bx
     mov eax, 0xFFFF
     xchg bx,bx

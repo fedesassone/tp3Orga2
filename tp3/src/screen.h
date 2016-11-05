@@ -11,7 +11,7 @@
 /* Definicion de la pantalla */
 #define VIDEO_FILS 25
 #define VIDEO_COLS 80
-#define VIDEO_SCREEN 0xB8000
+#define VIDEO_SCREEN 0xB80000
 
 #include "colors.h"
 

@@ -51,26 +51,6 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
     p[y][x].a = attr;
 }
 
-void limpiar_screen(){
-    unsigned int x = VIDEO_FILS;
-    unsigned int y = VIDEO_COLS;
-    unsigned int i;
-    unsigned int j;
-    char l = 'a';
-    char *c = &l;
-    unsigned short formatoFill = (C_FG_LIGHT_GREY | C_BG_LIGHT_GREY ); 
-    unsigned short formatoLine = (C_FG_WHITE | C_BG_BLACK );
-    for(i=1; i<x;i++){
-        for(j=0;j<y;j++){
-            print(c,i,j,formatoFill);
-        }
-    }
-    for(j=0;j<y;j++){
-        print(c,0,j,formatoLine);
-    }
-    for(j=0;j<y;j++){
-        print(c,x,j,formatoLine);
-    }
-}
+
 
 

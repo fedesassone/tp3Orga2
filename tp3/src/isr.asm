@@ -26,7 +26,7 @@ _isr%1:
     ;mov eax, %1
     ;push eax
     mov edi, %1
-    call atender_int
+    imprimir_texto_mp INT_%1, INT_len_%1, 0x07, 1, 0
     mov eax, 0xFFF2
     mov ebx, 0xFFF2
     mov ecx, 0xFFF2
@@ -97,23 +97,42 @@ proximo_reloj:
     ret
 
 INT_0: db 'Interrupcion de division por 0. (Error 0)', 0
-INT_0_len equ    $ - INT_0
+INT_len_0 equ    $ - INT_0
 INT_1: db 'Interrupcion reservada. (Error 1)', 0
+INT_len_1 equ    $ - INT_1
 INT_2: db 'Interrupcion no enmascarable. (Error 2)', 0
+INT_len_2 equ    $ - INT_2
 INT_3: db 'Interrupcion BreakPoint. (Error 3)', 0
+INT_len_3 equ    $ - INT_3
 INT_4: db 'Interrupcion de overflow. (Error 4)', 0
+INT_len_4 equ    $ - INT_4
 INT_5: db 'Interrupcion BOUND Range Exceeded. (Error 5)', 0
+INT_len_5 equ    $ - INT_5
 INT_6: db 'Interrupcion Invalid Opcode. (Error 6)' , 0
+INT_len_6 equ    $ - INT_6
 INT_7: db 'Interrupcion Coprocesador No Disponible. (Error 7)', 0
+INT_len_7 equ    $ - INT_7
 INT_8: db 'Interrupcion Doble Fault. (Error 8)', 0
+INT_len_8 equ    $ - INT_8
 INT_9: db 'Interrupcion Coprocessor Segment Overrun (reservada). (Error 9)', 0
+INT_len_9 equ    $ - INT_9
 INT_10: db 'Interrupcion TSS Invalido. (Error 10)', 0
+INT_len_10 equ    $ - INT_10
 INT_11: db 'Interrupcion Segmento no Presente. (Error 11)', 0
+INT_len_11 equ    $ - INT_11
 INT_12: db 'Interrupcion de Falta en el Stack Segment. (Error 12)', 0
+INT_len_12 equ    $ - INT_12
 INT_13: db 'Interrupcion de General Protection. (Error 13)', 0
+INT_len_13 equ    $ - INT_13
 INT_14: db 'Interrupcion de Page Fault. (Error 14)', 0
+INT_len_14 equ    $ - INT_14
 INT_15: db 'Interrupcion Reservada por Intel. (Error 15)', 0
+INT_len_15 equ    $ - INT_15
 INT_16: db 'Interrupcion X-87 FPU Error de punto flotante. (Error 16)', 0
+INT_len_16 equ    $ - INT_16
 INT_17: db 'Interrupcion de Alignment Check Fault. (Error 17)', 0
+INT_len_17 equ    $ - INT_17
 INT_18: db 'Interrupcion de Machine Check abort. (Error 18)', 0
+INT_len_18 equ    $ - INT_18
 INT_19: db 'Interrupcion SIMD Floating Point. (Error 19)', 0
+INT_len_19 equ    $ - INT_19
