@@ -5,6 +5,8 @@
 
 %include "imprimir.mac"
 
+
+
 global start
 
 %macro limpiar_screenasm 0
@@ -45,6 +47,10 @@ extern habilitar_pic
 extern limpiar_screen
 extern print
 
+;; MMU
+extern mmu_inicializar_dir_kernel
+extern mmu_inicializar_table_kernel
+%define PAGE_DIR_ADDR 0x00027000
 
 ;; Saltear seccion de datos
 jmp start
@@ -137,17 +143,19 @@ BITS 32
     limpiar_screenasm
 
 
-
-
-
     ; inicializar el manejador de memoria
 
     ; inicializar el directorio de paginas
-
+    call mmu_inicializar_dir_kernel
+    call mmu_inicializar_table_kernel
     ; inicializar memoria de tareas
 
     ; habilitar paginacion
-
+    mov eax, PAGE_DIR_ADDR
+    mov cr3, eax
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
     ; inicializar tarea idle
 
     ; inicializar todas las tsss
