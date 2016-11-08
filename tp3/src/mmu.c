@@ -19,16 +19,30 @@
 void mmu_inicializar_dir_kernel(){
     int* page_directory = (int*) PAGE_DIRECTORY_KERNEL;
     page_directory[0] = PAGE_TABLE_KERNEL + 0x3;
+    page_directory[1] = PAGE_TABLE2_KERNEL + 0x3;
+
     int i;
-    for (i = 1; i < 1024; ++i) {
+    for (i = 2; i < 1024; ++i) {
         page_directory[i]= 0x0;
     }
-
     int* page_table = (int*) PAGE_TABLE_KERNEL;
     for (i = 0; i < 1024; ++i) {
         page_table[i] = ((i << 12) | 3);
     }
+    int* page_table2 = (int*) PAGE_TABLE2_KERNEL;
+    for (i = 400; i < 1919; ++i) {
+        page_table2[i] = ((i << 12) | 3);
+    }
 }
+
+ uint *tabla2_paginas = (uint*)(0x29000);
+ +    for(j = 0; j<895; j++) // 77f-400 = 895(decimal)
+ +    {
+ +
+ +        tabla_paginas[j] = (j<<12) | 0x3; // por ej con i = 1 este es 0x001003
+ +        tabla_paginas[j] = tabla_paginas[j] + 0x400000; // le sumo 0x400000 y queda 0x401003
+ +
+ +    }
 
 unsigned int mmu_inicializar_dir_tarea(unsigned int* codigo, posicion pos) {
     pde_entry* page_directory_tareas = (pde_entry*) mmu_proxima_pagina_fisica_libre();
@@ -165,7 +179,7 @@ unsigned int mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
 
 
 
-/*
+
 void mmu_inicializar_dir_kernel()
 {
 	unsigned int* dir_paginas = (unsigned int*)PAGE_DIR_ADDR;
@@ -215,6 +229,50 @@ void* dame_pagina_libre()
 void mmu_inicializar_dir_tarea(uint* dir_paginas, uint* tabla_paginas, uint* tabla2_paginas, uint* codigo_tarea)
 {
     //HAGO IDENTITY MAPPING
+	    pde_entry* page_directory_tareas = (pde_entry*) mmu_proxima_pagina_fisica_libre();
+
+    int i;
+    for (i = 0; i < 1024; i++) {
+        page_directory_tareas[i].present = 0;
+        page_directory_tareas[i].rw = 0;
+        page_directory_tareas[i].us = 0;
+        page_directory_tareas[i].pwt = 0;
+        page_directory_tareas[i].pcd = 0;
+        page_directory_tareas[i].a = 0;
+        page_directory_tareas[i].d = 0;
+        page_directory_tareas[i].pat = 0;        
+        page_directory_tareas[i].g = 0;
+        page_directory_tareas[i].disponible = 0;
+        page_directory_tareas[i].base = 0;
+    }
+
+    
+    pte_entry* page_table_tareas = (pte_entry*) mmu_proxima_pagina_fisica_libre();  
+    for (i = 0; i < 1024; i++) {
+    
+        page_table_tareas[i].present = 1;
+        page_table_tareas[i].rw = 1;
+        page_table_tareas[i].us = 1;
+        page_table_tareas[i].base = (unsigned int) i;  // = ((i << 12) | 3)
+    }
+
+    page_directory_tareas[0].base = (unsigned int) page_table_tareas >> 12;
+    page_directory_tareas[0].present = 1;
+    page_directory_tareas[0].rw = 1;
+
+    pte_entry* page_table2_tareas = (pte_entry*) mmu_proxima_pagina_fisica_libre();  
+    for (i = 400; i < 1919; i++) {
+    
+        page_table_tareas[i].present = 1;
+        page_table_tareas[i].rw = 1;
+        page_table_tareas[i].us = 1;
+        page_table_tareas[i].base = (unsigned int) i;  // = ((i << 12) | 3)
+    }
+
+    page_directory_tareas[0].base = (unsigned int) page_table2_tareas >> 12;
+    page_directory_tareas[0].present = 1;
+    page_directory_tareas[0].rw = 1;
+
     dir_paginas[0] = tabla_paginas | 0x3;
     dir_paginas[1] = tabla2_paginas | 0x3;
     uint i;
