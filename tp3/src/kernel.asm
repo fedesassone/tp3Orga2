@@ -9,7 +9,7 @@
 
 global start
 
-%macro limpiar_screenasm 0
+%macro limpiar_screen 0
    mov ecx, 0x7cf 
    mov ebx, 0x7d0 
    limpar:    
@@ -48,8 +48,8 @@ extern limpiar_screen
 extern print
 
 ;; MMU
-extern mmu_inicializar_dir_kernel
-extern mmu_inicializar_table_kernel
+;extern mmu_inicializar_dir_kernel
+;extern mmu_inicializar_table_kernel
 %define PAGE_DIR_ADDR 0x00027000
 
 ;; Saltear seccion de datos
@@ -124,38 +124,45 @@ BITS 32
     mov esp, 0x27000
 
     ; pintar pantalla, todos los colores, que bonito!
-  ;  .limpiar:
-  ;      .cicloVer:
- ;       .cicloHor:
-
-
-;         xchg bx,bx
+  limpiar_screen
+  
 ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
-    ;imprimir_texto_mp INT_0, INT_0_len, 0x07, 1, 0
-
-    ; 
-    xchg bx,bx
-    ;call limpiar_screen
-
-
-
-    limpiar_screenasm
+    
+    
 
 
     ; inicializar el manejador de memoria
 
+
     ; inicializar el directorio de paginas
-    call mmu_inicializar_dir_kernel
-    call mmu_inicializar_table_kernel
+    ;call mmu_inicializar_dir_kernel
+    ;call mmu_inicializar_table_kernel
     ; inicializar memoria de tareas
 
     ; habilitar paginacion
     mov eax, PAGE_DIR_ADDR
     mov cr3, eax
     mov eax, cr0
-    or eax, 0x80000000
+    or eax, 0x80000000 ; paginacion habilitada 
     mov cr0, eax
+    
+    ; identity mapping en los primeros siete megas
+
+    'mov ecx, 1024
+    mov ebx, PAGE_DIR_ADDR
+
+    .pd7megas:
+        mov dword [ebx + ecx*7-4], 0x00000002
+        loop .pd7megas
+    mov ecx, 512
+    .pdmedioMega:
+        mov dword [ebx  + ecx -4], 0x00000002
+        loop .pdmedioMega
+    '
+
+
+
     ; inicializar tarea idle
 
     ; inicializar todas las tsss

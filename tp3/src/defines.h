@@ -15,6 +15,7 @@
 #define FALSE                   0x00000000
 
 
+
 /* Misc */
 /* -------------------------------------------------------------------------- */
 #define CANT_TAREAS             8
@@ -23,10 +24,17 @@
 
 #define TASK_SIZE               2 * 4096
 
+#define PAGE_DIRECTORY_KERNEL   0x27000
+#define PAGE_TABLE_KERNEL		0x28000
+#define PAGE_SIZE				0x1000
+#define INICIO_PAGINAS_LIBRES	0x100000
+#define DIR_VIRTUAL_TAREA		0x8000000
+#define PAGINA_MAPEADA			0x8001000
+
+
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_IDX_NULL_DESC           0
 #define GDT_IDX_NULL_DESC           0x12 
 #define GDT_IDX_DATA_0				0x13
 #define GDT_IDX_DATA_3				0x14
