@@ -11,7 +11,10 @@
 /* Definicion de la pantalla */
 #define VIDEO_FILS 25
 #define VIDEO_COLS 80
-#define VIDEO_SCREEN 0xB80000
+#define VIDEO_SCREEN 0xB8000
+
+#define BUFFER_MAPA				0x0002E000
+#define BUFFER_ESTADO			0x0002D000
 
 #include "colors.h"
 
@@ -27,4 +30,6 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+void limpiarBufferMapa(); 
+void cargarBufferMapa();
 #endif  /* !__SCREEN_H__ */

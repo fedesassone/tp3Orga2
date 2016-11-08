@@ -51,6 +51,59 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
     p[y][x].a = attr;
 }
 
+void limpiarBufferMapa(){
+    // tengo q pintar 1 mb de tierra y 6.5 mb de agua
+    // 1mb de tierra 256 pix
+    int i;
+    ca (*mapa)[2000] = (ca (*)[2000]) BUFFER_MAPA;
+    //imprimoTierra
+    int x = 0;
+    int y = 0;
+    for(i=0; i<256; i++){
+        mapa[y][x].c =  0xA; //character
+        mapa[y][x].a =  (0x2 << 4)&&(0xF); //atributo; fondo green, letras white
+        x++;
+        if (x == VIDEO_COLS) {
+            x = 0;
+            y++;
+        }
+    }
+    //quedan instanciados el x e y?
+    for(i=0; i<1664;i++){
+        mapa[y][x].c =  0x0; //character
+        mapa[y][x].a =  (0x1 << 4)&&(0xF); //atributo; fondo blue, letras white
+        x++;
+        if (x == VIDEO_COLS) {
+            x = 0;
+            y++;
+        }
+    }
+    for(i=0;i<80;i++){
+        mapa[y][x].c =  0x0; //character
+        mapa[y][x].a =  (0x0 << 4)&&(0xF); //atributo; fondo black, letras white
+        x++;
+    }
+}
+
+void cargarBufferMapa(){
+    int i;
+    int x=0;
+    int y=0;
+    ca(*d)[2000] = (ca(*)[2000]) VIDEO_SCREEN;
+    ca(*s)[2000] = (ca(*)[2000]) BUFFER_MAPA;
+    for(i=0;i<2000;i++){
+        d[y][x].c = s[y][x].c;
+        d[y][x].a = s[y][x].a;
+        x++;
+        if (x == VIDEO_COLS) {
+            x = 0;
+            y++;
+        }
+    }
+}
+
+
+
 
 
 
