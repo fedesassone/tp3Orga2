@@ -7,6 +7,8 @@
 
 #ifndef __MMU_H__
 #define __MMU_H__
-
+void mmu_inicializar_dir_kernel();
+void mmu_inicializar()
+void mmu_inicializar_table_kernel()
 
 #endif	/* !__MMU_H__ */

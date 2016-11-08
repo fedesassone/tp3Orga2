@@ -1,4 +1,4 @@
-	/* ** por compatibilidad se omiten tildes **
+/* ** por compatibilidad se omiten tildes **
 ================================================================================
  TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 ================================================================================
@@ -26,13 +26,7 @@
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_IDX_NULL_DESC           0x12 
-#define GDT_IDX_DATA_0				0x13
-#define GDT_IDX_DATA_3				0x14
-#define GDT_IDX_CODE_0				0X15
-#define GDT_IDX_CODE_3				0X16
-#define GDT_IDX_PANTALLA_KERNEL		0x17
-
+#define GDT_IDX_NULL_DESC           0
 
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */
