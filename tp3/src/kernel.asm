@@ -149,17 +149,17 @@ BITS 32
     
     ; identity mapping en los primeros siete megas
 
-    'mov ecx, 1024
-    mov ebx, PAGE_DIR_ADDR
+    ;mov ecx, 1024
+    ;mov ebx, PAGE_DIR_ADDR
 
-    .pd7megas:
-        mov dword [ebx + ecx*7-4], 0x00000002
-        loop .pd7megas
-    mov ecx, 512
-    .pdmedioMega:
-        mov dword [ebx  + ecx -4], 0x00000002
-        loop .pdmedioMega
-    '
+    ;.pd7megas:
+    ;    mov dword [ebx + ecx*7-4], 0x00000002
+    ;    loop .pd7megas
+    ;mov ecx, 512
+    ;.pdmedioMega:
+    ;    mov dword [ebx  + ecx -4], 0x00000002
+    ;    loop .pdmedioMega
+    
 
 
 
@@ -172,28 +172,13 @@ BITS 32
     ; inicializar el scheduler
 
     ; inicializar la IDT
-        xchg bx,bx
-
-    lidt[IDT_DESC]
-    
-    call idt_inicializar
-    xchg bx,bx
-
-    xchg bx,bx
-    xor eax,eax
-    xor ecx,ecx
-    div ecx
-    xchg bx,bx
-    mov eax, 0xFFFF
-    xchg bx,bx
-
-    inc eax
-    xchg bx,bx
-
-
+    lidt[IDT_DESC]   
+    call idt_inicializar    ;cargo tabla de interrupciones
 
     ; configurar controlador de interrupciones
-    
+    call resetear_pic
+    call habilitar_pic
+    sti                     ;configuro el pic y lo habilito
 
     ; cargar la tarea inicial
 

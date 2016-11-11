@@ -7,7 +7,7 @@
 
 #ifndef __ISR_H__
 #define __ISR_H__
-
+//interrupciones por defecto
 void _isr0();
 void _isr1();
 void _isr2();
@@ -19,14 +19,17 @@ void _isr7();
 void _isr8();
 void _isr9();
 void _isr10();
-
 void _isr11();
 void _isr12();
 void _isr13();
 void _isr14();
-//void _isr15();
 void _isr16();
 void _isr17();
 void _isr18();
 void _isr19();
+void _isr32(); 
+void _isr33(); 
+void _isr50();
+void _isr66();
+
 #endif  /* !__ISR_H__ */
