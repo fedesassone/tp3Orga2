@@ -8,6 +8,8 @@
 #ifndef __MMU_H__
 #define __MMU_H__
 
+#include "i386.h"
+
 typedef struct str_pde_entry {
     unsigned char   present:1;
     unsigned char   rw:1;
@@ -40,7 +42,14 @@ typedef struct str_pte_entry {
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
-//void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char us, unsigned char rw);
-//unsigned int mmu_proxima_pagina_fisica_libre();
+void mmu_inicializar_dir_tarea();
+void copiarCodigo(unsigned int src, unsigned int dst);
+unsigned int mmu_proxima_pagina_fisica_libre();
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char us, unsigned char rw);
+void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3);
+
+extern pde_entry pde[];
+extern pte_entry pte[];
+
 
 #endif	/* !__MMU_H__ */
