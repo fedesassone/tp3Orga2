@@ -50,7 +50,7 @@ extern print
 ;; MMU
 ;extern mmu_inicializar_dir_kernel
 ;extern mmu_inicializar_table_kernel
-%define PAGE_DIR_ADDR 0x00027000
+%define PAGE_DIR_ADDR 0x27000 << 12
 
 ;; Saltear seccion de datos
 jmp start
@@ -129,7 +129,7 @@ BITS 32
 ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
     
-    
+    xchg bx, bx
 
 
     ; inicializar el manejador de memoria
@@ -140,12 +140,15 @@ BITS 32
     ;call mmu_inicializar_table_kernel
     ; inicializar memoria de tareas
 
+
+    ;esto de abajo funciona hasta or eax, blah
     ; habilitar paginacion
-    mov eax, PAGE_DIR_ADDR
-    mov cr3, eax
-    mov eax, cr0
-    or eax, 0x80000000 ; paginacion habilitada 
-    mov cr0, eax
+    ;mov eax, PAGE_DIR_ADDR
+    ;mov cr3, eax
+    ;mov eax, cr0
+    ;mov ebx, 0x80000000 
+    ;or eax, ebx ; paginacion habilitada 
+    ;mov cr0, eax
     
     ; identity mapping en los primeros siete megas
 
@@ -172,13 +175,28 @@ BITS 32
     ; inicializar el scheduler
 
     ; inicializar la IDT
-    lidt[IDT_DESC]   
-    call idt_inicializar    ;cargo tabla de interrupciones
+        xchg bx,bx
+
+    lidt[IDT_DESC]
+    
+    call idt_inicializar
+    xchg bx,bx
+
+    xchg bx,bx
+    xor eax,eax
+    xor ecx,ecx
+    div ecx
+    xchg bx,bx
+    mov eax, 0xFFFF
+    xchg bx,bx
+
+    inc eax
+    xchg bx,bx
+
+
 
     ; configurar controlador de interrupciones
-    call resetear_pic
-    call habilitar_pic
-    sti                     ;configuro el pic y lo habilito
+    
 
     ; cargar la tarea inicial
 

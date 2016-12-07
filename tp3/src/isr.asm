@@ -17,9 +17,6 @@ extern atender_int
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
 
-;;; MODIFICAR LO DE ACA ABAJO CON TP_ANT
-
-
 %macro ISR 1
 global _isr%1
 
@@ -63,6 +60,7 @@ ISR 11
 ISR 12
 ISR 13
 ISR 14
+
 ISR 16
 ISR 17
 ISR 18
@@ -72,29 +70,13 @@ ISR 19
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 
-global _isr32:
-pushad
-call fin_intr_pic1
-call proximo_reloj
-popad
-iret 
-
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 
-global _isr33:
-
-
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-
-global _isr50:
-
-
-global _isr66:
-
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
