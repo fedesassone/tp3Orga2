@@ -78,10 +78,11 @@ _isr32:
   pushfd
 
   call fin_intr_pic1
+
   call proximo_reloj
 
-  popad
   popfd
+  popad
 
   iret
 ;;
