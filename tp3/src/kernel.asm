@@ -161,6 +161,7 @@ BITS 32
     
     lidt[IDT_DESC]
 
+        xchg bx,bx
 
 
     ; configurar controlador de interrupciones

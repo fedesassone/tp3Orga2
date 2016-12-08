@@ -19,6 +19,10 @@ extern atender_int
 
 %macro ISR 1
 global _isr%1
+global _isr32
+global _isr33
+global _isr80
+global _isr102
 
 _isr%1:
 .loopear:
@@ -69,15 +73,81 @@ ISR 19
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
+_isr32:
+  pushad
+  pushfd
 
+  call fin_intr_pic1
+  call proximo_reloj
+
+  popad
+  popfd
+
+  iret
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+_isr33:
+  pushad
+  pushfd
 
+  call fin_intr_pic1
+
+
+  ;ACA HACER LA INT DEL TECLADO
+  
+  popfd
+  popad
+  
+  iret
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
+_isr80:
+  push ecx
+  push edx
+  push ebx
+  push esp
+  push ebp
+  push esi
+  push edi
+  pushfd
+  
+  mov eax, 0x0042
+ 
+  popfd
+  pop edi
+  pop esi
+  pop ebp
+  pop esp
+  pop ebx
+  pop edx
+  pop ecx
+  
+  iret
 
+  _isr102:
+  push ecx
+  push edx
+  push ebx
+  push esp
+  push ebp
+  push esi
+  push edi
+  pushfd
+  
+  mov eax, 0x0042
+ 
+  popfd
+  pop edi
+  pop esi
+  pop ebp
+  pop esp
+  pop ebx
+  pop edx
+  pop ecx
+  
+  iret
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
 proximo_reloj:

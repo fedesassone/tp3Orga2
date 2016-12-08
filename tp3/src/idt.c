@@ -90,6 +90,17 @@ void idt_inicializar() {
         IDT_ENTRY(17);
         IDT_ENTRY(18);
         IDT_ENTRY(19);
-    
+        IDT_ENTRY(32);//RELOJ
+        IDT_ENTRY(33);//TECLADO
+        idt[80].offset_0_15 = (unsigned short) ((unsigned int)(&_isr80) & (unsigned int) 0xFFFF);        
+        idt[80].segsel = (unsigned short) 0x00a8;                                                                  
+        idt[80].attr = (unsigned short) 0xee00;// LE PONGO DPL 3 YA QUE VA A SER USADA POR UN USUARIO                                                                  
+        idt[80].offset_16_31 = (unsigned short) ((unsigned int)(&_isr80) >> 16 & (unsigned int) 0xFFFF);
+        idt[102].offset_0_15 = (unsigned short) ((unsigned int)(&_isr102) & (unsigned int) 0xFFFF);        
+        idt[102].segsel = (unsigned short) 0x00a8;                                                                  
+        idt[102].attr = (unsigned short) 0xee00;// LE PONGO DPL 3 YA QUE VA A SER USADA POR UN USUARIO                                                                  
+        idt[102].offset_16_31 = (unsigned short) ((unsigned int)(&_isr102) >> 16 & (unsigned int) 0xFFFF);
+
     }
+
 
