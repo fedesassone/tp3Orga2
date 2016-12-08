@@ -41,6 +41,24 @@
 #define GDT_IDX_CODE_0				0X15
 #define GDT_IDX_CODE_3				0X16
 #define GDT_IDX_PANTALLA_KERNEL		0x17
+#define GDT_TAREA_IDLE				0X18
+#define GDT_TAREA_INICIAL			0X19
+#define GDT_TAREA_1					0x20
+#define GDT_TAREA_1_BANDERA			0x21   
+#define GDT_TAREA_2					0x22
+#define GDT_TAREA_2_BANDERA			0x23 
+#define GDT_TAREA_3					0x24
+#define GDT_TAREA_3_BANDERA			0x25 
+#define GDT_TAREA_4					0x26
+#define GDT_TAREA_4_BANDERA			0x27 
+#define GDT_TAREA_5					0x28
+#define GDT_TAREA_5_BANDERA			0x29 
+#define GDT_TAREA_6					0x30
+#define GDT_TAREA_6_BANDERA			0x31 
+#define GDT_TAREA_7					0x32
+#define GDT_TAREA_7_BANDERA			0x33 
+#define GDT_TAREA_8					0x34
+#define GDT_TAREA_8_BANDERA			0x35  
 
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */
