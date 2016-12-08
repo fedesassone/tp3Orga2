@@ -160,9 +160,9 @@ BITS 32
     call idt_inicializar
     
     lidt[IDT_DESC]
-
+    int 80
         xchg bx,bx
-
+    
 
     ; configurar controlador de interrupciones
     
