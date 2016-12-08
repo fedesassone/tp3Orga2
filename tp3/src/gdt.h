@@ -8,7 +8,7 @@
 #ifndef __GDT_H__
 #define __GDT_H__
 
-#define GDT_COUNT 48
+#define GDT_COUNT 54
 
 #include "defines.h"
 
