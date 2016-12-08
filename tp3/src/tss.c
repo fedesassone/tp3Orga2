@@ -6,6 +6,8 @@
 */
 
 #include "tss.h"
+#include "gdt.h"
+#include "mmu.h"  
 
 tss tarea_inicial;
 tss tarea_idle;
@@ -30,6 +32,56 @@ void tss_inicializar() {
 	tarea_idle.iomap 	= 0xFFFF;
 	tarea_idle.esp0     = TASK_IDLE_STACK_RING_0; // aca no se si va esto o TASK_IDLE_STACK o 0x0002a000
 	tarea_idle.ss0      = 0xa8;
+
+}
+
+//la vamos a llamar con cr3_inicial = 0x30000
+void tss_iniciarTareas(unsigned int cr3_inicial){
+	//en cada ciclo inicializamos un navio y una bandera
+
+	int i;
+	for(i = 0; i < 16; i= i+2){
+		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
+		unsigned int cr3_paCadaTarea = cr3_inicial;
+		mmu_inicializar_dir_tarea(i); //le pasamos el id
+
+		//inicio navio
+		tss_nueva->esp0 = mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
+		tss_nueva->ss0 = GDT_IDX_DATA_0;  
+	    tss_nueva->cr3 = cr3_paCadaTarea;
+	    tss_nueva->eip = DIR_VIRTUAL_TAREA;
+	    tss_nueva->esp = DIR_VIRTUAL_TAREA + 0x1000;
+	    tss_nueva->ebp = DIR_VIRTUAL_TAREA + 0x1000;
+	    tss_nueva->eflags = 0x202;
+	    tss_nueva->es = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->cs = ((TASK_1_CODE_SRC_ADDR + (0x2000 * i))| 0x3);
+	    tss_nueva->ss = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->ds = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->fs = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->gs = (GDT_IDX_DATA_3 | 0x3);//chequear esto
+		//navio 1 ready
+	    //inicio bandera 
+		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();			
+		cr3_paCadaTarea = cr3_paCadaTarea + 0x1000;
+		mmu_inicializar_dir_tarea(i+1); //chequear que hace con el ID, le estamos pasando nums del 0 al 15
+
+		tss_nueva->esp0 = mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
+		tss_nueva->ss0 = GDT_IDX_DATA_0;  
+	    tss_nueva->cr3 = cr3_paCadaTarea;
+	    tss_nueva->eip = DIR_VIRTUAL_TAREA;
+	    tss_nueva->esp = DIR_VIRTUAL_TAREA + 0x1000;
+	    tss_nueva->ebp = DIR_VIRTUAL_TAREA + 0x1000;
+	    tss_nueva->eflags = 0x202;
+	    tss_nueva->es = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->cs = ((TASK_1_CODE_SRC_ADDR + (0x2000 * i))| 0x3);
+	    tss_nueva->ss = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->ds = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->fs = (GDT_IDX_DATA_3 | 0x3);
+	    tss_nueva->gs = (GDT_IDX_DATA_3 | 0x3);//chequear esto
+		//mismo contexto que su navio (bandera)
+
+	}
+
 
 }
 

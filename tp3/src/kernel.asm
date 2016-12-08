@@ -51,6 +51,12 @@ extern print
 extern mmu_inicializar
 extern mmu_inicializar_dir_kernel
 ;extern mmu_inicializar_table_kernel
+
+;; TSS 
+extern tss_inicializar
+extern tss_iniciarTareas
+
+
 %define BASE_PAGE_DIRECTORY 0x27000 
 
 ;; Saltear seccion de datos
@@ -149,9 +155,9 @@ BITS 32
     mov cr0, eax
 
     ; inicializar tarea idle
-
+    call tss_inicializar
     ; inicializar todas las tsss
-
+    call tss_iniciarTareas
     ; inicializar entradas de la gdt de las tsss
 
     ; inicializar el scheduler
