@@ -96,7 +96,7 @@ void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3){
 		}
 		if (QuedaVacia)
 		{
-			PDE.present = 0;
+			PDE->present = 0;
 		}
 		tlbflush();
 		}
