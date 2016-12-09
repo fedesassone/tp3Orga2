@@ -12,7 +12,7 @@ BITS 32
 ;; PIC
 extern fin_intr_pic1
 extern atender_int
-
+extern atender_sched
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -44,6 +44,10 @@ _isr%1:
 ; Scheduler
 reloj_numero:           dd 0x00000000
 reloj:                  db '|/-\'
+
+; Tareas
+tss_selector: dw 0x0
+tss_offset:   dd 0x0 
 
 
 ;;
@@ -78,9 +82,13 @@ _isr32:
   pushfd
 
   call fin_intr_pic1
-
+  ;muestra reloj
   call proximo_reloj
-
+  ;schedulizar
+  ;call atender_sched ;esto me devuelve un selector tss
+  ;mov [tss_selector], ax
+  ;jmp far [tss_offset]
+  ; listo?
   popfd
   popad
 

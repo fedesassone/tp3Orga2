@@ -24,9 +24,9 @@ typedef struct str_sched_t
 }__attribute__((__packed__)) sched_t;
 
 
-
 void sched_inicializar();
 unsigned short sched_proximo_indice();
 unsigned short sched_proxima_bandera(); 
+unsigned short atender_sched();
 
 #endif	/* !__SCHED_H__ */

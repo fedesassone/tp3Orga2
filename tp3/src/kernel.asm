@@ -41,6 +41,7 @@ extern idt_inicializar
 ;; PIC
 extern resetear_pic
 extern habilitar_pic
+extern deshabilitar_pic
 
 ;; SCREEN 
 extern limpiar_screen
@@ -54,6 +55,7 @@ extern mmu_inicializar_dir_kernel
 ;; TSS 
 extern tss_inicializar
 extern tss_iniciarTareas
+
 
 
 %define BASE_PAGE_DIRECTORY 0x27000 
@@ -70,6 +72,9 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
+; TSS_idle
+;tss_selector_idle: dw 0xc0   ;descriptor de tss
+;tss_offset_idle:   dd 0x0 
 
 
 ;;
@@ -81,8 +86,6 @@ BITS 16
 start:
     ; Deshabilitar interrupciones
     cli
-
-    ; xchg bx, bx
 
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
@@ -133,7 +136,7 @@ BITS 32
   limpiar_screen
   
 ; Imprimir mensaje de bienvenida
-    ;imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
+    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
     
 
 
@@ -147,8 +150,6 @@ BITS 32
     ;habilitar paginacion
     mov eax, BASE_PAGE_DIRECTORY
     mov cr3, eax
-        ;xchg bx,bx
-
     mov eax, cr0
     or eax, 0x80000000
     mov cr0, eax
@@ -169,23 +170,25 @@ BITS 32
     call idt_inicializar
     
     lidt[IDT_DESC]
-    int 80
+    ;int 80
     
-    
-
     ; configurar controlador de interrupciones
-    
-    
+    ;
+
+    call deshabilitar_pic
+    call resetear_pic
+    call habilitar_pic
+    sti
+
     ; cargar la tarea inicial
     mov ax, 0x19 ; 19 = segmento de tarea inic 
     shl ax, 3
 
     ltr ax
-    ; saltar a la primer tarea
+    ; saltar a la tarea idle
     xchg bx,bx
-    mov ax, 0x18
-    shl ax, 3 
-    jmp 0xc0:0
+    jmp  0xc0:0x0
+    
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
