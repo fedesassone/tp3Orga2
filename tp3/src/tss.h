@@ -56,5 +56,5 @@ extern tss tarea_idle;
 extern tss tarea_dibujar;
 
 void tss_inicializar();
-void tss_iniciarTareas(unsigned int cr3_inicial);
+void tss_iniciarTareas();
 #endif  /* !__TSS_H__ */

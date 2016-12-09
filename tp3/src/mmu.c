@@ -39,13 +39,22 @@ void mmu_inicializar_dir_kernel(){
 	}
 }
 
-void copiarCodigo(unsigned int src, unsigned int dst){
+/*void copiarCodigo(unsigned int src, unsigned int dst){
 		int i;
 		for(i=0; i<8120; i++){
 			*((unsigned int *) (dst + i)) = *((unsigned int *) (src + i));
 		}
 	}
-
+*/
+	
+void copiarCodigo(unsigned int src, unsigned int dest)
+{
+    unsigned int i;
+    for(i = 0; i<4096; i+=4)
+    {
+        *((unsigned int *) (dest + i)) =  *((unsigned int *) (src + i));
+    }
+}
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char us, unsigned char rw){
 	pde_entry* CR3 = (pde_entry*)(cr3 & 0xFFFFF000); 
 	pde_entry* PDE = &(CR3[virtual>>22]);    
@@ -106,7 +115,7 @@ void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3){
 
 
 
-void mmu_inicializar_dir_tarea( unsigned int id_tarea){
+pde_entry* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	pde_entry* directorio_tareas = (pde_entry*) mmu_proxima_pagina_fisica_libre();
 	int i;
 	for (i=0; i<1024; i++){
@@ -139,10 +148,12 @@ void mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	directorio_tareas[1].rw = 1;
 	directorio_tareas[1].us = 1;
 
+	
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + (0x1000*id_tarea),1,1);//ver si esta bien que el cr3 sea ese
+	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) directorio_tareas,TASK_ANCLA_FIS,1,1);
 	copiarCodigo(0x10000 + (0x1000*id_tarea), 0x40000000);
-
-
-
+	//copiarCodigo(0x10000, 0x40000000);
+	return directorio_tareas;
 }
 
 

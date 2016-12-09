@@ -157,6 +157,8 @@ BITS 32
     ; inicializar tarea idle
     call tss_inicializar
     ; inicializar todas las tsss
+            xchg bx,bx
+
     call tss_iniciarTareas
     ; inicializar entradas de la gdt de las tsss
 
