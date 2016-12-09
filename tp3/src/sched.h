@@ -12,6 +12,7 @@ typedef struct str_sched_tarea
 {
 	unsigned short tss_selector;
 	unsigned int id;
+	unsigned int viva;
 }__attribute__((__packed__)) sched_tarea;
 
 typedef struct str_sched_t
