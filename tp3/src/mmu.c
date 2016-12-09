@@ -150,7 +150,7 @@ pde_entry* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 
 	
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + (0x1000*id_tarea),1,1);//ver si esta bien que el cr3 sea ese
-	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) directorio_tareas,TASK_ANCLA_FIS,1,1);
+	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) directorio_tareas,TASK_ANCLA_FIS,1,0);// el ancla es de solo lectura
 	//copiarCodigo(0x10000 + (0x1000*id_tarea), 0x40000000);
 	//copiarCodigo(0x10000, 0x40000000);
 	return directorio_tareas;
