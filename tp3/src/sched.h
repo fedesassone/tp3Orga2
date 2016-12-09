@@ -7,6 +7,20 @@
 
 #ifndef __SCHED_H__
 #define __SCHED_H__
+  
+typedef struct str_sched_tarea
+{
+	unsigned short tss_selector;
+	unsigned int id;
+}__attribute__((__packed__)) sched_tarea;
+
+typedef struct str_sched_t
+{
+	unsigned char tarea_actual;
+	sched_tarea tareas[8];
+	sched_tarea banderas[8];
+}__attribute__((__packed__)) sched_t;
+
 
 
 void sched_inicializar();
