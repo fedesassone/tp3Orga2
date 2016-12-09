@@ -18,6 +18,7 @@ typedef struct str_sched_tarea
 typedef struct str_sched_t
 {
 	unsigned char tarea_actual;
+	unsigned char bandera_actual;
 	sched_tarea tareas[8];
 	sched_tarea banderas[8];
 }__attribute__((__packed__)) sched_t;

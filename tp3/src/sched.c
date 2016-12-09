@@ -81,3 +81,20 @@ unsigned short sched_proximo_indice() {
     return scheduler.tareas[scheduler.tarea_actual].tss_selector;
 }
 
+unsigned short sched_proxima_bandera() {
+
+	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
+	if (scheduler.bandera_actual == 8) 
+	{
+		scheduler.bandera_actual = 0;
+	}
+
+	while ( scheduler.banderas[scheduler.bandera_actual].viva == 0 )
+	{
+		scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
+
+	}// salgo del while con la proxima bandera viva
+    
+    return scheduler.banderas[scheduler.bandera_actual].tss_selector;
+}
+
