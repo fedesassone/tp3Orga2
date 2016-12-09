@@ -160,8 +160,10 @@ BITS 32
             xchg bx,bx
 
     call tss_iniciarTareas
-    ; inicializar entradas de la gdt de las tsss
+    ; inicializar entradas de la gdt de las tss
 
+    ;// Consultar si hay que llamar a una funcion que configure tss//
+    
     ; inicializar el scheduler
 
     ; inicializar la IDT
@@ -169,15 +171,22 @@ BITS 32
     
     lidt[IDT_DESC]
     int 80
-        xchg bx,bx
+    
     
 
     ; configurar controlador de interrupciones
     
-
+        xchg bx,bx
     ; cargar la tarea inicial
+    mov ax, 0x19 ; 19 = segmento de tarea inic 
+    shl ax, 3
 
+    ltr ax
     ; saltar a la primer tarea
+
+    mov ax, 0x18
+    shl ax, 3 
+    jmp 0xc0:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

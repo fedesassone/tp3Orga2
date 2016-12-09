@@ -65,7 +65,7 @@ void tss_iniciarTareas(){
 	    //inicio bandera 
 		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();			
 		
-		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(i+1); //chequear que hace con el ID, le estamos pasando nums del 0 al 15
+		//cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(i+1); //chequear que hace con el ID, le estamos pasando nums del 0 al 15
 
 		//tss_nueva->esp0 = mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
 		tss_nueva->esp0 = pila_cero_tarea - 0x500;
@@ -76,15 +76,16 @@ void tss_iniciarTareas(){
 	    tss_nueva->ebp = 0x40001FFC; // 0x40001FFC
 	    tss_nueva->eflags = 0x202;
 	    tss_nueva->es = (GDT_IDX_DATA_3 << 3) | 3;
-	    tss_nueva->cs = (GDT_IDX_CODE_3 << 3) | 3;//aca creo que va (GDT_IDX_CODE_3 << 3) | 3 ( RPL = 3 )
+	    tss_nueva->cs = (GDT_IDX_CODE_3 << 3) | 3;//Figura 5: Dirección de la función bandera ¿?
 	    tss_nueva->ss = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->ds = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->fs = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
 		//mismo contexto que su navio (bandera)
-
 	}
 
-
 }
+
+
+
 
