@@ -27,6 +27,6 @@ typedef struct str_sched_t
 
 void sched_inicializar();
 unsigned short sched_proximo_indice();
-
+unsigned short sched_proxima_bandera(); 
 
 #endif	/* !__SCHED_H__ */

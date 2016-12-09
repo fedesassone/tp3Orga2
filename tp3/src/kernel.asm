@@ -6,7 +6,6 @@
 %include "imprimir.mac"
 
 
-
 global start
 
 %macro limpiar_screen 0
@@ -148,7 +147,7 @@ BITS 32
     ;habilitar paginacion
     mov eax, BASE_PAGE_DIRECTORY
     mov cr3, eax
-        xchg bx,bx
+        ;xchg bx,bx
 
     mov eax, cr0
     or eax, 0x80000000
@@ -157,7 +156,7 @@ BITS 32
     ; inicializar tarea idle
     call tss_inicializar
     ; inicializar todas las tsss
-            xchg bx,bx
+            ;xchg bx,bx
 
     call tss_iniciarTareas
     ; inicializar entradas de la gdt de las tss
@@ -176,14 +175,14 @@ BITS 32
 
     ; configurar controlador de interrupciones
     
-        xchg bx,bx
+    
     ; cargar la tarea inicial
     mov ax, 0x19 ; 19 = segmento de tarea inic 
     shl ax, 3
 
     ltr ax
     ; saltar a la primer tarea
-
+    xchg bx,bx
     mov ax, 0x18
     shl ax, 3 
     jmp 0xc0:0

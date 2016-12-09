@@ -33,6 +33,10 @@ void tss_inicializar() {
 	tarea_idle.esp0     = TASK_IDLE_STACK_RING_0; // aca no se si va esto o TASK_IDLE_STACK o 0x0002a000
 	tarea_idle.ss0      = 0xa8;
 
+	gdt[GDT_TAREA_IDLE].base_0_15  = ((unsigned int) (&tarea_idle)) & 0xFFFF;
+    gdt[GDT_TAREA_IDLE].base_23_16 = (((unsigned int) (&tarea_idle)) >> 16) & 0xFF;
+    gdt[GDT_TAREA_IDLE].base_31_24 = ((unsigned int) (&tarea_idle)) >> 24 ;
+
 }
 
 //la vamos a llamar con cr3_inicial = 0x30000
@@ -61,7 +65,14 @@ void tss_iniciarTareas(){
 	    tss_nueva->ds = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->fs = (GDT_IDX_DATA_3 << 3) | 3;// no seria << en vez de |?
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
-		//navio 1 ready
+		//Descripcion de Navio lista
+	    //Apuntarle con el segmento en gdt
+
+	        gdt[GDT_TAREA_1 + i].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;
+	        gdt[GDT_TAREA_1 + i].base_23_16 = (((unsigned int) tss_nueva )>> 16) & 0xFF;
+	        gdt[GDT_TAREA_1 + i].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
+		//lesto
+        
 	    //inicio bandera 
 		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();			
 		
@@ -82,6 +93,14 @@ void tss_iniciarTareas(){
 	    tss_nueva->fs = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
 		//mismo contexto que su navio (bandera)
+		//apunto segseltss
+
+        gdt[GDT_TAREA_1 + (i+1)].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;
+        gdt[GDT_TAREA_1 + (i+1)].base_23_16 = (((unsigned int) tss_nueva )>> 16) & 0xFF;
+        gdt[GDT_TAREA_1 + (i+1)].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
+
+
+
 	}
 
 }
