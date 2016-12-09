@@ -50,7 +50,7 @@ void mmu_inicializar_dir_kernel(){
 void copiarCodigo(unsigned int src, unsigned int dest)
 {
     unsigned int i;
-    for(i = 0; i<4096; i+=4)
+    for(i = 0; i<1024; i+=4)
     {
         *((unsigned int *) (dest + i)) =  *((unsigned int *) (src + i));
     }
@@ -151,7 +151,7 @@ pde_entry* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + (0x1000*id_tarea),1,1);//ver si esta bien que el cr3 sea ese
 	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) directorio_tareas,TASK_ANCLA_FIS,1,1);
-	copiarCodigo(0x10000 + (0x1000*id_tarea), 0x40000000);
+	//copiarCodigo(0x10000 + (0x1000*id_tarea), 0x40000000);
 	//copiarCodigo(0x10000, 0x40000000);
 	return directorio_tareas;
 }
