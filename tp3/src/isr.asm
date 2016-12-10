@@ -90,9 +90,9 @@ _isr32:
   ;muestra reloj
   call proximo_reloj
   ;schedulizar
-  ;call atender_sched ;esto me devuelve un selector tss
-  ;mov [tss_selector], ax
-  ;jmp far [tss_offset]
+  call atender_sched ;esto me devuelve un selector tss
+  mov [tss_selector], ax
+  jmp far [tss_offset]
   ; listo?
   popfd
   popad
@@ -118,13 +118,7 @@ _isr33:
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 _isr80:
-        push ecx
-        push edx
-        push ebx
-        push esp
-        push ebp
-        push esi
-        push edi
+        pushad
         pushfd
         cmp eax,0x83a
         jne cont
@@ -144,16 +138,13 @@ _isr80:
         call llamada
         add esp,12
         
-        jmp  0xc0:0x0 ;saltamos a la tarea idle
+        call atender_sched  ;avanzamos sched 
+        mov [tss_selector], ax
+        jmp far [tss_offset]
+        
 
         popfd
-        pop edi
-        pop esi
-        pop ebp
-        pop esp
-        pop ebx
-        pop edx
-        pop ecx
+        popad
         
         iret
 
