@@ -18,7 +18,7 @@ idle:
         mov dword [numero], 0x0
 
     .imprimir:
-        ; Imprimir 'reloj'
+        ; Imprimir 'reloj' 
         mov ebx, dword [numero]
         add ebx, message1
         imprimir_texto_mp ebx, 1, 0x0f, 24, 0
