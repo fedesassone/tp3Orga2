@@ -188,7 +188,8 @@ BITS 32
     ; saltar a la tarea idle
     xchg bx,bx
     jmp  0xc0:0x0
-    
+    xchg bx,bx
+
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

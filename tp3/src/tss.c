@@ -9,6 +9,7 @@
 #include "gdt.h"
 #include "mmu.h"  
 
+
 tss tarea_inicial;
 tss tarea_idle;
 
@@ -37,18 +38,24 @@ void tss_inicializar() {
     gdt[GDT_TAREA_IDLE].base_23_16 = (((unsigned int) (&tarea_idle)) >> 16) & 0xFF;
     gdt[GDT_TAREA_IDLE].base_31_24 = ((unsigned int) (&tarea_idle)) >> 24 ;
 
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x20000,0,1);
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x21000,0,1);
+
+	copiarCodigo(0x20000, 0x40000000);
+
 }
 
 //la vamos a llamar con cr3_inicial = 0x30000
 void tss_iniciarTareas(){
 	//en cada ciclo inicializamos un navio y una bandera
+	unsigned int id_tarea = 0x0000;
 	unsigned int cr3_paCadaTarea;	
 	int i;
 	for(i = 0; i < 16; i= i+2){
 		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
 		//unsigned int cr3_paCadaTarea = cr3_inicial; //aca creo que estarian coincidiendo tss_nueva y cr3_paCadaTarea
 		
-		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(i); //le pasamos el id
+		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(id_tarea); //le pasamos el id
 
 		//inicio navio
 		tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
@@ -99,9 +106,10 @@ void tss_iniciarTareas(){
         gdt[GDT_TAREA_1 + (i+1)].base_23_16 = (((unsigned int) tss_nueva )>> 16) & 0xFF;
         gdt[GDT_TAREA_1 + (i+1)].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
 
-
+        id_tarea = id_tarea + 0x2000;
 
 	}
+
 
 }
 
