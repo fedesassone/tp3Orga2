@@ -152,11 +152,11 @@ pde_entry* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	directorio_tareas[1].rw = 1;
 	directorio_tareas[1].us = 1;
 
-	
+	//copiarCodigo(0x10000 + (id_tarea), 0x40000000);
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) directorio_tareas,0x10000 + id_tarea + 0x1000,1,1);//mappeamos la segunda pagina
 	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) directorio_tareas,TASK_ANCLA_FIS,1,0);// el ancla es de solo lectura
-	copiarCodigo(0x10000 + (id_tarea), 0x40000000);
+	
 	return directorio_tareas;
 }
 

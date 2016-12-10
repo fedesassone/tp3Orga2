@@ -88,9 +88,12 @@ _isr32:
 
   call fin_intr_pic1
   ;muestra reloj
+  imprimir_texto_mp INT_1, INT_len_1, 0x07, 4, 0
   call proximo_reloj
   ;schedulizar
+  xchg bx,bx
   call atender_sched ;esto me devuelve un selector tss
+  imprimir_texto_mp INT_1, INT_len_1, 0x07, 6, 0
   mov [tss_selector], ax
   jmp far [tss_offset]
   ; listo?
@@ -186,7 +189,7 @@ proximo_reloj:
     .ok:
         add ebx, reloj
         imprimir_texto_mp ebx, 1, 0x0f, 24, 79
-
+        imprimir_texto_mp INT_1, INT_len_1, 0x07, 5, 0
     popad
     ret
 

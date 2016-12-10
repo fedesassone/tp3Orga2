@@ -55,6 +55,8 @@ extern mmu_inicializar_dir_kernel
 ;; TSS 
 extern tss_inicializar
 extern tss_iniciarTareas
+;;SCHEDULER
+extern sched_inicializar
 
 
 
@@ -154,18 +156,19 @@ BITS 32
     or eax, 0x80000000
     mov cr0, eax
 
+    
     ; inicializar tarea idle
     call tss_inicializar
     ; inicializar todas las tsss
             ;xchg bx,bx
 
-    ;call tss_iniciarTareas
+    call tss_iniciarTareas
     ; inicializar entradas de la gdt de las tss
 
     ;// Consultar si hay que llamar a una funcion que configure tss//
     
     ; inicializar el scheduler
-
+    call sched_inicializar
     ; inicializar la IDT
     call idt_inicializar
     
@@ -175,10 +178,10 @@ BITS 32
     ; configurar controlador de interrupciones
     ;
 
-    ;call deshabilitar_pic
-    ;call resetear_pic
-    ;call habilitar_pic
-    ;sti
+    call deshabilitar_pic
+    call resetear_pic
+    call habilitar_pic
+    sti
 
     ; cargar la tarea inicial
     mov ax, 0x19 ; 19 = segmento de tarea inic 

@@ -50,8 +50,8 @@ void llamoTarea()
 
 
 void sched_inicializar() {
-	scheduler.tarea_actual = 0;
-	scheduler.bandera_actual = 0;
+	scheduler.tarea_actual = 7;
+	scheduler.bandera_actual = 7;
 	tareasRestantes = 3;
 	corriendoTareas = 1;
 	corriendoBandera = 0;
