@@ -29,5 +29,6 @@ unsigned short sched_proximo_indice();
 unsigned short sched_proxima_bandera(); 
 unsigned short atender_sched();
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx);
+unsigned short matar_tarea();
 
 #endif	/* !__SCHED_H__ */

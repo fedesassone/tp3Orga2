@@ -18,7 +18,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
 	if ( eax == 0x923)
 	{
-		unsigned int directorio_tareas = rcr3();
+		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
 		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
 	}
 	//cañonear en ASM
@@ -176,3 +176,9 @@ unsigned short atender_sched(){
 	return sched_proxima_bandera();
 }
 
+unsigned short matar_tarea()
+{
+	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
+	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
+	return atender_sched();
+}

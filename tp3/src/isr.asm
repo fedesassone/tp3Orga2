@@ -13,9 +13,10 @@ BITS 32
 extern fin_intr_pic1
 extern atender_int
 extern atender_sched
-;; SYSCALL
+;; SYSCALL ; estan en sched.c (fue la forma que encontre que me las acepte)
 extern llamada
 extern llamoTarea
+extern matar_tarea
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -32,13 +33,14 @@ _isr%1:
     ; To Infinity And Beyond!!
     ;mov eax, %1
     ;push eax
-    mov edi, %1
+    pushfd
+    pushad
     imprimir_texto_mp INT_%1, INT_len_%1, 0x07, 1, 0
-    mov eax, 0xFFF2
-    mov ebx, 0xFFF2
-    mov ecx, 0xFFF2
-    mov edx, 0xFFF2
-    jmp $
+    call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa y devuelve en ax el selector
+    mov [tss_selector], ax
+    jmp far [tss_offset] ;paso a la proxima tarea o bandera segun corresponda
+    popad
+    popfd
 %endmacro
 
 ;;
