@@ -159,7 +159,7 @@ BITS 32
     ; inicializar todas las tsss
             ;xchg bx,bx
 
-    call tss_iniciarTareas
+    ;call tss_iniciarTareas
     ; inicializar entradas de la gdt de las tss
 
     ;// Consultar si hay que llamar a una funcion que configure tss//
@@ -175,10 +175,10 @@ BITS 32
     ; configurar controlador de interrupciones
     ;
 
-    call deshabilitar_pic
-    call resetear_pic
-    call habilitar_pic
-    sti
+    ;call deshabilitar_pic
+    ;call resetear_pic
+    ;call habilitar_pic
+    ;sti
 
     ; cargar la tarea inicial
     mov ax, 0x19 ; 19 = segmento de tarea inic 

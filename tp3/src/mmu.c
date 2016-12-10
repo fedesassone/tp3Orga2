@@ -55,10 +55,12 @@ void copiarCodigo(unsigned int src, unsigned int dest)
         *((unsigned int *) (dest + i)) =  *((unsigned int *) (src + i));
     }
 }
-void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char us, unsigned char rw){
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, 
+	unsigned int fisica, unsigned char us, unsigned char rw){
+
 	pde_entry* CR3 = (pde_entry*)(cr3 & 0xFFFFF000); 
 	pde_entry* PDE = &(CR3[virtual>>22]);    
-
+	
 	if (!(PDE->present)){
 
 		PDE->base = mmu_proxima_pagina_fisica_libre() >> 12;
@@ -84,6 +86,8 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 
 	tlbflush();
 }
+
+
 
 void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3){
 	pde_entry* CR3 = (pde_entry*)(cr3 & 0xFFFFF000); 

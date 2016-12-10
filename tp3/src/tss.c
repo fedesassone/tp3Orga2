@@ -34,14 +34,21 @@ void tss_inicializar() {
 	tarea_idle.esp0     = TASK_IDLE_STACK_RING_0; // aca no se si va esto o TASK_IDLE_STACK o 0x0002a000
 	tarea_idle.ss0      = 0xa8;
 
-	gdt[GDT_TAREA_IDLE].base_0_15  = ((unsigned int) (&tarea_idle)) & 0xFFFF;
-    gdt[GDT_TAREA_IDLE].base_23_16 = (((unsigned int) (&tarea_idle)) >> 16) & 0xFF;
-    gdt[GDT_TAREA_IDLE].base_31_24 = ((unsigned int) (&tarea_idle)) >> 24 ;
+	gdt[GDT_TAREA_IDLE].base_0_15  = 
+	((unsigned int) (&tarea_idle)) & 0xFFFF;
 
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x22000,0,1);
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x23000,0,1);
+    gdt[GDT_TAREA_IDLE].base_23_16 = 
+    (((unsigned int) (&tarea_idle)) >> 16) & 0xFF;
 
-	copiarCodigo(0x22000, 0x40000000);
+    gdt[GDT_TAREA_IDLE].base_31_24 = (
+    	(unsigned int) (&tarea_idle)) >> 24 ;
+
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x20000,0,1);
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x21000,0,1);
+
+	//DIR_VIRTUAL_TAREA = 0x40000000
+
+	//copiarCodigo(0x20000, 0x40000000);
 
 }
 

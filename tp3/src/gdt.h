@@ -20,7 +20,7 @@ typedef struct str_gdt_descriptor {
 
 typedef struct str_gdt_entry {
     unsigned short  limit_0_15;
-    unsigned short  base_0_15;
+    unsigned short  base_0_15;  
     unsigned char   base_23_16;
     unsigned char   type:4;
     unsigned char   s:1;
