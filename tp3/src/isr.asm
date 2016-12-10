@@ -115,31 +115,44 @@ _isr33:
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 _isr80:
-  push ecx
-  push edx
-  push ebx
-  push esp
-  push ebp
-  push esi
-  push edi
-  pushfd
-  
-  push ecx
-  push ebx
-  push eax
-  call llamada
-  add esp,12
- 
-  popfd
-  pop edi
-  pop esi
-  pop ebp
-  pop esp
-  pop ebx
-  pop edx
-  pop ecx
-  
-  iret
+        push ecx
+        push edx
+        push ebx
+        push esp
+        push ebp
+        push esi
+        push edi
+        pushfd
+        cmp eax,0x83a
+        jne cont
+        xor esi,esi
+        mov esi,97
+  ciclo:mov dl,[ecx];MUEVO EL BYTE A COPIAR EN DL // VER LO DE QUE ES RELATIVA
+        mov [ebx],dl; muevo el byte a la pagina destino
+        inc ecx
+        inc ebx
+        dec esi
+        cmp esi,0
+        jne ciclo
+   cont: push ecx
+         push ebx
+         push eax
+
+        call llamada
+        add esp,12
+        
+        jmp  0xc0:0x0 ;saltamos a la tarea idle
+
+        popfd
+        pop edi
+        pop esi
+        pop ebp
+        pop esp
+        pop ebx
+        pop edx
+        pop ecx
+        
+        iret
 
   _isr102:
   push ecx

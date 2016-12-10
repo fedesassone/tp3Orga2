@@ -9,6 +9,10 @@
 #include "defines.h"
 #include "i386.h"
 #include "mmu.h"
+
+sched_t scheduler;
+unsigned int tareasRestantes;
+unsigned short corriendoTareas;
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
 	if ( eax == 0x923)
@@ -16,11 +20,17 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		unsigned int directorio_tareas = rcr3();
 		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
 	}
+	//cañonear en ASM
+	if ( eax == 0xaef)
+	{
+		//copiarCodigo deberia copiar una sola pagina
+		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
+		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
+
+	}
 }
 
-sched_t scheduler;
-unsigned int tareasRestantes;
-unsigned short corriendoTareas;
+
 
 void sched_inicializar() {
 	scheduler.tarea_actual = 0;
