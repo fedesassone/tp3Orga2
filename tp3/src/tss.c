@@ -38,10 +38,10 @@ void tss_inicializar() {
     gdt[GDT_TAREA_IDLE].base_23_16 = (((unsigned int) (&tarea_idle)) >> 16) & 0xFF;
     gdt[GDT_TAREA_IDLE].base_31_24 = ((unsigned int) (&tarea_idle)) >> 24 ;
 
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x20000,0,1);
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x21000,0,1);
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x22000,0,1);
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x23000,0,1);
 
-	copiarCodigo(0x20000, 0x40000000);
+	copiarCodigo(0x22000, 0x40000000);
 
 }
 

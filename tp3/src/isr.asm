@@ -120,18 +120,18 @@ _isr33:
 _isr80:
         pushad
         pushfd
-        cmp eax,0x83a
-        jne cont
-        xor esi,esi
-        mov esi,97
-  ciclo:mov dl,[ecx];MUEVO EL BYTE A COPIAR EN DL // VER LO DE QUE ES RELATIVA
-        mov [ebx],dl; muevo el byte a la pagina destino
-        inc ecx
-        inc ebx
-        dec esi
-        cmp esi,0
-        jne ciclo
-   cont: push ecx
+  ;       cmp eax,0x83a
+  ;       jne cont
+  ;       xor esi,esi
+  ;       mov esi,97
+  ; ciclo:mov dl,[ecx];MUEVO EL BYTE A COPIAR EN DL // VER LO DE QUE ES RELATIVA
+  ;       mov [ebx],dl; muevo el byte a la pagina destino
+  ;       inc ecx
+  ;       inc ebx
+  ;       dec esi
+  ;       cmp esi,0
+  ;       jne ciclo
+         push ecx
          push ebx
          push eax
 
