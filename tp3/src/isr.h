@@ -4,9 +4,9 @@
 ================================================================================
   definicion de las rutinas de atencion de interrupciones
 */
-
 #ifndef __ISR_H__
 #define __ISR_H__
+#include "i386.h"
 
 void _isr0();
 void _isr1();
@@ -33,4 +33,13 @@ void _isr32();
 void _isr33();
 void _isr80();
 void _isr102();
+
+void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
+{
+	if ( eax == 0x923)
+	{
+		unsigned int directorio_tareas = rcr3();
+		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+	}
+}
 #endif  /* !__ISR_H__ */

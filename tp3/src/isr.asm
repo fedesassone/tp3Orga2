@@ -13,6 +13,8 @@ BITS 32
 extern fin_intr_pic1
 extern atender_int
 extern atender_sched
+;; SYSCALL
+extern llamada
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -122,7 +124,11 @@ _isr80:
   push edi
   pushfd
   
-  mov eax, 0x0042
+  push ecx
+  push ebx
+  push eax
+  call llamada
+  add esp,12
  
   popfd
   pop edi

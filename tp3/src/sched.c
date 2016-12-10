@@ -7,6 +7,16 @@
 
 #include "sched.h"
 #include "defines.h"
+#include "i386.h"
+#include "mmu.h"
+void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
+{
+	if ( eax == 0x923)
+	{
+		unsigned int directorio_tareas = rcr3();
+		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+	}
+}
 
 sched_t scheduler;
 unsigned int tareasRestantes;
