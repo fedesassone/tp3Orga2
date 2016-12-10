@@ -15,6 +15,7 @@ extern atender_int
 extern atender_sched
 ;; SYSCALL
 extern llamada
+extern llamoTarea
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -164,8 +165,10 @@ _isr80:
   push edi
   pushfd
   
-  mov eax, 0x0042
+  call llamoTarea ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
  
+  jmp  0xc0:0x0 ;saltamos a la tarea idle
+
   popfd
   pop edi
   pop esi

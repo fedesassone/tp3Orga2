@@ -13,6 +13,7 @@
 sched_t scheduler;
 unsigned int tareasRestantes;
 unsigned short corriendoTareas;
+unsigned short corriendoBandera;
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
 	if ( eax == 0x923)
@@ -29,6 +30,15 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 
 	}
 }
+void llamoTarea()
+{
+	corriendoBandera = 0;
+	if (corriendoTareas == 1)
+	{
+		scheduler.tareas[scheduler.tarea_actual].viva = 0; // si una tarea llama a int 66 se muere la tarea
+		scheduler.banderas[scheduler.tarea_actual].viva = 0;// y su bandera
+	}
+}
 
 
 
@@ -37,6 +47,7 @@ void sched_inicializar() {
 	scheduler.bandera_actual = 0;
 	tareasRestantes = 3;
 	corriendoTareas = 1;
+	corriendoBandera = 0;
 	int i;
 	for(i=0; i<8;i++){
 		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + i) << 3) | 3;
@@ -138,12 +149,18 @@ unsigned short atender_sched(){
 		tareasRestantes--;
 		if(tareasRestantes == 0){
 			corriendoTareas = 0; //voy a correr banderas
+			corriendoBandera = 1;
 			scheduler.bandera_actual = 7;
 			return sched_proxima_bandera();
 		}
 		return sched_proximo_indice();
 	}
 	//corriendo banderas
+	if ( corriendoBandera == 1)
+	{
+		scheduler.tareas[scheduler.tarea_actual].viva = 0; // si cae una int de reloj mientras estaba corriendo una bandera se muere la bandera
+		scheduler.banderas[scheduler.tarea_actual].viva = 0;// y su bandera
+	}
 	unsigned short ultimaViva = 0;
 	unsigned int i;
 	for(i=0; i<8;i++){
