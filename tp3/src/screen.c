@@ -8,7 +8,7 @@
 #include "screen.h"
 #include "colors.h"
 #include "defines.h"
-
+unsigned int MuestroMapa = 0;
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
     int i;
