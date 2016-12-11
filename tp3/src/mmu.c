@@ -168,7 +168,7 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 
 	int* page_table_2 = (int*) mmu_proxima_pagina_fisica_libre();
 	for (i = 0; i < 1024; ++i) {
-		if(i<895){
+		if(i<896){
 			page_table_2[i] = (((i+1024) << 12) | 5);// es 5 porque los atributos son 1 user 0 read/w 1 present
 		}else{
 			page_table_2[i] = 0x0;
