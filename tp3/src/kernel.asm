@@ -190,7 +190,7 @@ BITS 32
     ltr ax
     ; saltar a la tarea idle
     xchg bx,bx
-    jmp  0xc0:0x0
+    jmp 0xc0:0x0
     xchg bx,bx
 
 

@@ -62,7 +62,8 @@ void tss_iniciarTareas(){
 		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
 		//unsigned int cr3_paCadaTarea = cr3_inicial; //aca creo que estarian coincidiendo tss_nueva y cr3_paCadaTarea
 		
-		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(id_tarea); //le pasamos el id
+		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(id_tarea); //le pasamos el id ; llama tres paginas
+
 
 		//inicio navio
 		tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo

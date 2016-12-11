@@ -161,6 +161,7 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 		page_directory[i]= 0x0;
 	}
 
+
 	int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
 	for (i = 0; i < 1024; ++i) {
 		page_table_1[i] = ((i << 12) | 5);
@@ -177,8 +178,8 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	page_directory[0] = (int)page_table_1 + 0x5;
 	page_directory[1] = (int)page_table_2 + 0x5;
 
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) page_directory,0x10000 + id_tarea + 0x1000,1,1);
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,0);//mappeamos la primera pagina
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) page_directory,0x10000 + id_tarea + 0x1000,1,0);
 	//copiarCodigo(0x10000 + (id_tarea), 0x40000000);
 	// mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
 	// mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) directorio_tareas,0x10000 + id_tarea + 0x1000,1,1);//mappeamos la segunda pagina
