@@ -92,12 +92,12 @@ void tss_iniciarTareas(){
 		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();			
 		
 		//cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(i+1); //chequear que hace con el ID, le estamos pasando nums del 0 al 15
-
 		//tss_nueva->esp0 = mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
 		tss_nueva->esp0 = pila_cero_tarea - 0x500;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3;  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
-	    tss_nueva->eip = DIR_VIRTUAL_TAREA;
+	    unsigned int * dir_bandera = 0x40001FFC;
+	    tss_nueva->eip = *(dir_bandera);//CHEQUEAR
 	    tss_nueva->esp = 0x40001FFC; // 0x40001FFC
 	    tss_nueva->ebp = 0x40001FFC; // 0x40001FFC
 	    tss_nueva->eflags = 0x202;
