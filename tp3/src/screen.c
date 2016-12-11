@@ -6,6 +6,8 @@
 */
 
 #include "screen.h"
+#include "colors.h"
+#include "defines.h"
 
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
@@ -19,7 +21,7 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
             y++;
         }
     }
-}
+}//imprime puntero a char
 
 void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
@@ -38,7 +40,7 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
         p[y][x + size - i - 1].c = hexa[i];
         p[y][x + size - i - 1].a = attr;
     }
-}
+}// imprime en hexa
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
@@ -49,9 +51,90 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
     }
     p[y][x].c = '0'+n;
     p[y][x].a = attr;
+}//imprime un short
+
+
+//dos modos:
+//estado :  | una linea negra, letras blancas de 80 pix |
+//          | 23*80 lineas = 1840 pix de 
+
+void iniciarBufferEstado(){
+    //linea fondo negro y letras blancas de 80pix
+    unsigned int i;
+    unsigned int x = 0;
+    unsigned int y = 0;
+    ca (*p)[2000] = (ca (*)[2000]) BUFFER_ESTADO;
+//primer linea 
+    for(i=0; i<160; i++){
+            p[y][x].c = ' ';
+            p[y][x].a = (C_FG_WHITE | C_BG_CYAN);
+            x++;
+            if(x == VIDEO_COLS){
+                x=0;
+                y++;
+            }
+    }
+    //fondo blanco
+    // x=0;
+    // y=3;
+    // for(i=0; i<80 ; i++){
+    //     p[y][x].c = ' ';
+    //     p[y][x].a = (C_FG_WHITE | C_BG_BLUE);
+    //     x++;
+    //     if(x == VIDEO_COLS){
+    //         x=0;
+    //         y++;
+    //     }
+    // }
+//panel derecha, 
+    // x=50;
+    // y=1;
+    // for(i=0; i<28 ; i++){
+    //     p[y][x].c = ' ';
+    //     p[y][x].a = (C_FG_BLACK | C_BG_CYAN);
+    //     x++;
+    //     if(x == 29){
+    //         x=0;
+    //         y++;
+    //     }
+    // }
+    // x=50;
+    // y=2;
+    // for(i=0; i<392 ; i++){
+    //     p[y][x].c = ' ';
+    //     p[y][x].a = (C_FG_WHITE | C_BG_BLACK);
+    //     x++;
+    //     if(x == 29){
+    //         x=0;
+    //         y++;
+    //     }
+    // }
+
 }
 
-void limpiarBufferMapa(){
+void cargarBufferEstado(){
+    unsigned int i;
+    ca (*s)[2000] = (ca (*)[2000]) BUFFER_ESTADO;
+    ca (*d)[2000] = (ca (*)[2000]) VIDEO;
+    unsigned int x = 0;
+    unsigned int y = 0;
+    for(i=0; i<2000;i++){
+        d[y][x].c = s[y][x].c;
+        d[y][x].a = s[y][x].a;
+        x++;
+        if(x == VIDEO_COLS){
+            x=0;
+            y++;
+        }
+    }
+    //const char* a = "Pabellon de Aragon -1";
+    //print(a,0,0,(C_FG_WHITE | C_BG_BLACK));   
+    //print(a,1,1,(C_FG_WHITE | C_BG_MAGENTA));  
+}
+
+
+
+void iniciarBufferMapa(){
     // tengo q pintar 1 mb de tierra y 6.5 mb de agua
     // 1mb de tierra 256 pix
     int i;
