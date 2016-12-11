@@ -46,6 +46,10 @@ extern deshabilitar_pic
 ;; SCREEN 
 extern limpiar_screen
 extern print
+extern iniciarBufferEstado
+extern cargarBufferEstado
+extern iniciarBufferMapa
+extern cargarBufferMapa
 
 ;; MMU
 extern mmu_inicializar
@@ -139,7 +143,16 @@ BITS 32
   
 ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
-    
+  
+ xchg bx, bx
+ call iniciarBufferEstado
+ xchg bx, bx
+ call cargarBufferEstado
+ xchg bx, bx
+  call iniciarBufferMapa
+ xchg bx, bx
+ call cargarBufferMapa
+ xchg bx, bx
 
 
     ; inicializar el manejador de memoria
@@ -156,7 +169,6 @@ BITS 32
     or eax, 0x80000000
     mov cr0, eax
 
-    
     ; inicializar tarea idle
     call tss_inicializar
     ; inicializar todas las tsss
@@ -164,8 +176,6 @@ BITS 32
 
     call tss_iniciarTareas
     ; inicializar entradas de la gdt de las tss
-
-    ;// Consultar si hay que llamar a una funcion que configure tss//
     
     ; inicializar el scheduler
     call sched_inicializar
@@ -190,7 +200,7 @@ BITS 32
     ltr ax
     ; saltar a la tarea idle
     xchg bx,bx
-    jmp 0xc0:0x0
+    jmp 0xc0:0x0 ;segmento de idle 
     xchg bx,bx
 
 

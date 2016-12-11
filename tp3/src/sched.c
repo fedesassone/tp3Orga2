@@ -70,13 +70,13 @@ void sched_inicializar() {
 		scheduler.tareas[i].viva = 1;
 	}
 	for(i=0x0; i<0x8;i=i+0x1){
-		scheduler.banderas[i].tss_selector = ((GDT_TAREA_1_BANDERA + i) << 3) | 3;
+		scheduler.banderas[i].tss_selector = 
+		((GDT_TAREA_1_BANDERA + i) << 3) | 3;
 		scheduler.banderas[i].id = 0;
 		scheduler.banderas[i].viva = 1;
 	}
 
 }
-
 
 unsigned short sched_proximo_indice() {
 
@@ -92,6 +92,9 @@ unsigned short sched_proximo_indice() {
 
 	}// salgo del while con la proxima tarea viva
     
+	//copiarCodigo(TASK_1_CODE_SRC_ADDR + (scheduler.tarea_actual*0x2000) , DIR_VIRTUAL_TAREA);
+	//copiarCodigo(TASK_1_CODE_SRC_ADDR + ((scheduler.tarea_actual*0x2000)+0x1000) , DIR_VIRTUAL_TAREA+0x1000);
+
     return scheduler.tareas[scheduler.tarea_actual].tss_selector;
 }
 

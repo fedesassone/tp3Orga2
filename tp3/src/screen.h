@@ -34,4 +34,6 @@ void iniciarBufferMapa();
 void cargarBufferMapa();
 void iniciarBufferEstado();
 void cargarBufferEstado();
+
+
 #endif  /* !__SCREEN_H__ */

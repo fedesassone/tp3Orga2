@@ -89,10 +89,13 @@ _isr32:
   pushfd
 
   call fin_intr_pic1
+  
+  call proximo_reloj
+
   ;schedulizar
   xchg bx,bx
-  call atender_sched ;esto me devuelve un selector tss
-  ;imprimir_texto_mp INT_1, INT_len_1, 0x07, 6, 0
+  call atender_sched 
+  ;esto me devuelve un selector tss
   mov [tss_selector], ax
   xchg bx,bx
   jmp far [tss_offset]

@@ -59,14 +59,10 @@ void tss_iniciarTareas(){
 	unsigned int cr3_paCadaTarea;	
 	int i;
 	for(i = 0; i < 16; i= i+2){
-		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
-		//unsigned int cr3_paCadaTarea = cr3_inicial; //aca creo que estarian coincidiendo tss_nueva y cr3_paCadaTarea
-		
+		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();		
 		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(id_tarea); //le pasamos el id ; llama tres paginas
-
-
 		//inicio navio
-		tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
+		tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //para recorrerla topdown
 		unsigned pila_cero_tarea = tss_nueva->esp0;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3; // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
@@ -82,17 +78,12 @@ void tss_iniciarTareas(){
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
 		//Descripcion de Navio lista
 	    //Apuntarle con el segmento en gdt
-
 	        gdt[GDT_TAREA_1 + i].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;
 	        gdt[GDT_TAREA_1 + i].base_23_16 = (((unsigned int) tss_nueva )>> 16) & 0xFF;
 	        gdt[GDT_TAREA_1 + i].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
 		//lesto
-        
 	    //inicio bandera 
 		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();			
-		
-		//cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(i+1); //chequear que hace con el ID, le estamos pasando nums del 0 al 15
-		//tss_nueva->esp0 = mmu_proxima_pagina_fisica_libre() + 0x1000; //le tiramos un cacho de memoria +1000 para q recorra hacia abajo
 		tss_nueva->esp0 = pila_cero_tarea - 0x500;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3;  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
@@ -109,13 +100,10 @@ void tss_iniciarTareas(){
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
 		//mismo contexto que su navio (bandera)
 		//apunto segseltss
-
         gdt[GDT_TAREA_1 + (i+1)].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;
         gdt[GDT_TAREA_1 + (i+1)].base_23_16 = (((unsigned int) tss_nueva )>> 16) & 0xFF;
         gdt[GDT_TAREA_1 + (i+1)].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
-
         id_tarea = id_tarea + 0x2000;
-
 	}
 
 
