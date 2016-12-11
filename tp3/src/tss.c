@@ -96,7 +96,7 @@ void tss_iniciarTareas(){
 		tss_nueva->esp0 = pila_cero_tarea - 0x500;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3;  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
-	    unsigned int * dir_bandera = 0x40001FFC;
+	    unsigned int * dir_bandera = (unsigned int*) 0x40001FFC;
 	    tss_nueva->eip = *(dir_bandera);//CHEQUEAR
 	    tss_nueva->esp = 0x40001FFC; // 0x40001FFC
 	    tss_nueva->ebp = 0x40001FFC; // 0x40001FFC

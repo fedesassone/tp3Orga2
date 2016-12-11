@@ -19,22 +19,30 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
 	if ( eax == SYS_FONDEAR)
 	{
-		syscall_fondear(ebx);
-		//unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
-		//mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+		//syscall_fondear(ebx);
+		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
+		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+
 	}
 	
 	if ( eax == SYS_NAVEGAR)
 	{
-		syscall_navegar(ebx,ecx);
-		//copiarCodigo deberia copiar una sola pagina
-		//copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
-		//copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
+		//syscall_navegar(ebx,ecx);
+		
+		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
+		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
 
 	}
 	if ( eax == SYS_CANONEAR )
 	{
-		syscall_canonear(ebx,ecx);//ver lo de que es relativa
+		//syscall_canonear(ebx,ecx);//ver lo de que es relativa
+		
+		unsigned int dir_absoluta = 0x40000000 + ecx;
+		unsigned int i;
+	    for(i = 0; i<97; i+=1)
+	    {
+	        *((unsigned char*) (ebx + i)) =  *((unsigned char *) (dir_absoluta + i));
+	    }
 	}
 }
 void llamoTarea()

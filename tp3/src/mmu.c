@@ -50,7 +50,7 @@ void mmu_inicializar_dir_kernel(){
 void copiarCodigo(unsigned int src, unsigned int dest)
 {
     unsigned int i;
-    for(i = 0; i<8192; i+=4)
+    for(i = 0; i<4096; i+=4)
     {
         *((unsigned int *) (dest + i)) =  *((unsigned int *) (src + i));
     }
