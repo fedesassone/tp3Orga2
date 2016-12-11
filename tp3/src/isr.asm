@@ -39,6 +39,7 @@ _isr%1:
     call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa y devuelve en ax el selector
     mov [tss_selector], ax
     jmp far [tss_offset] ;paso a la proxima tarea o bandera segun corresponda
+
     popad
     popfd
 %endmacro
@@ -51,8 +52,9 @@ reloj_numero:           dd 0x00000000
 reloj:                  db '|/-\'
 
 ; Tareas
-tss_selector: dw 0x0
 tss_offset:   dd 0x0 
+tss_selector: dw 0x0
+
 
 
 ;;
@@ -92,7 +94,10 @@ _isr32:
   call atender_sched ;esto me devuelve un selector tss
   ;imprimir_texto_mp INT_1, INT_len_1, 0x07, 6, 0
   mov [tss_selector], ax
+  xchg bx,bx
   jmp far [tss_offset]
+
+
   ; listo?
   popfd
   popad

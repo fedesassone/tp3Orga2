@@ -119,45 +119,72 @@ void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3){
 
 
 
-pde_entry* mmu_inicializar_dir_tarea( unsigned int id_tarea){
-	pde_entry* directorio_tareas = (pde_entry*) mmu_proxima_pagina_fisica_libre();
+int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
+	// pde_entry* directorio_tareas = (pde_entry*) mmu_proxima_pagina_fisica_libre();
+	// int i;
+	// for (i=0; i<1024; i++){
+	// 	directorio_tareas[i].present = 0x0;
+	// }
+	// pte_entry* tabla_tareas1 = (pte_entry*) mmu_proxima_pagina_fisica_libre();
+	// for (i=0; i<1024; i++){
+	// 	tabla_tareas1[i].present = 1;
+	// 	tabla_tareas1[i].rw 		= 0;
+	// 	tabla_tareas1[i].us 		= 1;
+	// 	tabla_tareas1[i].base    = (unsigned int) i;
+	// }
+	// pte_entry* tabla_tareas2 = (pte_entry*) mmu_proxima_pagina_fisica_libre();
+	// for (i=0; i<895; i++){
+	// 	tabla_tareas2[i].present = 1;
+	// 	tabla_tareas2[i].rw 		= 0;
+	// 	tabla_tareas2[i].us 		= 1;
+	// 	tabla_tareas2[i].base    = (unsigned int) i;
+	// }
+	// for (i=895; i<1024; i++){
+	// 	tabla_tareas2[i].present = 0;
+	// }
+	// directorio_tareas[0].base =(unsigned int) tabla_tareas1<<12;
+	// directorio_tareas[0].present = 1;
+	// directorio_tareas[0].rw = 1;
+	// directorio_tareas[0].us = 1;
+
+	// directorio_tareas[1].base =(unsigned int) tabla_tareas2<<12;
+	// directorio_tareas[1].present = 1;
+	// directorio_tareas[1].rw = 1;
+	// directorio_tareas[1].us = 1;
+
+	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();  // PAGE_DIRECTORY_KERNEL = 0x27000
+	//page_directory[0] = 0x28000 + 0x3;		 // PAGE_TABLE_KERNEL_1 = 0x28000, seteo p=1 y r/w=1
+	//page_directory[1] = 0x29000 + 0x3;       // PAGE_TABLE_KERNEL_2 = 0x30000
+ 	
 	int i;
-	for (i=0; i<1024; i++){
-		directorio_tareas[i].present = 0x0;
+	for (i = 2; i < 1024; ++i) { //pongo todo el resto de las posiciones en cero.
+		page_directory[i]= 0x0;
 	}
-	pte_entry* tabla_tareas1 = (pte_entry*) mmu_proxima_pagina_fisica_libre();
-	for (i=0; i<1024; i++){
-		tabla_tareas1[i].present = 1;
-		tabla_tareas1[i].rw 		= 0;
-		tabla_tareas1[i].us 		= 1;
-		tabla_tareas1[i].base    = (unsigned int) i;
-	}
-	pte_entry* tabla_tareas2 = (pte_entry*) mmu_proxima_pagina_fisica_libre();
-	for (i=0; i<895; i++){
-		tabla_tareas2[i].present = 1;
-		tabla_tareas2[i].rw 		= 0;
-		tabla_tareas2[i].us 		= 1;
-		tabla_tareas2[i].base    = (unsigned int) i;
-	}
-	for (i=895; i<1024; i++){
-		tabla_tareas2[i].present = 0;
-	}
-	directorio_tareas[0].base =(unsigned int) tabla_tareas1<<12;
-	directorio_tareas[0].present = 1;
-	directorio_tareas[0].rw = 1;
-	directorio_tareas[0].us = 1;
 
-	directorio_tareas[1].base =(unsigned int) tabla_tareas2<<12;
-	directorio_tareas[1].present = 1;
-	directorio_tareas[1].rw = 1;
-	directorio_tareas[1].us = 1;
+	int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
+	for (i = 0; i < 1024; ++i) {
+		page_table_1[i] = ((i << 12) | 5);
+	}
 
+	int* page_table_2 = (int*) mmu_proxima_pagina_fisica_libre();
+	for (i = 0; i < 1024; ++i) {
+		if(i<895){
+			page_table_2[i] = (((i+1024) << 12) | 5);// es 5 porque los atributos son 1 user 0 read/w 1 present
+		}else{
+			page_table_2[i] = 0x0;
+		}
+	}
+	page_directory[0] = (int)page_table_1 + 0x5;
+	page_directory[1] = (int)page_table_2 + 0x5;
+
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) page_directory,0x10000 + id_tarea + 0x1000,1,1);
 	//copiarCodigo(0x10000 + (id_tarea), 0x40000000);
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) directorio_tareas,0x10000 + id_tarea + 0x1000,1,1);//mappeamos la segunda pagina
-	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) directorio_tareas,TASK_ANCLA_FIS,1,0);// el ancla es de solo lectura
-	
-	return directorio_tareas;
+	// mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) directorio_tareas,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
+	// mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) directorio_tareas,0x10000 + id_tarea + 0x1000,1,1);//mappeamos la segunda pagina
+	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) page_directory,TASK_ANCLA_FIS,1,0);// el ancla es de solo lectura
+	return page_directory;
+	//return directorio_tareas;
 }
 
 

@@ -42,7 +42,7 @@ typedef struct str_pte_entry {
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
-pde_entry* mmu_inicializar_dir_tarea();
+int* mmu_inicializar_dir_tarea();
 void copiarCodigo(unsigned int src, unsigned int dst);
 unsigned int mmu_proxima_pagina_fisica_libre();
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char us, unsigned char rw);
