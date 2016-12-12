@@ -17,7 +17,16 @@ extern atender_sched
 extern llamada
 extern llamoTarea
 extern matar_tarea
-;;
+;; Scheduler
+extern scheduler 
+;; SCREEN
+extern actualizarBufferEstado_UltimoProblema
+extern debug_info
+
+extern cargarBufferMapa
+extern cargarBufferEstado
+extern muestroMapa
+
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
 
@@ -29,19 +38,62 @@ global _isr80
 global _isr102
 
 _isr%1:
-.loopear:
-    ; To Infinity And Beyond!!
-    ;mov eax, %1
-    ;push eax
-    pushfd
-    pushad
-    imprimir_texto_mp INT_%1, INT_len_%1, 0x07, 1, 0
-    call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa y devuelve en ax el selector
+    mov dword [debug_info + 00], eax        ;eax
+    mov eax, INT_%1 
+    mov dword [debug_info + 04], eax        ;la direccion de memoria del error
+    mov dword [debug_info + 08], INT_len_%1 ;len del error
+    xor eax, eax
+    mov al, [scheduler + 0]
+    mov dword [debug_info + 12], eax        ;id tarea actual 
+    mov dword [debug_info + 16], ebx        ;ebx
+    mov dword [debug_info + 20], ecx        ;ecx
+    mov dword [debug_info + 24], edx        ;edx
+    mov dword [debug_info + 28], esi        ;esi
+    mov dword [debug_info + 32], edi        ;edi
+    mov dword [debug_info + 36], ebp        ;ebp
+    mov dword [debug_info + 40], esp        ;esp
+   
+    mov eax, [esp+12] ; eip
+    mov dword [debug_info + 44], eax        ;eip
+    mov eax, cr0
+    mov dword [debug_info + 48], eax        ;cr0          
+    mov eax, cr2
+    mov dword [debug_info + 52], eax        ;cr2
+    mov eax, cr3
+    mov dword [debug_info + 56], eax        ;cr3
+    mov eax, cr4
+    mov dword [debug_info + 60], eax        ;cr4
+    
+
+    xor eax, eax
+    mov ax, cs
+    mov word [debug_info + 64], ax          ;cs
+    mov ax, ds
+    mov word [debug_info + 68], ax          ;ds
+    mov ax, es
+    mov word [debug_info + 72], ax          ;es
+    mov ax, fs
+    mov word [debug_info + 76], ax          ;fs
+    mov ax, gs
+    mov word [debug_info + 80], ax          ;gs
+    mov ax, ss
+    mov word [debug_info + 84], ax          ;ss
+    
+    xor eax, eax
+    pushf                                   ; obtenemos el registro
+    pop ax                                  ; eflags
+    mov dword [debug_info + 88], eax
+
+    call actualizarBufferEstado_UltimoProblema
+
+    call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
+                     ; y devuelve en ax el selector de idle
+    
+
     mov [tss_selector], ax
+    sti
     jmp far [tss_offset] ;paso a la proxima tarea o bandera segun corresponda
 
-    popad
-    popfd
 %endmacro
 
 ;;
@@ -90,8 +142,15 @@ _isr32:
 
   call fin_intr_pic1
   
+  cmp byte [muestroMapa],0x1
+  je .muestroMapa
+  .muestroEst:
+  call cargarBufferEstado
+  jmp .sigo
+  .muestroMapa:
+  call cargarBufferMapa
+  .sigo:
   call proximo_reloj
-
   ;schedulizar
   xchg bx,bx
   call atender_sched 
@@ -114,10 +173,11 @@ _isr33:
   pushfd
 
   call fin_intr_pic1
-
-
-  ;ACA HACER LA INT DEL TECLADO
-  
+  xor eax, eax
+  in al, 0x60
+  push eax
+  call handler_teclado
+  add esp,4
   popfd
   popad
   
@@ -146,6 +206,15 @@ _isr80:
         call llamada
         add esp,12
         
+        cmp byte [muestroMapa],0x1
+        je .muestroMapa
+        .muestroEst:
+        call cargarBufferEstado
+        jmp .sigo
+        .muestroMapa:
+        call cargarBufferMapa
+        .sigo:
+
         call atender_sched  ;avanzamos sched 
         mov [tss_selector], ax
         jmp far [tss_offset]
@@ -157,27 +226,16 @@ _isr80:
         iret
 
   _isr102:
-  push ecx
-  push edx
-  push ebx
-  push esp
-  push ebp
-  push esi
-  push edi
+  pushad
   pushfd
   
   call llamoTarea ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
- 
+
+
   jmp  0xc0:0x0 ;saltamos a la tarea idle
 
   popfd
-  pop edi
-  pop esi
-  pop ebp
-  pop esp
-  pop ebx
-  pop edx
-  pop ecx
+  popad
   
   iret
 ;; Funciones Auxiliares

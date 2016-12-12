@@ -10,28 +10,107 @@
 #include "i386.h"
 #include "mmu.h"
 #include "syscall.h"
+#include "screen.h"
 
 sched_t scheduler;
 unsigned int tareasRestantes;
 unsigned short corriendoTareas;
 unsigned short corriendoBandera;
+
+void handler_teclado(unsigned char scan_code){
+    
+    unsigned short attr;
+
+    switch (scan_code)
+    {
+        case 0x02:
+            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
+            print_int(VIDEO,1,79,0,attr);
+            break;
+
+        case 0x03:
+            attr = (C_FG_WHITE | C_BG_BROWN);
+            print_int(VIDEO,2,79, 0, attr);
+            break;
+
+        case 0x04:
+            attr = (C_FG_WHITE | C_BG_MAGENTA);
+            print_int(VIDEO,3,79,0, attr);
+
+            break;
+
+        case 0x05:  
+            attr = (C_FG_WHITE | C_BG_RED);
+            print_int(VIDEO,4,79,0, attr);
+            break;
+
+
+        case 0x06:
+            attr = (C_FG_WHITE | C_BG_CYAN);
+            print_int(VIDEO,5,79,0, attr);
+            break;
+
+        case 0x07:
+            attr = (C_FG_WHITE | C_BG_GREEN);
+            print_int(VIDEO,6,79,0, attr);
+
+            break;
+
+        case 0x08:  
+            attr = (C_FG_WHITE | C_BG_BLUE);
+            print_int(VIDEO,7,79,0, attr);
+            break;
+
+
+        case 0x09:
+            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
+            print_int(VIDEO,8,79,0, attr);
+            break;
+
+        case 0x0a:  
+            attr = (C_FG_WHITE | C_BG_RED);
+            print_int(VIDEO,9,79,0, attr);
+            break;
+        case 0x0b:  
+            attr = (C_FG_WHITE | C_BG_BROWN);
+            print_int(VIDEO,0,79,0, attr);
+            break;
+        case 0x32:  //M
+            if (!muestroMapa){
+                cargarBufferMapa();
+                muestroMapa = 1;
+            }
+        case 0x12://    E
+            if (muestroMapa)
+            {   
+                muestroMapa = 0;
+                cargarBufferEstado();
+            }
+            
+             break;
+    }
+}
+
+
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
-	if ( eax == SYS_FONDEAR)
+	paginasNavios.idTarea = scheduler.tarea_actual +1;
+	if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
 	{
 		//syscall_fondear(ebx);
 		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
 		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
-
+		paginasNavios.p3=(unsigned int)ebx;
 	}
 	
-	if ( eax == SYS_NAVEGAR)
+	if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
 	{
 		//syscall_navegar(ebx,ecx);
 		
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
-
+		paginasNavios.p1=(unsigned int)ebx;
+		paginasNavios.p2=(unsigned int)ecx;
 	}
 	if ( eax == SYS_CANONEAR )
 	{
@@ -44,6 +123,8 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	        *((unsigned char*) (ebx + i)) =  *((unsigned char *) (dir_absoluta + i));
 	    }
 	}
+	actualizarBufferEstado_Paginas();
+
 }
 void llamoTarea()
 {
@@ -99,7 +180,7 @@ unsigned short sched_proximo_indice() {
 }
 
 unsigned short sched_proxima_bandera() {
-
+	actualizarBufferEstado_Bandera_i(scheduler.bandera_actual);
 	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
 	if (scheduler.bandera_actual == 8) 
 	{
@@ -130,8 +211,7 @@ unsigned short atender_sched(){
 	//corriendo banderas
 	if ( corriendoBandera == 1)
 	{
-		scheduler.tareas[scheduler.tarea_actual].viva = 0; // si cae una int de reloj mientras estaba corriendo una bandera se muere la bandera
-		scheduler.banderas[scheduler.tarea_actual].viva = 0;// y su bandera
+		unsigned short a = matar_tarea();
 	}
 	unsigned short ultimaViva = 0;
 	unsigned int i;
@@ -142,7 +222,7 @@ unsigned short atender_sched(){
 	if(scheduler.bandera_actual == ultimaViva){
 		corriendoTareas = 1;
 		tareasRestantes = 3;
-		return sched_proximo_indice();
+		return 0xc0; //devuelvo idle porque se murió una
 	}
 	//si no, paso bandera
 	return sched_proxima_bandera();
@@ -152,5 +232,8 @@ unsigned short matar_tarea()
 {
 	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
-	return atender_sched();
+	//return atender_sched();
+	//tenemos que saltar a la idle desde acá, 
+	matarEnBuffer();
+	return 0xc0; //selector de idle
 }

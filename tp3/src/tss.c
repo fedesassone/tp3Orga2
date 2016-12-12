@@ -76,6 +76,7 @@ void tss_iniciarTareas(){
 	    tss_nueva->ds = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->fs = (GDT_IDX_DATA_3 << 3) | 3;// no seria << en vez de |?
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
+
 		//Descripcion de Navio lista
 	    //Apuntarle con el segmento en gdt
 	        gdt[GDT_TAREA_1 + i].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;

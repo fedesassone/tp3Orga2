@@ -8,9 +8,46 @@
 #include "screen.h"
 #include "colors.h"
 #include "defines.h"
-unsigned int MuestroMapa = 0;
-void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+
+#define BANDERA_BUFFER  0x40001000
+
+/*str para guardarme info de registros*/
+
+struct {
+  unsigned int eax;
+  
+  char *error;
+  unsigned int error_len;
+  unsigned int tareaId;
+  
+  unsigned int ebx;
+  unsigned int ecx;
+  unsigned int edx;
+  unsigned int esi;
+  unsigned int edi;
+  unsigned int ebp;
+  unsigned int esp;
+  unsigned int eip;
+  unsigned int cr0;
+  unsigned int cr2;
+  unsigned int cr3;
+  unsigned int cr4;
+
+  unsigned int cs;
+  unsigned int ds;
+  unsigned int es;
+  unsigned int fs;
+  unsigned int gs;
+  unsigned int ss;
+  
+  unsigned int eflags;
+  
+} __attribute__((__packed__)) debug_info;
+
+
+
+void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr) {
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dest;
     int i;
     for (i = 0; text[i] != 0; i++) {
         p[y][x].c = (unsigned char) text[i];
@@ -23,8 +60,8 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
     }
 }//imprime puntero a char
 
-void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+void print_hex(unsigned int dest, unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dest;
     int i;
     char hexa[8];
     char letras[16] = "0123456789ABCDEF";
@@ -42,16 +79,17 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
     }
 }// imprime en hexa
 
-void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+void  ) {
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dest;
     if( n > 9 ) {
       int a = n / 10;
       n -= 10 * a;
-      print_int(a,x-1,y,attr);
+      print_int(dest,a,x-1,y,attr);
     }
     p[y][x].c = '0'+n;
     p[y][x].a = attr;
 }//imprime un short
+
 void iniciarBufferEstado(){
     //linea fondo negro y letras blancas de 80pix
     unsigned int i;
@@ -104,6 +142,22 @@ void iniciarBufferEstado(){
             y++;
         }
     }
+//registros derecha
+    x=51;
+    y=2;
+    const char *regs[20] ={"EAX","EBX","ECX","EDX","ESI","EDI","EBP","ESP","EIP",
+    "CR0","CR2","CR3","CR4","CS","DS","ES","FS","GS","SS","EFLAGS"};
+    for (i = 0; i < 19; ++i){
+        print(BUFFER_ESTADO,regs[i],x,y,(C_BG_BLACK|C_FG_WHITE));
+        y++;
+        if(y==15){
+            y=2;
+            x=66;
+        }
+    }
+    y=y+2;
+    print(BUFFER_ESTADO,regs[19],x,y,(C_BG_BLACK|C_FG_WHITE));
+
 //estados  
     x=1;
     y=16;
@@ -134,7 +188,7 @@ void cargarBufferEstado(){
         }
     }
     const char* a = " // Pabellon de Aragon -1 // F. Sassone - G. Teren";
-    print(a,0,0,(C_FG_WHITE | C_BG_BLUE));    
+    print(VIDEO,a,0,0,(C_FG_WHITE | C_BG_BLUE));    
 }
 
 void iniciarBufferMapa(){
@@ -188,6 +242,108 @@ void cargarBufferMapa(){
         }
     }
 }
+
+void actualizarBufferEstado_Bandera_i(char id_Bandera){
+    int i;
+    ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    ca (*s)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BANDERA_BUFFER;
+    //inicializo vars
+    int x = 2+(id_Bandera* 12);
+    int y;
+    int j;
+    int cont=0;
+    if(id_Bandera<4)y=3;
+    if(id_Bandera>3)y=10;
+    char texto[7] = {'N','A','V','I','O',' ', id_Bandera+1};
+    for(j=0; j<7;j++){
+        d[y-1][x+3].c = texto[j];
+        d[y-1][x+3].a = (C_FG_WHITE | C_BG_LIGHT_GREY);
+        j++;
+    }
+    //actualizo buffer estado
+    for(i=0;i<50;i++){
+        d[y][x].c = s[y][x].c;
+        d[y][x].a = s[y][x].a;
+        x++;
+        cont++;
+        if(cont==5){
+            x = 2+(id_Bandera* 12);
+            cont = 0;
+            y++;
+        }
+    } //fijarse donde se llama
+
+}
+
+void actualizarBufferEstado_UltimoProblema(){
+    unsigned int i;
+    unsigned int x = 50;
+    unsigned int y = 1;
+
+    char *error = debug_info.error;
+    ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    //error
+    print(BUFFER_ESTADO, error,x,y,(C_BG_CYAN | C_FG_BLACK ));
+    
+    x=71;
+    char texto[7] = {'N','A','V','I','O',' ', ((char)debug_info.tareaId) + 1};    
+    //navio i
+    for (int i = 0; i < 7; ++i){
+        d[y][x].c = texto[i];
+        d[y][x].a = (C_BG_CYAN | C_FG_BLACK );
+        x++;         
+    }
+    //registros der
+    x=55;
+    y=2;
+    unsigned int nums[20] ={debug_info.eax,debug_info.ebx, debug_info.ecx, debug_info.edx, 
+        debug_info.esi, debug_info.edi, debug_info.ebp, debug_info.esp, debug_info.eip, 
+        debug_info.cr0, debug_info.cr2, debug_info.cr3, debug_info.cr4, 
+        debug_info.cs, debug_info.ds, debug_info.es, debug_info.fs, 
+        debug_info.gs, debug_info.ss, debug_info.eflags} ;
+    for (i = 0; i < 19; ++i){
+        print_hex(BUFFER_ESTADO,nums[i],8,x,y,(C_BG_BLACK|C_FG_WHITE));
+        y++;
+        if(y==15){
+            y=2;
+            x=69;
+        }
+    }
+    y=y+3;
+    print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
+}
+
+void actualizarBufferEstado_Paginas(){
+    int i;
+    unsigned int x=1;
+    unsigned int y = 16;
+    for (i = 0; i < 8; ++i)
+    {
+        print_int(BUFFER_ESTADO,i, 1, y, (C_FG_BLACK|C_BG_CYAN);
+        print(BUFFER_ESTADO, "P1:",3 ,y,(C_BG_CYAN | C_FG_BLACK ));    
+        print(BUFFER_ESTADO, "P2:",15,y,(C_BG_CYAN | C_FG_BLACK ));    
+        print(BUFFER_ESTADO, "P3:",29,y,(C_BG_CYAN | C_FG_BLACK ));    
+        y++;
+    }
+    y=16;
+    y= y+paginasNavios.idTarea;
+    print_hex(BUFFER_ESTADO,paginasNavios.p1,8,6,y,(C_BG_BLACK|C_FG_WHITE));    
+    print_hex(BUFFER_ESTADO,paginasNavios.p2,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
+    print_hex(BUFFER_ESTADO,paginasNavios.p3,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
+}
+
+void matarEnBuffer(){
+    ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    int i;
+    int x=2;
+    int y=16+paginasNavios.idTarea;
+    for (int i = 0; i < 76; ++i)
+    {
+        d[y][x].a = (C_FG_WHITE | C_BG_RED);
+    }
+}
+
+
 
 
 

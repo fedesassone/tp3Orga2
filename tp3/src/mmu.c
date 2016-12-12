@@ -6,12 +6,15 @@
 */
 
 #include "mmu.h"
-#include "defines.h"
+#include "screen.h"
+ #include "defines.h"
 
 unsigned int proxima_pagina_libre;
+
 void mmu_inicializar() {
-	proxima_pagina_libre = 0x30000;
+	proxima_pagina_libre 		= 0x30000;
 }
+
 void mmu_inicializar_dir_kernel(){
 	int* page_directory = (int*) 0x27000;  // PAGE_DIRECTORY_KERNEL = 0x27000
 	page_directory[0] = 0x28000 + 0x3;		 // PAGE_TABLE_KERNEL_1 = 0x28000, seteo p=1 y r/w=1
@@ -35,17 +38,21 @@ void mmu_inicializar_dir_kernel(){
 }
 
 int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
+	//paginasNavios.idtarea = id_tarea;
 	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();  // PAGE_DIRECTORY_KERNEL = 0x27000
 	int i;
 	for (i = 2; i < 1024; ++i) { //pongo todo el resto de las posiciones en cero.
 		page_directory[i]= 0x0;
 	}
 	int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
+	
 	for (i = 0; i < 1024; ++i) {
 		page_table_1[i] = ((i << 12) | 5);
 	}
+	//paginasNavios.p1 = (unsigned int) page_table_1;
 
 	int* page_table_2 = (int*) mmu_proxima_pagina_fisica_libre();
+	
 	for (i = 0; i < 1024; ++i) {
 		if(i<896){
 			page_table_2[i] = (((i+1024) << 12) | 5);// es 5 porque los atributos son 1 user 0 read/w 1 present
@@ -53,6 +60,7 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 			page_table_2[i] = 0x0;
 		}
 	}
+
 	page_directory[0] = (int)page_table_1 + 0x5;
 	page_directory[1] = (int)page_table_2 + 0x5;
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,0);//mappeamos la primera pagina
@@ -69,6 +77,8 @@ void copiarCodigo(unsigned int src, unsigned int dest)
         *((unsigned int *) (dest + i)) =  *((unsigned int *) (src + i));
     }
 }
+
+
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, 
 	unsigned int fisica, unsigned char us, unsigned char rw){
 	pde_entry* CR3 = (pde_entry*)(cr3 & 0xFFFFF000); 

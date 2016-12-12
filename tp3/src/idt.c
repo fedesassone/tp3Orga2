@@ -39,12 +39,12 @@ idt_descriptor IDT_DESC = {
     idt[numero].attr = (unsigned short) 0x8e00;                                                                  \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
-void atender_int(unsigned short n){
+/*void atender_int(unsigned short n){
     unsigned int x = 10;
     unsigned int y = 10;
     unsigned int attr = ((C_FG_WHITE | C_BG_BLACK ));
-    //char l = ' ';
-    /*//char *c = &l;
+    char l = ' ';
+    char *c = &l;
     if(n==0)c= "Divide Error";
     if(n==1)c= "RESERVED";
     if(n==2)c= "NMI Interrupt";
@@ -64,10 +64,11 @@ void atender_int(unsigned short n){
     if(n==16)c= "x87 FPU Floating-Point Error (Math Fault)";
     if(n==17)c=  "Alignment Check";
     if(n==18)c= "Machine Check";
-    if(n==19)c= "SIMD Floating-Point Exception";*/
+    if(n==19)c= "SIMD Floating-Point Exception";
 
     print_int(n,x,y,attr);
 }
+*/
 
 void idt_inicializar() {
         IDT_ENTRY(0);

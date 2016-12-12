@@ -24,16 +24,28 @@ typedef struct ca_s {
     unsigned char a;
 } ca;
 
-void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
+typedef struct pn_s {
+  unsigned int idTarea;  
+  unsigned int p1;
+  unsigned int p2;
+  unsigned int p3;
+  
+} __attribute__((__packed__)) paginasNavios;
 
-void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr);
 
-void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
+void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr);
+
+void print_hex(unsigned int dest, unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr);
+
+void print_int(unsigned int dest, unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
 void iniciarBufferMapa(); 
 void cargarBufferMapa();
 void iniciarBufferEstado();
 void cargarBufferEstado();
 
+void actualizarBufferEstado_Bandera_i(char id_Bandera);
+void actualizarBufferEstado_UltimoProblema();
+void actualizarBufferEstado_Paginas();
 
 #endif  /* !__SCREEN_H__ */

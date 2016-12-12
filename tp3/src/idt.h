@@ -27,7 +27,7 @@ extern idt_entry idt[];
 extern idt_descriptor IDT_DESC;
 
 void idt_inicializar();
-void atender_int(unsigned short n);
+//void atender_int(unsigned short n);
 
 
 #endif  /* !__IDT_H__ */
