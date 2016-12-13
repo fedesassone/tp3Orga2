@@ -201,7 +201,12 @@ BITS 32
     ltr ax
     ; saltar a la tarea idle
     xchg bx,bx
-    jmp 0xc0:0x0 ;segmento de idle 
+    xor eax,eax
+    mov ax, 0x1A
+    shl ax, 3
+        xchg bx,bx
+        ;11010-000
+    jmp 0xd0:0 ;salto a la primer tarea
 
 
     ; Ciclar infinitamente (por si algo sale mal...)

@@ -390,6 +390,7 @@ void actualizarBufferEstado_Bandera_i(char id_Bandera){
     int x = 2+(id_Bandera* 12);
     int y;
     int j;
+
     int cont=0;
     if(id_Bandera<4)y=3;
     if(id_Bandera>3)y=10;
@@ -427,7 +428,7 @@ void actualizarBufferEstado_UltimoProblema(){
     x=71;
     char texto[7] = {'N','A','V','I','O',' ', ((char)debug_info.tareaId) + 1};    
     //navio i
-    for (int i = 0; i < 7; ++i){
+    for (i = 0; i < 7; ++i){
         d[y][x].c = texto[i];
         d[y][x].a = (C_BG_CYAN | C_FG_BLACK );
         x++;         
