@@ -8,6 +8,14 @@
 #ifndef __SCHED_H__
 #define __SCHED_H__
   
+typedef struct pn_s {
+  unsigned int idTarea;  
+  unsigned int p1;
+  unsigned int p2;
+  unsigned int p3;
+  
+} __attribute__((__packed__)) estadoNaveAct;  
+
 typedef struct str_sched_tarea
 {
 	unsigned short tss_selector;
@@ -19,15 +27,22 @@ typedef struct str_sched_t
 {
 	unsigned char tarea_actual;
 	unsigned char bandera_actual;
+	unsigned char banderasPorCiclar;
+	unsigned char banderasVivas;
 	sched_tarea tareas[8];
 	sched_tarea banderas[8];
+	estadoNaveAct paginas;
 }__attribute__((__packed__)) sched_t;
 
+extern sched_t scheduler;
 
+unsigned int tarea_actual();
+
+unsigned short atender_int66();
 void sched_inicializar();
 unsigned short sched_proximo_indice();
 unsigned short sched_proxima_bandera(); 
-unsigned short atender_sched();
+unsigned short atender_reloj();
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx);
 unsigned short matar_tarea();
 

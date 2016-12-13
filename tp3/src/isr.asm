@@ -12,13 +12,13 @@ BITS 32
 ;; PIC
 extern fin_intr_pic1
 extern atender_int
-extern atender_sched
+extern atender_reloj
 ;; SYSCALL ; estan en sched.c (fue la forma que encontre que me las acepte)
 extern llamada
-extern llamoTarea
+extern atender_int66
 extern matar_tarea
 ;; Scheduler
-extern scheduler 
+extern tarea_actual 
 ;; SCREEN
 extern actualizarBufferEstado_UltimoProblema
 extern debug_info
@@ -26,6 +26,8 @@ extern debug_info
 extern cargarBufferMapa
 extern cargarBufferEstado
 extern muestroMapa
+
+extern handler_teclado
 
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -42,9 +44,6 @@ _isr%1:
     mov eax, INT_%1 
     mov dword [debug_info + 04], eax        ;la direccion de memoria del error
     mov dword [debug_info + 08], INT_len_%1 ;len del error
-    xor eax, eax
-    mov al, [scheduler + 0]
-    mov dword [debug_info + 12], eax        ;id tarea actual 
     mov dword [debug_info + 16], ebx        ;ebx
     mov dword [debug_info + 20], ecx        ;ecx
     mov dword [debug_info + 24], edx        ;edx
@@ -83,6 +82,9 @@ _isr%1:
     pushf                                   ; obtenemos el registro
     pop ax                                  ; eflags
     mov dword [debug_info + 88], eax
+
+    call tarea_actual
+    mov dword [debug_info + 12], eax        ;id tarea actual 
 
     call actualizarBufferEstado_UltimoProblema
 
@@ -153,7 +155,7 @@ _isr32:
   call proximo_reloj
   ;schedulizar
   xchg bx,bx
-  call atender_sched 
+  call atender_reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
   xchg bx,bx
@@ -188,17 +190,7 @@ _isr33:
 _isr80:
         pushad
         pushfd
-  ;       cmp eax,0x83a
-  ;       jne cont
-  ;       xor esi,esi
-  ;       mov esi,97
-  ; ciclo:mov dl,[ecx];MUEVO EL BYTE A COPIAR EN DL // VER LO DE QUE ES RELATIVA
-  ;       mov [ebx],dl; muevo el byte a la pagina destino
-  ;       inc ecx
-  ;       inc ebx
-  ;       dec esi
-  ;       cmp esi,0
-  ;       jne ciclo
+
          push ecx
          push ebx
          push eax
@@ -215,9 +207,10 @@ _isr80:
         call cargarBufferMapa
         .sigo:
 
-        call atender_sched  ;avanzamos sched 
+        xor eax, eax
+        mov ax, 0xc0
         mov [tss_selector], ax
-        jmp far [tss_offset]
+        jmp far [tss_offset] ;saltamos a la idle por el resto del quantum
         
 
         popfd
@@ -229,10 +222,10 @@ _isr80:
   pushad
   pushfd
   
-  call llamoTarea ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
-
-
-  jmp  0xc0:0x0 ;saltamos a la tarea idle
+  call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
+  mov [tss_selector], ax
+  jmp far [tss_offset]
+  ;salto a idle
 
   popfd
   popad
@@ -252,7 +245,7 @@ proximo_reloj:
     .ok:
         add ebx, reloj
         imprimir_texto_mp ebx, 1, 0x0f, 24, 79
-        imprimir_texto_mp INT_1, INT_len_1, 0x07, 5, 0
+        ;imprimir_texto_mp INT_1, INT_len_1, 0x07, 5, 0
     popad
     ret
 

@@ -24,14 +24,6 @@ typedef struct ca_s {
     unsigned char a;
 } ca;
 
-typedef struct pn_s {
-  unsigned int idTarea;  
-  unsigned int p1;
-  unsigned int p2;
-  unsigned int p3;
-  
-} __attribute__((__packed__)) paginasNavios;
-
 
 void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr);
 
@@ -43,6 +35,7 @@ void iniciarBufferMapa();
 void cargarBufferMapa();
 void iniciarBufferEstado();
 void cargarBufferEstado();
+void matarEnBuffer();
 
 void actualizarBufferEstado_Bandera_i(char id_Bandera);
 void actualizarBufferEstado_UltimoProblema();

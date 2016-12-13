@@ -38,7 +38,5 @@ void _isr33();
 void _isr80();
 void _isr102();
 
-char muestroMapa;
-
 
 #endif  /* !__ISR_H__ */

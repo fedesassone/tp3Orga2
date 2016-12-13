@@ -46,10 +46,6 @@ void tss_inicializar() {
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x20000,0,1);
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x21000,0,1);
 
-	//DIR_VIRTUAL_TAREA = 0x40000000
-
-	//copiarCodigo(0x20000, 0x40000000);
-
 }
 
 //la vamos a llamar con cr3_inicial = 0x30000
@@ -61,7 +57,34 @@ void tss_iniciarTareas(){
 	for(i = 0; i < 16; i= i+2){
 		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();		
 		cr3_paCadaTarea = (unsigned int) mmu_inicializar_dir_tarea(id_tarea); //le pasamos el id ; llama tres paginas
-		//inicio navio
+    		//inicio navio
+        //lo que no tocamos
+    	tss_nueva->	ptl     =0x0;
+        tss_nueva->	unused0	=0x0;
+        tss_nueva->	unused1	=0x0;
+        tss_nueva-> esp1	=0x0;
+        tss_nueva->	ss1		=0x0;
+        tss_nueva->	unused2	=0x0;
+        tss_nueva-> esp2	=0x0;
+        tss_nueva->	ss2		=0x0;
+        tss_nueva->	unused3	=0x0;
+        tss_nueva-> eax		=0x0;
+        tss_nueva-> ecx		=0x0;
+        tss_nueva-> edx		=0x0;
+        tss_nueva-> ebx		=0x0;
+        tss_nueva-> ebp		=0x0;
+        tss_nueva-> esi		=0x0;
+        tss_nueva-> edi		=0x0;
+        tss_nueva->	unused4	=0x0;
+        tss_nueva->	unused5	=0x0;
+        tss_nueva->	unused6	=0x0;        
+        tss_nueva->	unused7	=0x0;        
+        tss_nueva-> unused8	=0x0;        
+        tss_nueva-> unused9	=0x0;
+        tss_nueva-> ldt		=0x0;
+        tss_nueva-> unused10=0x0;
+        tss_nueva-> dtrap	=0x0;
+        //lo que tocamos
 		tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //para recorrerla topdown
 		unsigned pila_cero_tarea = tss_nueva->esp0;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3; // creo que va (GDT_IDX_DATA_0 << 3) | 3 
@@ -76,7 +99,8 @@ void tss_iniciarTareas(){
 	    tss_nueva->ds = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->fs = (GDT_IDX_DATA_3 << 3) | 3;// no seria << en vez de |?
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
-
+	    tss_nueva->iomap = 0xFFFF;
+	    tss_nueva->dtrap = 0x0;
 		//Descripcion de Navio lista
 	    //Apuntarle con el segmento en gdt
 	        gdt[GDT_TAREA_1 + i].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;
@@ -84,7 +108,34 @@ void tss_iniciarTareas(){
 	        gdt[GDT_TAREA_1 + i].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
 		//lesto
 	    //inicio bandera 
-		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();			
+		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
+        //de nuevo
+        tss_nueva-> ptl     =0x0;
+        tss_nueva-> unused0 =0x0;
+        tss_nueva-> unused1 =0x0;
+        tss_nueva-> esp1    =0x0;
+        tss_nueva-> ss1     =0x0;
+        tss_nueva-> unused2 =0x0;
+        tss_nueva-> esp2    =0x0;
+        tss_nueva-> ss2     =0x0;
+        tss_nueva-> unused3 =0x0;
+        tss_nueva-> eax     =0x0;
+        tss_nueva-> ecx     =0x0;
+        tss_nueva-> edx     =0x0;
+        tss_nueva-> ebx     =0x0;
+        tss_nueva-> ebp     =0x0;
+        tss_nueva-> esi     =0x0;
+        tss_nueva-> edi     =0x0;
+        tss_nueva-> unused4 =0x0;
+        tss_nueva-> unused5 =0x0;
+        tss_nueva-> unused6 =0x0;        
+        tss_nueva-> unused7 =0x0;        
+        tss_nueva-> unused8 =0x0;        
+        tss_nueva-> unused9 =0x0;
+        tss_nueva-> ldt     =0x0;
+        tss_nueva-> unused10=0x0;
+        tss_nueva-> dtrap   =0x0;
+        //seteamos
 		tss_nueva->esp0 = pila_cero_tarea - 0x500;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3;  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
@@ -99,6 +150,8 @@ void tss_iniciarTareas(){
 	    tss_nueva->ds = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->fs = (GDT_IDX_DATA_3 << 3) | 3;
 	    tss_nueva->gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
+		tss_nueva->iomap = 0xFFFF;
+		tss_nueva->dtrap = 0x0;
 		//mismo contexto que su navio (bandera)
 		//apunto segseltss
         gdt[GDT_TAREA_1 + (i+1)].base_0_15  = ((unsigned int) tss_nueva) & 0xFFFF;

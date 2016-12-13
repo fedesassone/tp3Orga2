@@ -144,15 +144,13 @@ BITS 32
 ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
   
- xchg bx, bx
- call iniciarBufferEstado
- xchg bx, bx
- call cargarBufferEstado
- xchg bx, bx
-  call iniciarBufferMapa
- xchg bx, bx
- call cargarBufferMapa
- xchg bx, bx
+
+    call iniciarBufferEstado
+
+    call cargarBufferEstado
+
+    call iniciarBufferMapa
+
 
 
     ; inicializar el manejador de memoria
@@ -201,7 +199,6 @@ BITS 32
     ; saltar a la tarea idle
     xchg bx,bx
     jmp 0xc0:0x0 ;segmento de idle 
-    xchg bx,bx
 
 
     ; Ciclar infinitamente (por si algo sale mal...)

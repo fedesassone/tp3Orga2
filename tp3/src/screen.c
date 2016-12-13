@@ -5,9 +5,10 @@
   definicion de funciones del scheduler
 */
 
-#include "screen.h"
 #include "colors.h"
+#include "screen.h"
 #include "defines.h"
+#include "sched.h"
 
 #define BANDERA_BUFFER  0x40001000
 
@@ -79,7 +80,7 @@ void print_hex(unsigned int dest, unsigned int numero, int size, unsigned int x,
     }
 }// imprime en hexa
 
-void  ) {
+void print_int(unsigned int dest, unsigned int n, unsigned int x, unsigned int y, unsigned short attr){
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dest;
     if( n > 9 ) {
       int a = n / 10;
@@ -315,29 +316,27 @@ void actualizarBufferEstado_UltimoProblema(){
 
 void actualizarBufferEstado_Paginas(){
     int i;
-    unsigned int x=1;
     unsigned int y = 16;
-    for (i = 0; i < 8; ++i)
-    {
-        print_int(BUFFER_ESTADO,i, 1, y, (C_FG_BLACK|C_BG_CYAN);
+    for (i = 0; i < 8; ++i){
+        print_int(BUFFER_ESTADO,i, 1, y, (C_FG_BLACK|C_BG_CYAN));
         print(BUFFER_ESTADO, "P1:",3 ,y,(C_BG_CYAN | C_FG_BLACK ));    
         print(BUFFER_ESTADO, "P2:",15,y,(C_BG_CYAN | C_FG_BLACK ));    
         print(BUFFER_ESTADO, "P3:",29,y,(C_BG_CYAN | C_FG_BLACK ));    
         y++;
     }
     y=16;
-    y= y+paginasNavios.idTarea;
-    print_hex(BUFFER_ESTADO,paginasNavios.p1,8,6,y,(C_BG_BLACK|C_FG_WHITE));    
-    print_hex(BUFFER_ESTADO,paginasNavios.p2,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
-    print_hex(BUFFER_ESTADO,paginasNavios.p3,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
+    y= y+scheduler.paginas.idTarea;
+    print_hex(BUFFER_ESTADO,scheduler.paginas.p1,8,6,y,(C_BG_BLACK|C_FG_WHITE));    
+    print_hex(BUFFER_ESTADO,scheduler.paginas.p2,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
+    print_hex(BUFFER_ESTADO,scheduler.paginas.p3,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
 }
 
 void matarEnBuffer(){
     ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
     int i;
     int x=2;
-    int y=16+paginasNavios.idTarea;
-    for (int i = 0; i < 76; ++i)
+    int y=16+scheduler.paginas.idTarea;
+    for (i = 0; i < 76; ++i)
     {
         d[y][x].a = (C_FG_WHITE | C_BG_RED);
     }

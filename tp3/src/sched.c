@@ -12,10 +12,18 @@
 #include "syscall.h"
 #include "screen.h"
 
-sched_t scheduler;
+
+
 unsigned int tareasRestantes;
 unsigned short corriendoTareas;
 unsigned short corriendoBandera;
+unsigned short muestroMapa;
+sched_t scheduler;
+
+unsigned int tarea_actual(){
+	return (unsigned int) scheduler.tarea_actual;
+}
+
 
 void handler_teclado(unsigned char scan_code){
     
@@ -94,13 +102,13 @@ void handler_teclado(unsigned char scan_code){
 
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
-	paginasNavios.idTarea = scheduler.tarea_actual +1;
+	scheduler.paginas.idTarea = scheduler.tarea_actual +1;
 	if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
 	{
 		//syscall_fondear(ebx);
 		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
 		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
-		paginasNavios.p3=(unsigned int)ebx;
+		scheduler.paginas.p3=(unsigned int)ebx;
 	}
 	
 	if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
@@ -109,8 +117,8 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
-		paginasNavios.p1=(unsigned int)ebx;
-		paginasNavios.p2=(unsigned int)ecx;
+		scheduler.paginas.p1=(unsigned int)ebx;
+		scheduler.paginas.p2=(unsigned int)ecx;
 	}
 	if ( eax == SYS_CANONEAR )
 	{
@@ -126,14 +134,19 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	actualizarBufferEstado_Paginas();
 
 }
-void llamoTarea()
-{
-	corriendoBandera = 0;
-	if (corriendoTareas == 1)
-	{
-		scheduler.tareas[scheduler.tarea_actual].viva = 0; // si una tarea llama a int 66 se muere la tarea
-		scheduler.banderas[scheduler.tarea_actual].viva = 0;// y su bandera
+
+
+unsigned short atender_int66(){
+	if(corriendoBandera==1){
+		//scheduler.bandera_actual = scheduler.bandera_actual+1;
+		//if(scheduler.bandera_actual ==)
+		corriendoBandera = 0;
+		return (GDT_TAREA_IDLE<<3);
+	}	
+	if ( corriendoTareas == 1){
+		return matar_tarea();
 	}
+	return 0; //nunca llega acá
 }
 
 
@@ -141,9 +154,12 @@ void llamoTarea()
 void sched_inicializar() {
 	scheduler.tarea_actual = 7;
 	scheduler.bandera_actual = 7;
+	scheduler.banderasVivas=8;
 	tareasRestantes = 3;
 	corriendoTareas = 1;
 	corriendoBandera = 0;
+	muestroMapa =0;
+	scheduler.paginas.idTarea = scheduler.tarea_actual;
 	unsigned short i = 0x0;
 	for(i=0x0; i< 0x8; i = i + 0x1){
 		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + i) << 3) | 3;
@@ -172,66 +188,60 @@ unsigned short sched_proximo_indice() {
 		scheduler.tarea_actual = scheduler.tarea_actual + 1 ;
 
 	}// salgo del while con la proxima tarea viva
-    
-	//copiarCodigo(TASK_1_CODE_SRC_ADDR + (scheduler.tarea_actual*0x2000) , DIR_VIRTUAL_TAREA);
-	//copiarCodigo(TASK_1_CODE_SRC_ADDR + ((scheduler.tarea_actual*0x2000)+0x1000) , DIR_VIRTUAL_TAREA+0x1000);
-
     return scheduler.tareas[scheduler.tarea_actual].tss_selector;
 }
 
 unsigned short sched_proxima_bandera() {
 	actualizarBufferEstado_Bandera_i(scheduler.bandera_actual);
+	if(scheduler.banderasPorCiclar==0){
+		corriendoTareas = 1;
+		tareasRestantes = 3;
+		corriendoBandera = 0;
+		return (GDT_TAREA_IDLE<<3);
+	}
 	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
 	if (scheduler.bandera_actual == 8) 
 	{
 		scheduler.bandera_actual = 0;
 	}
-
 	while ( scheduler.banderas[scheduler.bandera_actual].viva == 0 )
 	{
 		scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
 
 	}// salgo del while con la proxima bandera viva
-    
+    //fijarse si es la ultima
+    scheduler.banderasPorCiclar--;
     return scheduler.banderas[scheduler.bandera_actual].tss_selector;
 }
 
 
-unsigned short atender_sched(){
+unsigned short atender_reloj(){
 	if(corriendoTareas==1){
-		tareasRestantes--;
-		if(tareasRestantes == 0){
-			corriendoTareas = 0; //voy a correr banderas
-			corriendoBandera = 1;
+		if(tareasRestantes == 0){	//si me quede sin tareas
+			corriendoTareas = 0;
+			corriendoBandera = 1;	
 			scheduler.bandera_actual = 7;
-			return sched_proxima_bandera();
+			scheduler.banderasPorCiclar = scheduler.banderasVivas;
+			return sched_proxima_bandera();	//corro primer bandera
 		}
-		return sched_proximo_indice();
+		tareasRestantes--;
+		return sched_proximo_indice(); //sigo corriendo tarea
 	}
 	//corriendo banderas
-	if ( corriendoBandera == 1)
-	{
-		unsigned short a = matar_tarea();
+	if ( corriendoBandera == 1){
+		corriendoBandera = 0;
+		return matar_tarea(); //estaba corriendo bandera y me corto el clock
 	}
-	unsigned short ultimaViva = 0;
-	unsigned int i;
-	for(i=0; i<8;i++){
-		if(scheduler.banderas[i].viva == 1) ultimaViva = i;
-	}
-	//si es la ultima, termino
-	if(scheduler.bandera_actual == ultimaViva){
-		corriendoTareas = 1;
-		tareasRestantes = 3;
-		return 0xc0; //devuelvo idle porque se murió una
-	}
-	//si no, paso bandera
-	return sched_proxima_bandera();
+	//si estoy en 0,0; vengo de la idle y estoy ciclando banderas
+	corriendoBandera = 1;
+	return sched_proxima_bandera(); //no estoy ni corriendo banderas, ni tareas => vengo de idle y ciclo bander
 }
 
 unsigned short matar_tarea()
 {
 	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
+	scheduler.banderasVivas--;
 	//return atender_sched();
 	//tenemos que saltar a la idle desde acá, 
 	matarEnBuffer();
