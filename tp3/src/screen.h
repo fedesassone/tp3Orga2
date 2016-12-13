@@ -37,6 +37,10 @@ void iniciarBufferEstado();
 void cargarBufferEstado();
 void matarEnBuffer();
 
+int damePosX(int x,int y,unsigned int pagina );
+int damePosY(int x,int y,unsigned int pagina );
+
+
 void actualizarBufferEstado_Bandera_i(char id_Bandera);
 void actualizarBufferEstado_UltimoProblema();
 void actualizarBufferEstado_Paginas();

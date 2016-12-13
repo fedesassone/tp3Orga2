@@ -207,8 +207,13 @@ void iniciarBufferMapa(){
             y++;
         }
     }
-    //agua
+    
+    int MarInicioX = 16;
+    int MarInicioY = 3;
+
+    //lleno el mar
     for(i=0; i<1664;i++){
+
         mapa[y][x].c =  ' '; //character
         mapa[y][x].a =  C_BG_CYAN; //atributo; fondo blue, letras white
         x++;
@@ -217,15 +222,148 @@ void iniciarBufferMapa(){
             y++;
         }
     }
-    x = 1;
-    y = 24;
+
+//pongo pags en mar
+    int j;
+    for (j=0;j<8;j++)
+    {
+        //ImprimirEnMar(BUFFER_MAPA,scheduler.paginasTareas[j].p1,j+1);
+
+    	 x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
+    	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
+            print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED); 
+     //    mapa[y][x].c = '0'+j+1;
+     //    mapa[y][x].a =  (C_FG_WHITE | C_BG_RED); //atributo; fondo red, letras white
+         x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
+    	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
+     //    //print_int(VIDEO,j+1,x,y,attr); VER 
+         mapa[y][x].c = '0'+j+1;
+         mapa[y][x].a =  (C_FG_WHITE | C_BG_RED); //atributo; fondo red, letras white
+
+    }
+
+        mapa[0][0].c =  'X'; //character
+        mapa[0][0].a =  C_FG_WHITE | C_BG_BROWN; //atributo; fondo blue, letras white
+
     //panel inferior
+   /* x = 1;
+    y = 24;
+    
     for(i=0;i<78;i++){
         mapa[y][x].c = ' '; //character
         mapa[y][x].a =  (C_BG_BLACK); //atributo; fondo black, letras white
         x++;
-    }
+    }*/
+    //paginas
+
 }
+/*
+int damePosX(int x,int y,unsigned int pagina )
+{
+        unsigned int pag = pagina/0x1000;
+        return pag%80;
+        // x = 0;
+        // y = 0;
+        // int i;
+        // int pos = pagina/0x1000;
+        // for(i=0; i<pos;i++)
+        // {
+        //     x++;
+        //     if (x == VIDEO_COLS) {
+        //         x = 0;
+        //         y++;
+        //     }
+        // }
+        // return x;
+    
+}
+int damePosY(int x,int y,unsigned int pagina )
+{
+        unsigned int pag = pagina/0x1000;
+        return pag/80;
+        // x = 0;
+        // y = 0;
+        // int i;
+        // int pos = pagina/0x1000;
+        // for(i=0; i<pos;i++)
+        // {
+        //     x++;
+        //     if (x == VIDEO_COLS) {
+        //         x = 0;
+        //         y++;
+        //     }
+        // }
+        // return y;
+    
+}
+*/
+/*
+int damePosX(int x,int y,unsigned int pagina )
+{
+        int i;
+        int xx = 0;
+        int yy = 0;
+        int pos = (pagina - 0x00000)/0x1000;
+        for(i=0; i<pos;i++)
+        {
+            xx++;
+            if (xx == VIDEO_COLS) {
+                xx = 0;
+                yy++;
+            }
+        }
+        return xx;
+    
+}
+int damePosY(int x,int y,unsigned int pagina )
+{
+        int i;
+        int xx = 0;
+        int yy = 0;
+        int pos = (pagina - 0x00000)/0x1000;
+        for(i=0; i<pos;i++)
+        {
+            xx++;
+            if (xx == VIDEO_COLS) {
+                xx = 0;
+                yy++;
+            }
+        }
+        return yy;
+    
+}*/
+
+int damePosX(int x,int y,unsigned int pagina )
+{
+		int i;
+	    int pos = (pagina - 0x10000)/0x1000;
+        for(i=0; i<pos;i++)
+        {
+        	x++;
+	        if (x == VIDEO_COLS) {
+	            x = 0;
+	            y++;
+	        }
+    	}
+    	return x;
+    
+}
+int damePosY(int x,int y,unsigned int pagina )
+{
+		int i;
+	    int pos = (pagina - 0x10000)/0x1000;
+        for(i=0; i<pos;i++)
+        {
+        	x++;
+	        if (x == VIDEO_COLS) {
+	            x = 0;
+	            y++;
+	        }
+    	}
+    	return y;
+    
+}
+//void ImprimirPagina(unsigned int)
 
 void cargarBufferMapa(){
     int i;
@@ -314,7 +452,7 @@ void actualizarBufferEstado_UltimoProblema(){
     print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
 }
 
-void actualizarBufferEstado_Paginas(){
+/*void actualizarBufferEstado_Paginas(){
     int i;
     unsigned int y = 16;
     for (i = 0; i < 8; ++i){
@@ -329,9 +467,9 @@ void actualizarBufferEstado_Paginas(){
     print_hex(BUFFER_ESTADO,scheduler.paginas.p1,8,6,y,(C_BG_BLACK|C_FG_WHITE));    
     print_hex(BUFFER_ESTADO,scheduler.paginas.p2,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
     print_hex(BUFFER_ESTADO,scheduler.paginas.p3,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
-}
+}*/
 
-void matarEnBuffer(){
+/*void matarEnBuffer(){
     ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
     int i;
     int x=2;
@@ -340,7 +478,7 @@ void matarEnBuffer(){
     {
         d[y][x].a = (C_FG_WHITE | C_BG_RED);
     }
-}
+}*/
 
 
 

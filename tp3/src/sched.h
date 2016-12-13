@@ -9,12 +9,11 @@
 #define __SCHED_H__
   
 typedef struct pn_s {
-  unsigned int idTarea;  
   unsigned int p1;
   unsigned int p2;
   unsigned int p3;
   
-} __attribute__((__packed__)) estadoNaveAct;  
+} __attribute__((__packed__)) paginas;  
 
 typedef struct str_sched_tarea
 {
@@ -31,7 +30,7 @@ typedef struct str_sched_t
 	unsigned char banderasVivas;
 	sched_tarea tareas[8];
 	sched_tarea banderas[8];
-	estadoNaveAct paginas;
+	paginas paginasTareas[8];
 }__attribute__((__packed__)) sched_t;
 
 extern sched_t scheduler;

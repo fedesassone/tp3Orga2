@@ -145,11 +145,6 @@ BITS 32
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
   
 
-    call iniciarBufferEstado
-
-    call cargarBufferEstado
-
-    call iniciarBufferMapa
 
 
 
@@ -179,6 +174,14 @@ BITS 32
     call sched_inicializar
     ; inicializar la IDT
     call idt_inicializar
+
+    call iniciarBufferEstado
+
+    call cargarBufferEstado
+
+    call iniciarBufferMapa
+
+    call cargarBufferMapa
     
     lidt[IDT_DESC]
     ;int 80

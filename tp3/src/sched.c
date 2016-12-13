@@ -102,13 +102,13 @@ void handler_teclado(unsigned char scan_code){
 
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
-	scheduler.paginas.idTarea = scheduler.tarea_actual +1;
+	//scheduler.paginas.idTarea = scheduler.tarea_actual +1;
 	if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
 	{
 		//syscall_fondear(ebx);
 		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
 		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
-		scheduler.paginas.p3=(unsigned int)ebx;
+		//scheduler.paginas.p3=(unsigned int)ebx;
 	}
 	
 	if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
@@ -117,8 +117,8 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
-		scheduler.paginas.p1=(unsigned int)ebx;
-		scheduler.paginas.p2=(unsigned int)ecx;
+		//scheduler.paginas.p1=(unsigned int)ebx;
+		//scheduler.paginas.p2=(unsigned int)ecx;
 	}
 	if ( eax == SYS_CANONEAR )
 	{
@@ -131,7 +131,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	        *((unsigned char*) (ebx + i)) =  *((unsigned char *) (dir_absoluta + i));
 	    }
 	}
-	actualizarBufferEstado_Paginas();
+	//actualizarBufferEstado_Paginas();
 
 }
 
@@ -159,7 +159,6 @@ void sched_inicializar() {
 	corriendoTareas = 1;
 	corriendoBandera = 0;
 	muestroMapa =0;
-	scheduler.paginas.idTarea = scheduler.tarea_actual;
 	unsigned short i = 0x0;
 	for(i=0x0; i< 0x8; i = i + 0x1){
 		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + i) << 3) | 3;
@@ -172,7 +171,15 @@ void sched_inicializar() {
 		scheduler.banderas[i].id = 0;
 		scheduler.banderas[i].viva = 1;
 	}
+	//inicializo las paginas de las tareas
+	for ( i=0;i<8;i++)
+	{
+		scheduler.paginasTareas[i].p1 = 0x10000 + (0x1000*i*0x2);
+		scheduler.paginasTareas[i].p2 = 0x10000 + (0x1000*i*0x2) + 0x1000;
+		scheduler.paginasTareas[i].p3 = 0x0;
 
+	}
+	//scheduler.paginasTareas[1].p1 = 0x12000;
 }
 
 unsigned short sched_proximo_indice() {
@@ -244,6 +251,6 @@ unsigned short matar_tarea()
 	scheduler.banderasVivas--;
 	//return atender_sched();
 	//tenemos que saltar a la idle desde acá, 
-	matarEnBuffer();
+	//matarEnBuffer();
 	return 0xc0; //selector de idle
 }
