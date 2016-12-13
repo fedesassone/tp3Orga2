@@ -108,7 +108,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		//syscall_fondear(ebx);
 		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
 		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
-		//scheduler.paginas.p3=(unsigned int)ebx;
+
 	}
 	
 	if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
@@ -119,6 +119,58 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
 		//scheduler.paginas.p1=(unsigned int)ebx;
 		//scheduler.paginas.p2=(unsigned int)ecx;
+		//scheduler.paginas.p3=(unsigned int)ebx;
+		//sacar de donde apuntaba
+		//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
+		//si a esa pos apuntaba solo la actual, poner en azul esa pos
+		//si apuntaban mas de dos, no hacerle nada
+		unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p1;
+		//unsigned int posvieja2 = scheduler.paginasTareas[scheduler.tarea_actual].p2;
+		scheduler.paginasTareas[scheduler.tarea_actual].p1 = ebx;//actualizo las paginas
+		scheduler.paginasTareas[scheduler.tarea_actual].p2 = ecx;
+		int cuantas;
+		//primero meto la nueva
+		int x;
+		int y;
+		cuantas = cuantasMeApuntan(ebx);
+		if(cuantas == 0)
+		{
+			    x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,x,y,C_FG_WHITE | C_BG_RED); 
+			    
+		}
+		if (cuantas == 1)
+		{
+				x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+    	 		char * p = "x";
+           		print(BUFFER_MAPA,p,x,y,C_FG_WHITE | C_BG_BROWN);
+		}
+		//sacar de donde apuntaba
+		//ya la saqué entonces si me queda 
+		//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
+		//si a esa pos apuntaba solo la actual, poner en azul esa pos
+		//si apuntaban mas de dos, no hacerle nada
+		cuantas = cuantasMeApuntan(posvieja1);
+		if (cuantas == 0)//si no le queda ninguna apuntando la pongo en azul
+		{
+				x = damePosX(16,3,posvieja1);
+    	 		y = damePosY(16,3,posvieja1);
+    	 		char * p = " ";
+           		print(BUFFER_MAPA,p,x,y,C_BG_CYAN);
+
+		}
+		if ( cuantas == 1)//si tenia una,pongo ese indice
+		{
+			int ind = dameIndTareaEnPos(posvieja1);
+			x = damePosX(16,3,posvieja1);
+	 		y = damePosY(16,3,posvieja1);
+           	print_int(BUFFER_MAPA,ind,x,y,C_FG_WHITE | C_BG_RED); 
+
+		}
+		//si le quedan dos o mas va a seguir con una X
+
 	}
 	if ( eax == SYS_CANONEAR )
 	{
@@ -135,7 +187,48 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 
 }
 
-
+int cuantasMeApuntan(unsigned int direccion)
+{
+	int i;
+	int res = 0;
+	for (i=0;i<7;i++)
+	{
+		if(scheduler.paginasTareas[i].p1 == direccion)
+		{
+			res = res + 1;
+		}
+		if(scheduler.paginasTareas[i].p2 == direccion)
+		{
+			res = res + 1;
+		}
+		if(scheduler.paginasTareas[i].p3 == direccion)
+		{
+			res = res + 1;
+		}
+	}
+	return res;
+}
+int dameIndTareaEnPos(unsigned int direccion)
+{
+	int i;
+	int res = 0;
+	for (i=0;i<7;i++)
+	{
+		if(scheduler.paginasTareas[i].p1 == direccion)
+		{
+			res = i;
+		}
+		if(scheduler.paginasTareas[i].p2 == direccion)
+		{
+			res = i;
+		}
+		if(scheduler.paginasTareas[i].p3 == direccion)
+		{
+			res = i;
+		}
+	}
+	return res;
+}
 unsigned short atender_int66(){
 	if(corriendoBandera==1){
 		//scheduler.bandera_actual = scheduler.bandera_actual+1;

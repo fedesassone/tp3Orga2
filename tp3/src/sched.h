@@ -44,5 +44,6 @@ unsigned short sched_proxima_bandera();
 unsigned short atender_reloj();
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx);
 unsigned short matar_tarea();
-
+int dameIndTareaEnPos(unsigned int direccion);
+int cuantasMeApuntan(unsigned int direccion);
 #endif	/* !__SCHED_H__ */
