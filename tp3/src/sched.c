@@ -253,16 +253,16 @@ void sched_inicializar() {
 	corriendoBandera = 0;
 	muestroMapa =0;
 	unsigned short i = 0x0;
-	for(i=0x0; i< 0x8; i = i + 0x1){
-		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + i) << 3) | 3;
+	for(i=0; i< 8; i++){
+		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + 2*i) << 3) | 3; //consultar
 		scheduler.tareas[i].id = 0;
 		scheduler.tareas[i].viva = 1;
-	}
-	for(i=0x0; i<0x8;i=i+0x1){
-		scheduler.banderas[i].tss_selector = 
-		((GDT_TAREA_1_BANDERA + i) << 3) | 3;
+
+		scheduler.banderas[i].tss_selector = ((GDT_TAREA_1_BANDERA + 2*i) << 3) | 3;
 		scheduler.banderas[i].id = 0;
 		scheduler.banderas[i].viva = 1;
+
+
 	}
 	//inicializo las paginas de las tareas
 	for ( i=0;i<8;i++)
@@ -316,7 +316,7 @@ unsigned short sched_proxima_bandera() {
 
 
 unsigned short atender_reloj(){
-	if(corriendoTareas==1){
+	if(corriendoTareas==1){			//si vengo de la idle, estoy corriendo tareas
 		if(tareasRestantes == 0){	//si me quede sin tareas
 			corriendoTareas = 0;
 			corriendoBandera = 1;	

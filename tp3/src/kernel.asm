@@ -199,7 +199,7 @@ BITS 32
 
     ltr ax
     ; saltar a la tarea idle
-    xchg bx,bx
+    ;xchg bx,bx
     ;xor eax,eax
     ;mov ax, 0x1A
     ;shl ax, 3

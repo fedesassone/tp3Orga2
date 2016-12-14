@@ -195,7 +195,9 @@ _isr80:
          push ebx
          push eax
 
+        xchg bx,bx
         call llamada
+
         add esp,12
         
         cmp byte [muestroMapa],0x1
@@ -210,6 +212,7 @@ _isr80:
         xor eax, eax
         mov ax, 0xc0
         mov [tss_selector], ax
+        xchg bx,bx
         jmp far [tss_offset] ;saltamos a la idle por el resto del quantum
         
 
