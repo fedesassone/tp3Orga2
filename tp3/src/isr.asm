@@ -155,11 +155,11 @@ _isr32:
   call proximo_reloj
   ;schedulizar
   xchg bx,bx
-  call atender_reloj 
+  call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
   xchg bx,bx
-  jmp far [tss_offset]
+  jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
 
 
   ; listo?

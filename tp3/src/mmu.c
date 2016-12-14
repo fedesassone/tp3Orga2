@@ -47,7 +47,7 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
 	
 	for (i = 0; i < 1024; ++i) {
-		page_table_1[i] = ((i << 12) | 5);
+		page_table_1[i] = ((i << 12) | 7); //101
 	}
 	//paginasNavios.p1 = (unsigned int) page_table_1;
 
@@ -55,16 +55,16 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 	
 	for (i = 0; i < 1024; ++i) {
 		if(i<896){
-			page_table_2[i] = (((i+1024) << 12) | 5);// es 5 porque los atributos son 1 user 0 read/w 1 present
+			page_table_2[i] = (((i+1024) << 12) | 7);// es 5 porque los atributos son 1 user 0 read/w 1 present
 		}else{
 			page_table_2[i] = 0x0;
 		}
 	}
 
-	page_directory[0] = (int)page_table_1 + 0x5;
-	page_directory[1] = (int)page_table_2 + 0x5;
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,0);//mappeamos la primera pagina
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) page_directory,0x10000 + id_tarea + 0x1000,1,0);
+	page_directory[0] = (int)page_table_1 + 0x7;
+	page_directory[1] = (int)page_table_2 + 0x7;
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) page_directory,0x10000 + id_tarea + 0x1000,1,1);
 	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) page_directory,TASK_ANCLA_FIS,1,0);// el ancla es de solo lectura
 	return page_directory;
 }

@@ -7,7 +7,6 @@ ORG 0x40000000
 BITS 32
 
 %include "imprimir.mac"
-
 idle:
     .loopear:
         inc dword [numero]

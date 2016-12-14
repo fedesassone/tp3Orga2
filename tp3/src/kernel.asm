@@ -4,6 +4,35 @@
 ; ==============================================================================
 
 %include "imprimir.mac"
+extern GDT_DESC
+extern IDT_DESC
+extern idt_inicializar
+extern mmu_inicializar
+extern mmu_inicializar_dir_kernel
+
+
+;; PIC
+extern resetear_pic
+extern habilitar_pic
+extern deshabilitar_pic
+
+;; SCREEN 
+extern limpiar_screen
+extern print
+extern iniciarBufferEstado
+extern cargarBufferEstado
+extern iniciarBufferMapa
+extern cargarBufferMapa
+
+;; MMU
+
+;extern mmu_inicializar_table_kernel
+
+;; TSS 
+extern tss_inicializar
+extern tss_iniciarTareas
+;;SCHEDULER
+extern sched_inicializar
 
 
 global start
@@ -31,36 +60,6 @@ global start
         loop lineas
 
 %endmacro
-;; GDT
-extern GDT_DESC
-
-;; IDT
-extern IDT_DESC
-extern idt_inicializar
-
-;; PIC
-extern resetear_pic
-extern habilitar_pic
-extern deshabilitar_pic
-
-;; SCREEN 
-extern limpiar_screen
-extern print
-extern iniciarBufferEstado
-extern cargarBufferEstado
-extern iniciarBufferMapa
-extern cargarBufferMapa
-
-;; MMU
-extern mmu_inicializar
-extern mmu_inicializar_dir_kernel
-;extern mmu_inicializar_table_kernel
-
-;; TSS 
-extern tss_inicializar
-extern tss_iniciarTareas
-;;SCHEDULER
-extern sched_inicializar
 
 
 
@@ -201,13 +200,13 @@ BITS 32
     ltr ax
     ; saltar a la tarea idle
     xchg bx,bx
-    xor eax,eax
-    mov ax, 0x1A
-    shl ax, 3
-        xchg bx,bx
+    ;xor eax,eax
+    ;mov ax, 0x1A
+    ;shl ax, 3
+        ;xchg bx,bx
         ;11010-000
-    jmp 0xd0:0 ;salto a la primer tarea
-
+    ;jmp 0xd0:0 ;salto a la primer tarea
+    jmp 0xc0:0 ;salto a la idle
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
