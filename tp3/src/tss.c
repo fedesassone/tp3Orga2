@@ -85,9 +85,14 @@ void tss_iniciarTareas(){
         tss_nueva-> unused10=0x0;
         tss_nueva-> dtrap	=0x0;
         //lo que tocamos
-		tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //para recorrerla topdown
-		unsigned pila_cero_tarea = tss_nueva->esp0;
+		//tss_nueva->esp0 = (unsigned int) mmu_proxima_pagina_fisica_libre() + 0x1000; //para recorrerla topdown
+		//unsigned pila_cero_tarea = tss_nueva->esp0;
+		//pruebo mappeando la pila de nivel cero
+        unsigned int pila_cero_fisica =  (unsigned int) mmu_proxima_pagina_fisica_libre(); //para recorrerla topdown
+        mmu_mapear_pagina(0x40003000,cr3_paCadaTarea,pila_cero_fisica,1,1);//mappeamos la primera pagina
+
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3; // creo que va (GDT_IDX_DATA_0 << 3) | 3 
+		tss_nueva->esp0 = 0x40003800;
 	    tss_nueva->cr3 = cr3_paCadaTarea;
 	    tss_nueva->eip = DIR_VIRTUAL_TAREA;
 	    tss_nueva->esp = 0x40001c00; // 0x40001C00
@@ -136,7 +141,7 @@ void tss_iniciarTareas(){
         tss_nueva-> unused10=0x0;
         tss_nueva-> dtrap   =0x0;
         //seteamos
-		tss_nueva->esp0 = pila_cero_tarea - 0x500;
+		tss_nueva->esp0 = 0x40004000;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3) | 3;  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
 	    unsigned int * dir_bandera = (unsigned int*) 0x40001FFC;
