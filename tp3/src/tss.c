@@ -31,8 +31,8 @@ void tss_inicializar() {
 	tarea_idle.gs 		= 0x98;
 	tarea_idle.eflags 	= 0x00000202;
 	tarea_idle.iomap 	= 0xFFFF;
-	tarea_idle.esp0     = TASK_IDLE_STACK_RING_0; // aca no se si va esto o TASK_IDLE_STACK o 0x0002a000
-	tarea_idle.ss0      = 0xa8;
+	tarea_idle.esp0     = 0;
+	tarea_idle.ss0      = 0;
 
 	gdt[GDT_TAREA_IDLE].base_0_15  = 
 	((unsigned int) (&tarea_idle)) & 0xFFFF;
@@ -43,8 +43,8 @@ void tss_inicializar() {
     gdt[GDT_TAREA_IDLE].base_31_24 = (
     	(unsigned int) (&tarea_idle)) >> 24 ;
 
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x20000,0,1);
-	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x21000,0,1);
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,0x27000,0x20000,0,1); // escritura nivel cero
+	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,0x27000,0x21000,0,1); // escritura nivel cero
 
 }
 
@@ -144,8 +144,10 @@ void tss_iniciarTareas(){
 		tss_nueva->esp0 = pila_cero_fisica + 0x500;
 		tss_nueva->ss0 = (GDT_IDX_DATA_0 << 3);  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_nueva->cr3 = cr3_paCadaTarea;
-	    unsigned int * dir_bandera = (unsigned int*) 0x40001FFC;
-	    tss_nueva->eip = *(dir_bandera);//CHEQUEAR
+
+	    unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_tarea + 0x1FFC);
+		tss_nueva->eip = 0x40000000 + *(dir_bandera);
+	    
 	    tss_nueva->esp = 0x40001FFC; // 0x40001FFC
 	    tss_nueva->ebp = 0x40001FFC; // 0x40001FFC
 	    tss_nueva->eflags = 0x202;

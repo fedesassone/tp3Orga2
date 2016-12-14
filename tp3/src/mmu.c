@@ -60,21 +60,29 @@ int* mmu_inicializar_dir_tarea( unsigned int id_tarea){
 			page_table_2[i] = 0x0;
 		}
 	}
-
+	//mapeamos
 	page_directory[0] = (int)page_table_1 + 0x7;
 	page_directory[1] = (int)page_table_2 + 0x7;
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA,(unsigned int) page_directory,0x10000 + id_tarea,1,1);//mappeamos la primera pagina
 	mmu_mapear_pagina(DIR_VIRTUAL_TAREA + 0x1000,(unsigned int) page_directory,0x10000 + id_tarea + 0x1000,1,1);
 	mmu_mapear_pagina(TASK_ANCLA,(unsigned int) page_directory,TASK_ANCLA_FIS,1,0);// el ancla es de solo lectura
+	
+
+	//copiamos codigo
+
+	copiarCodigo( 0x10000 + id_tarea         ,  AREA_MAR_INICIO + id_tarea); 		 //pagina uno
+	copiarCodigo( 0x10000 + id_tarea + 0x1000,  AREA_MAR_INICIO + id_tarea +0x1000); //pagina dos
+
+
 	return page_directory;
 }
 
 void copiarCodigo(unsigned int src, unsigned int dest)
 {
     unsigned int i;
-    for(i = 0; i<4096; i+=4)
+    for(i = 0; i<4096; i++)
     {
-        *((unsigned int *) (dest + i)) =  *((unsigned int *) (src + i));
+        *((char *) (dest + i)) =  *((char *) (src + i));
     }
 }
 
