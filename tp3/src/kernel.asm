@@ -206,6 +206,7 @@ BITS 32
         ;xchg bx,bx
         ;11010-000
     ;jmp 0xd0:0 ;salto a la primer tarea
+    
     jmp 0xc0:0 ;salto a la idle
 
     ; Ciclar infinitamente (por si algo sale mal...)

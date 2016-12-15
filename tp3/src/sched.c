@@ -264,11 +264,11 @@ void sched_inicializar() {
 	muestroMapa =0;
 	unsigned short i = 0x0;
 	for(i=0; i< 8; i++){
-		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + 2*i) << 3) | 3; //consultar
+		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + 2*i) << 3) | 0; //consultar 
 		scheduler.tareas[i].id = 0;
 		scheduler.tareas[i].viva = 1;
 
-		scheduler.banderas[i].tss_selector = ((GDT_TAREA_1_BANDERA + 2*i) << 3) | 3;
+		scheduler.banderas[i].tss_selector = ((GDT_TAREA_1_BANDERA + 2*i) << 3) | 0;
 		scheduler.banderas[i].id = 0;
 		scheduler.banderas[i].viva = 1;
 

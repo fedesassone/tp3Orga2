@@ -160,7 +160,7 @@ _isr32:
   mov [tss_selector], ax
   ;xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
-
+  
 
   ; listo?
   popfd
