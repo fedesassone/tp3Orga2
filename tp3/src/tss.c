@@ -52,7 +52,8 @@ void tss_inicializar() {
 void tss_iniciarTareas(){
 	//en cada ciclo inicializamos un navio y una bandera
 	unsigned int id_tarea = 0x0000;
-	unsigned int cr3_paCadaTarea;	
+	unsigned int cr3_paCadaTarea;
+	int j=0;	
 	int i;
 	for(i = 0; i < 16; i= i+2){
 		tss* tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();		
@@ -113,7 +114,7 @@ void tss_iniciarTareas(){
 	        gdt[GDT_TAREA_1 + i].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
 		//lesto
 	    //inicio bandera 
-		tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
+		/*tss_nueva = (tss*) mmu_proxima_pagina_fisica_libre();	
         //de nuevo
         tss_nueva-> ptl     =0x0;
         tss_nueva-> unused0 =0x0;
@@ -165,6 +166,64 @@ void tss_iniciarTareas(){
         gdt[GDT_TAREA_1 + (i+1)].base_23_16 = (((unsigned int) tss_nueva )>> 16) & 0xFF;
         gdt[GDT_TAREA_1 + (i+1)].base_31_24 = ((unsigned int) tss_nueva )>> 24 ;
         id_tarea = id_tarea + 0x2000;
+        */
+
+        //guardo las cosas en el arreglo de tss_banderas
+        tss_banderas[j]. ptl     =0x0;
+        tss_banderas[j]. unused0 =0x0;
+        tss_banderas[j]. unused1 =0x0;
+        tss_banderas[j]. esp1    =0x0;
+        tss_banderas[j]. ss1     =0x0;
+        tss_banderas[j]. unused2 =0x0;
+        tss_banderas[j]. esp2    =0x0;
+        tss_banderas[j]. ss2     =0x0;
+        tss_banderas[j]. unused3 =0x0;
+        tss_banderas[j]. eax     =0x0;
+        tss_banderas[j]. ecx     =0x0;
+        tss_banderas[j]. edx     =0x0;
+        tss_banderas[j]. ebx     =0x0;
+        tss_banderas[j]. ebp     =0x0;
+        tss_banderas[j]. esi     =0x0;
+        tss_banderas[j]. edi     =0x0;
+        tss_banderas[j]. unused4 =0x0;
+        tss_banderas[j]. unused5 =0x0;
+        tss_banderas[j]. unused6 =0x0;        
+        tss_banderas[j]. unused7 =0x0;        
+        tss_banderas[j]. unused8 =0x0;        
+        tss_banderas[j]. unused9 =0x0;
+        tss_banderas[j]. ldt     =0x0;
+        tss_banderas[j]. unused10=0x0;
+        tss_banderas[j]. dtrap   =0x0;
+        //seteamos
+		tss_banderas[j].esp0 = pila_cero_fisica + 0x500;
+		tss_banderas[j].ss0 = (GDT_IDX_DATA_0 << 3);  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
+	    tss_banderas[j].cr3 = cr3_paCadaTarea;
+
+	    unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_tarea + 0x1FFC);
+		tss_banderas[j].eip = 0x40000000 + *(dir_bandera);
+	    
+	    tss_banderas[j].esp = 0x40001FFC; // 0x40001FFC
+	    tss_banderas[j].ebp = 0x40001FFC; // 0x40001FFC
+	    tss_banderas[j].eflags = 0x202;
+	    tss_banderas[j].es = (GDT_IDX_DATA_3 << 3) | 3;
+	    tss_banderas[j].cs = (GDT_IDX_CODE_3 << 3) | 3;//Figura 5: Dirección de la función bandera ¿?
+	    tss_banderas[j].ss = (GDT_IDX_DATA_3 << 3) | 3;
+	    tss_banderas[j].ds = (GDT_IDX_DATA_3 << 3) | 3;
+	    tss_banderas[j].fs = (GDT_IDX_DATA_3 << 3) | 3;
+	    tss_banderas[j].gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
+		tss_banderas[j].iomap = 0xFFFF;
+		tss_banderas[j].dtrap = 0x0;
+
+		//apunto segseltss
+        gdt[GDT_TAREA_1 + (i+1)].base_0_15  = ((unsigned int) &(tss_banderas[j])) & 0xFFFF;
+        gdt[GDT_TAREA_1 + (i+1)].base_23_16 = (((unsigned int) &(tss_banderas[j]) )>> 16) & 0xFF;
+        gdt[GDT_TAREA_1 + (i+1)].base_31_24 = ((unsigned int) &(tss_banderas[j]) )>> 24 ;
+        id_tarea = id_tarea + 0x2000;
+
+        //guardo la tss nueva de la bandera en el indice correspondiente de tss_banderas
+        //tss_banderas[j]=*(tss_nueva);
+        j++;
+
 	}
 
 

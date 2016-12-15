@@ -55,6 +55,8 @@ extern tss tarea_inicial;
 extern tss tarea_idle;
 extern tss tarea_dibujar;
 
+extern tss tss_banderas[CANT_TAREAS];
+
 void tss_inicializar();
 void tss_iniciarTareas();
 #endif  /* !__TSS_H__ */

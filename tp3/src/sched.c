@@ -11,6 +11,7 @@
 #include "mmu.h"
 #include "syscall.h"
 #include "screen.h"
+#include "tss.h"
 
 
 
@@ -311,9 +312,24 @@ unsigned short sched_proxima_bandera() {
 		return sched_proximo_indice();
 	}   
 	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
-	if (scheduler.bandera_actual == 8) 
+	if (scheduler.bandera_actual == 8 )//si estaba en la ultima viva, paso a la primera yreinicio banderas
 	{
+		
 		scheduler.bandera_actual = 0;
+		
+		int i;
+		int id_tarea = 0x0000;
+		for (i=0;i<8;i++)//ESTA PARA QUE ENTRE UNA SOLA VEZ PARA PROBAR ALGO
+		{
+			unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_tarea + 0x1FFC);
+			tss_banderas[i].eip = 0x40000000 + *(dir_bandera);
+	    
+	    	tss_banderas[i].esp = 0x40001FFC; // 0x40001FFC
+	    	tss_banderas[i].ebp = 0x40001FFC; // 0x40001FFC
+
+	    	id_tarea = id_tarea + 0x2000;
+	 
+		}
 	}
 	while ( scheduler.banderas[scheduler.bandera_actual].viva == 0 )
 	{
