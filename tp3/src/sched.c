@@ -301,10 +301,11 @@ unsigned short sched_proximo_indice() {
 }
 
 unsigned short sched_proxima_bandera() {
-	actualizarBufferEstado_Bandera_i(scheduler.bandera_actual);
+	//actualizarBufferEstado_Bandera_i(scheduler.bandera_actual);
 	if(scheduler.banderasPorCiclar==0){
 		corriendoTareas = 1;
-		tareasRestantes = 3;
+		//tareasRestantes = 3;
+		tareasRestantes = 2;
 		corriendoBandera = 0;
 		//return (GDT_TAREA_IDLE<<3); vengo de la idle,ya habiendo corrido la ultima bandera, tengo que saltar a la proxima tarea
 		return sched_proximo_indice();
