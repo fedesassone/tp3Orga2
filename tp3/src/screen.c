@@ -195,7 +195,8 @@ void cargarBufferEstado(){
 void iniciarBufferMapa(){
     int i;
     ca (*mapa)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_MAPA;
-    //imprimoTierra
+
+///////imprimoTierra
     int x = 0;
     int y = 0;
     for(i=0; i<256; i++){
@@ -211,7 +212,7 @@ void iniciarBufferMapa(){
     int MarInicioX = 16;
     int MarInicioY = 3;
 
-    //lleno el mar
+///////lleno el mar
     for(i=0; i<1664;i++){
 
         mapa[y][x].c =  ' '; //character
@@ -223,115 +224,25 @@ void iniciarBufferMapa(){
         }
     }
 
-//pongo pags en mar
+//////pongo pags 1 y 2 de tareas en mar
     int j;
     for (j=0;j<8;j++)
     {
-        //ImprimirEnMar(BUFFER_MAPA,scheduler.paginasTareas[j].p1,j+1);
-
     	 x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
     	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
-            print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED); 
-     //    mapa[y][x].c = '0'+j+1;
-     //    mapa[y][x].a =  (C_FG_WHITE | C_BG_RED); //atributo; fondo red, letras white
+         print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED); 
+     
          x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
     	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
-     //    //print_int(VIDEO,j+1,x,y,attr); VER 
-         mapa[y][x].c = '0'+j+1;
-         mapa[y][x].a =  (C_FG_WHITE | C_BG_RED); //atributo; fondo red, letras white
-
+     
+         print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED);     
+         
     }
 
-        mapa[0][0].c =  'X'; //character
-        mapa[0][0].a =  C_FG_WHITE | C_BG_BROWN; //atributo; fondo blue, letras white
-
-    //panel inferior
-   /* x = 1;
-    y = 24;
-    
-    for(i=0;i<78;i++){
-        mapa[y][x].c = ' '; //character
-        mapa[y][x].a =  (C_BG_BLACK); //atributo; fondo black, letras white
-        x++;
-    }*/
-    //paginas
-
+///////pongo anclas de tareas en tierra
+        //estan todas en 0, no es nec
+        print_int(BUFFER_MAPA,8,0,0,C_FG_WHITE | C_BG_RED);     
 }
-/*
-int damePosX(int x,int y,unsigned int pagina )
-{
-        unsigned int pag = pagina/0x1000;
-        return pag%80;
-        // x = 0;
-        // y = 0;
-        // int i;
-        // int pos = pagina/0x1000;
-        // for(i=0; i<pos;i++)
-        // {
-        //     x++;
-        //     if (x == VIDEO_COLS) {
-        //         x = 0;
-        //         y++;
-        //     }
-        // }
-        // return x;
-    
-}
-int damePosY(int x,int y,unsigned int pagina )
-{
-        unsigned int pag = pagina/0x1000;
-        return pag/80;
-        // x = 0;
-        // y = 0;
-        // int i;
-        // int pos = pagina/0x1000;
-        // for(i=0; i<pos;i++)
-        // {
-        //     x++;
-        //     if (x == VIDEO_COLS) {
-        //         x = 0;
-        //         y++;
-        //     }
-        // }
-        // return y;
-    
-}
-*/
-/*
-int damePosX(int x,int y,unsigned int pagina )
-{
-        int i;
-        int xx = 0;
-        int yy = 0;
-        int pos = (pagina - 0x00000)/0x1000;
-        for(i=0; i<pos;i++)
-        {
-            xx++;
-            if (xx == VIDEO_COLS) {
-                xx = 0;
-                yy++;
-            }
-        }
-        return xx;
-    
-}
-int damePosY(int x,int y,unsigned int pagina )
-{
-        int i;
-        int xx = 0;
-        int yy = 0;
-        int pos = (pagina - 0x00000)/0x1000;
-        for(i=0; i<pos;i++)
-        {
-            xx++;
-            if (xx == VIDEO_COLS) {
-                xx = 0;
-                yy++;
-            }
-        }
-        return yy;
-    
-}*/
 
 int damePosX(int x,int y,unsigned int pagina )
 {
@@ -348,6 +259,7 @@ int damePosX(int x,int y,unsigned int pagina )
     	return x;
     
 }
+
 int damePosY(int x,int y,unsigned int pagina )
 {
 		int i;
@@ -363,7 +275,6 @@ int damePosY(int x,int y,unsigned int pagina )
     	return y;
     
 }
-//void ImprimirPagina(unsigned int)
 
 void cargarBufferMapa(){
     int i;
@@ -453,33 +364,40 @@ void actualizarBufferEstado_UltimoProblema(){
     print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
 }
 
-/*void actualizarBufferEstado_Paginas(){
+void actualizarBufferEstado_Paginas(){
     int i;
     unsigned int y = 16;
     for (i = 0; i < 8; ++i){
-        print_int(BUFFER_ESTADO,i, 1, y, (C_FG_BLACK|C_BG_CYAN));
+        //numero
+        print_int(BUFFER_ESTADO,i+1, 1, y, (C_FG_BLACK|C_BG_CYAN));
+        //caract
         print(BUFFER_ESTADO, "P1:",3 ,y,(C_BG_CYAN | C_FG_BLACK ));    
         print(BUFFER_ESTADO, "P2:",15,y,(C_BG_CYAN | C_FG_BLACK ));    
         print(BUFFER_ESTADO, "P3:",29,y,(C_BG_CYAN | C_FG_BLACK ));    
+        //pags
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p1 ,8,6 ,y,(C_BG_BLACK|C_FG_WHITE));    
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p2 ,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p3 ,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
+
         y++;
     }
-    y=16;
-    y= y+scheduler.paginas.idTarea;
-    print_hex(BUFFER_ESTADO,scheduler.paginas.p1,8,6,y,(C_BG_BLACK|C_FG_WHITE));    
-    print_hex(BUFFER_ESTADO,scheduler.paginas.p2,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
-    print_hex(BUFFER_ESTADO,scheduler.paginas.p3,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
-}*/
+    
+}
 
-/*void matarEnBuffer(){
+void matarEnBuffer(){
     ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
     int i;
     int x=2;
-    int y=16+scheduler.paginas.idTarea;
+    int y=16+scheduler.tarea_actual;
+    //pone en rojo
     for (i = 0; i < 76; ++i)
     {
         d[y][x].a = (C_FG_WHITE | C_BG_RED);
     }
-}*/
+    //imprime mensaje
+    x=55;
+    print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));
+}
 
 
 

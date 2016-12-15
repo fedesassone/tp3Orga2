@@ -193,7 +193,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		        *((unsigned char*) (ebx + i)) =  *((unsigned char *) (dir_absoluta + i));
 		    }
 		}
-		//actualizarBufferEstado_Paginas();
+		actualizarBufferEstado_Paginas();
 	}
 }
 
