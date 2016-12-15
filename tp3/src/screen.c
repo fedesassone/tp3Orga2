@@ -390,12 +390,13 @@ void matarEnBuffer(){
     int x=2;
     int y=16+scheduler.tarea_actual;
     //pone en rojo
-    for (i = 0; i < 76; ++i)
+    for (i = 2; i < 79; ++i)
     {
         d[y][x].a = (C_FG_WHITE | C_BG_RED);
+        x++;
     }
     //imprime mensaje
-    x=55;
+    x=50;
     print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));
 }
 

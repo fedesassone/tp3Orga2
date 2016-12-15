@@ -371,6 +371,6 @@ unsigned short matar_tarea()
 	scheduler.banderasVivas--;
 	//return atender_sched();
 	//tenemos que saltar a la idle desde acá, 
-	//matarEnBuffer();
+	matarEnBuffer();
 	return 0xc0; //selector de idle
 }
