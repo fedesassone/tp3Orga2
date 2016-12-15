@@ -102,89 +102,98 @@ void handler_teclado(unsigned char scan_code){
 
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
-	//scheduler.paginas.idTarea = scheduler.tarea_actual +1;
-	if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
+	if (corriendoBandera == 1)//si una bandera llama a la syscall 0x50, se muere esa bandera y su tarea
 	{
-		//syscall_fondear(ebx);
-		unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
-		mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
-
+			corriendoBandera = 0;
+			scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
+			scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
+			scheduler.banderasVivas--;
 	}
-	
-	if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
+	else
 	{
-		//syscall_navegar(ebx,ecx);
+		//scheduler.paginas.idTarea = scheduler.tarea_actual +1;
+		if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
+		{
+			//syscall_fondear(ebx);
+			unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
+			mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+
+		}
 		
-		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
-		copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
-		//scheduler.paginas.p1=(unsigned int)ebx;
-		//scheduler.paginas.p2=(unsigned int)ecx;
-		//scheduler.paginas.p3=(unsigned int)ebx;
-		//sacar de donde apuntaba
-		//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
-		//si a esa pos apuntaba solo la actual, poner en azul esa pos
-		//si apuntaban mas de dos, no hacerle nada
-		unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p1;
-		//unsigned int posvieja2 = scheduler.paginasTareas[scheduler.tarea_actual].p2;
-		scheduler.paginasTareas[scheduler.tarea_actual].p1 = ebx;//actualizo las paginas
-		scheduler.paginasTareas[scheduler.tarea_actual].p2 = ecx;
-		int cuantas;
-		//primero meto la nueva
-		int x;
-		int y;
-		cuantas = cuantasMeApuntan(ebx);
-		if(cuantas == 0)
+		if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
 		{
-			    x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,x,y,C_FG_WHITE | C_BG_RED); 
-			    
-		}
-		if (cuantas == 1)
-		{
-				x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-    	 		char * p = "x";
-           		print(BUFFER_MAPA,p,x,y,C_FG_WHITE | C_BG_BROWN);
-		}
-		//sacar de donde apuntaba
-		//ya la saqué entonces si me queda 
-		//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
-		//si a esa pos apuntaba solo la actual, poner en azul esa pos
-		//si apuntaban mas de dos, no hacerle nada
-		cuantas = cuantasMeApuntan(posvieja1);
-		if (cuantas == 0)//si no le queda ninguna apuntando la pongo en azul
-		{
+			//syscall_navegar(ebx,ecx);
+			
+			copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
+			copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
+			//scheduler.paginas.p1=(unsigned int)ebx;
+			//scheduler.paginas.p2=(unsigned int)ecx;
+			//scheduler.paginas.p3=(unsigned int)ebx;
+			//sacar de donde apuntaba
+			//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
+			//si a esa pos apuntaba solo la actual, poner en azul esa pos
+			//si apuntaban mas de dos, no hacerle nada
+			unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p1;
+			//unsigned int posvieja2 = scheduler.paginasTareas[scheduler.tarea_actual].p2;
+			scheduler.paginasTareas[scheduler.tarea_actual].p1 = ebx;//actualizo las paginas
+			scheduler.paginasTareas[scheduler.tarea_actual].p2 = ecx;
+			int cuantas;
+			//primero meto la nueva
+			int x;
+			int y;
+			cuantas = cuantasMeApuntan(ebx);
+			if(cuantas == 0)
+			{
+				    x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+	           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,x,y,C_FG_WHITE | C_BG_RED); 
+				    
+			}
+			if (cuantas == 1)
+			{
+					x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
+	    	 		char * p = "x";
+	           		print(BUFFER_MAPA,p,x,y,C_FG_WHITE | C_BG_BROWN);
+			}
+			//sacar de donde apuntaba
+			//ya la saqué entonces si me queda 
+			//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
+			//si a esa pos apuntaba solo la actual, poner en azul esa pos
+			//si apuntaban mas de dos, no hacerle nada
+			cuantas = cuantasMeApuntan(posvieja1);
+			if (cuantas == 0)//si no le queda ninguna apuntando la pongo en azul
+			{
+					x = damePosX(16,3,posvieja1);
+	    	 		y = damePosY(16,3,posvieja1);
+	    	 		char * p = " ";
+	           		print(BUFFER_MAPA,p,x,y,C_BG_CYAN);
+
+			}
+			if ( cuantas == 1)//si tenia una,pongo ese indice
+			{
+				int ind = dameIndTareaEnPos(posvieja1);
 				x = damePosX(16,3,posvieja1);
-    	 		y = damePosY(16,3,posvieja1);
-    	 		char * p = " ";
-           		print(BUFFER_MAPA,p,x,y,C_BG_CYAN);
+		 		y = damePosY(16,3,posvieja1);
+	           	print_int(BUFFER_MAPA,ind,x,y,C_FG_WHITE | C_BG_RED); 
+
+			}
+			//si le quedan dos o mas va a seguir con una X
 
 		}
-		if ( cuantas == 1)//si tenia una,pongo ese indice
+		if ( eax == SYS_CANONEAR )
 		{
-			int ind = dameIndTareaEnPos(posvieja1);
-			x = damePosX(16,3,posvieja1);
-	 		y = damePosY(16,3,posvieja1);
-           	print_int(BUFFER_MAPA,ind,x,y,C_FG_WHITE | C_BG_RED); 
-
+			//syscall_canonear(ebx,ecx);//ver lo de que es relativa
+			
+			unsigned int dir_absoluta = 0x40000000 + ecx;
+			unsigned int i;
+		    for(i = 0; i<97; i+=1)
+		    {
+		        *((unsigned char*) (ebx + i)) =  *((unsigned char *) (dir_absoluta + i));
+		    }
 		}
-		//si le quedan dos o mas va a seguir con una X
-
+		//actualizarBufferEstado_Paginas();
 	}
-	if ( eax == SYS_CANONEAR )
-	{
-		//syscall_canonear(ebx,ecx);//ver lo de que es relativa
-		
-		unsigned int dir_absoluta = 0x40000000 + ecx;
-		unsigned int i;
-	    for(i = 0; i<97; i+=1)
-	    {
-	        *((unsigned char*) (ebx + i)) =  *((unsigned char *) (dir_absoluta + i));
-	    }
-	}
-	//actualizarBufferEstado_Paginas();
-
 }
 
 int cuantasMeApuntan(unsigned int direccion)
