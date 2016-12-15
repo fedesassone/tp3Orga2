@@ -306,8 +306,9 @@ unsigned short sched_proxima_bandera() {
 		corriendoTareas = 1;
 		tareasRestantes = 3;
 		corriendoBandera = 0;
-		return (GDT_TAREA_IDLE<<3);
-	}
+		//return (GDT_TAREA_IDLE<<3); vengo de la idle,ya habiendo corrido la ultima bandera, tengo que saltar a la proxima tarea
+		return sched_proximo_indice();
+	}   
 	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
 	if (scheduler.bandera_actual == 8) 
 	{
