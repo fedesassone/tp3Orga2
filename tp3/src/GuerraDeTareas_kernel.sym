@@ -34,7 +34,7 @@
 0x000013eb contadorlineas
 0x00002fc9 copiarCodigo
 0x000073a0 corriendoBandera
-0x000074c4 corriendoTareas
+0x000074c6 corriendoTareas
 0x000038c2 cuantasMeApuntan
 0x0000393e dameIndTareaEnPos
 0x00004c43 damePosX
