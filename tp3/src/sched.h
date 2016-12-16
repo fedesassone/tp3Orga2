@@ -29,9 +29,11 @@ typedef struct str_sched_t
 	unsigned char banderasPorCiclar;
 	unsigned char banderasVivas;
 	unsigned char ultimaViva;
+	unsigned char mostrarEstado;
 	sched_tarea tareas[8];
 	sched_tarea banderas[8];
 	paginas paginasTareas[8];
+
 }__attribute__((__packed__)) sched_t;
 
 extern sched_t scheduler;
@@ -47,6 +49,7 @@ unsigned short atender_reloj();
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx);
 unsigned short matar_tarea();
 unsigned short matar_bandera();
+void actualizarPantalla();
 
 int dameIndTareaEnPos(unsigned int direccion);
 int cuantasMeApuntan(unsigned int direccion);

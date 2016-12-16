@@ -27,77 +27,150 @@ unsigned int tarea_actual(){
 
 
 void handler_teclado(unsigned char scan_code){
-    
     unsigned short attr;
+    const char *m = (const char*)'M';
+    const char *e = (const char*)'E';
+    //CASO ESTOY EN ESTADO
+	if(scheduler.mostrarEstado == 1){
+	    switch (scan_code)
+	    {
+	        case 0x02:
+	            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
+	            print_int(BUFFER_ESTADO,1,79,0,attr);
+	            break;
 
-    switch (scan_code)
-    {
-        case 0x02:
-            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
-            print_int(VIDEO,1,79,0,attr);
-            break;
+	        case 0x03:
+	            attr = (C_FG_WHITE | C_BG_BROWN);
+	            print_int(BUFFER_ESTADO,2,79, 0, attr);
+	            break;
 
-        case 0x03:
-            attr = (C_FG_WHITE | C_BG_BROWN);
-            print_int(VIDEO,2,79, 0, attr);
-            break;
+	        case 0x04:
+	            attr = (C_FG_WHITE | C_BG_MAGENTA);
+	            print_int(BUFFER_ESTADO,3,79,0, attr);
 
-        case 0x04:
-            attr = (C_FG_WHITE | C_BG_MAGENTA);
-            print_int(VIDEO,3,79,0, attr);
+	            break;
 
-            break;
-
-        case 0x05:  
-            attr = (C_FG_WHITE | C_BG_RED);
-            print_int(VIDEO,4,79,0, attr);
-            break;
-
-
-        case 0x06:
-            attr = (C_FG_WHITE | C_BG_CYAN);
-            print_int(VIDEO,5,79,0, attr);
-            break;
-
-        case 0x07:
-            attr = (C_FG_WHITE | C_BG_GREEN);
-            print_int(VIDEO,6,79,0, attr);
-
-            break;
-
-        case 0x08:  
-            attr = (C_FG_WHITE | C_BG_BLUE);
-            print_int(VIDEO,7,79,0, attr);
-            break;
+	        case 0x05:  
+	            attr = (C_FG_WHITE | C_BG_RED);
+	            print_int(BUFFER_ESTADO,4,79,0, attr);
+	            break;
 
 
-        case 0x09:
-            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
-            print_int(VIDEO,8,79,0, attr);
-            break;
+	        case 0x06:
+	            attr = (C_FG_WHITE | C_BG_CYAN);
+	            print_int(BUFFER_ESTADO,5,79,0, attr);
+	            break;
 
-        case 0x0a:  
-            attr = (C_FG_WHITE | C_BG_RED);
-            print_int(VIDEO,9,79,0, attr);
-            break;
-        case 0x0b:  
-            attr = (C_FG_WHITE | C_BG_BROWN);
-            print_int(VIDEO,0,79,0, attr);
-            break;
-        case 0x32:  //M
-            if (!muestroMapa){
-                cargarBufferMapa();
-                muestroMapa = 1;
-            }
-        case 0x12://    E
-            if (muestroMapa)
-            {   
-                muestroMapa = 0;
-                cargarBufferEstado();
-            }
-            
-             break;
-    }
+	        case 0x07:
+	            attr = (C_FG_WHITE | C_BG_GREEN);
+	            print_int(BUFFER_ESTADO,6,79,0, attr);
+
+	            break;
+
+	        case 0x08:  
+	            attr = (C_FG_WHITE | C_BG_BLUE);
+	            print_int(BUFFER_ESTADO,7,79,0, attr);
+	            break;
+
+
+	        case 0x09:
+	            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
+	            print_int(BUFFER_ESTADO,8,79,0, attr);
+	            break;
+
+	        case 0x0a:  
+	            attr = (C_FG_WHITE | C_BG_RED);
+	            print_int(BUFFER_ESTADO,9,79,0, attr);
+	            break;
+	        case 0x0b:  
+	            attr = (C_FG_WHITE | C_BG_BROWN);
+	            print_int(BUFFER_ESTADO,0,79,0, attr);
+	            break;
+	        case 0x32:  //M
+	        		attr = (C_FG_WHITE | C_BG_BROWN);
+	         		print(BUFFER_MAPA,m,79,0, attr);
+	                scheduler.mostrarEstado = 0;
+	                cargarBufferMapa();
+	            return;
+	        case 0x12://    E
+	            	attr = (C_FG_WHITE | C_BG_BROWN);
+	         		print(BUFFER_ESTADO,e,79,0, attr);
+	             break;
+	    }
+	    cargarBufferEstado();
+	    return;
+	}
+
+//CASO ESTOY EN MAPA
+	if(scheduler.mostrarEstado == 0){
+		    switch (scan_code)
+		    {
+		        case 0x02:
+		            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
+		            print_int(BUFFER_MAPA,1,79,0,attr);
+		            break;
+
+		        case 0x03:
+		            attr = (C_FG_WHITE | C_BG_BROWN);
+		            print_int(BUFFER_MAPA,2,79, 0, attr);
+		            break;
+
+		        case 0x04:
+		            attr = (C_FG_WHITE | C_BG_MAGENTA);
+		            print_int(BUFFER_MAPA,3,79,0, attr);
+
+		            break;
+		        case 0x05:  
+		            attr = (C_FG_WHITE | C_BG_RED);
+		            print_int(BUFFER_MAPA,4,79,0, attr);
+		            break;
+
+
+		        case 0x06:
+		            attr = (C_FG_WHITE | C_BG_CYAN);
+		            print_int(BUFFER_MAPA,5,79,0, attr);
+		            break;
+
+		        case 0x07:
+		            attr = (C_FG_WHITE | C_BG_GREEN);
+		            print_int(BUFFER_MAPA,6,79,0, attr);
+
+		            break;
+
+		        case 0x08:  
+		            attr = (C_FG_WHITE | C_BG_BLUE);
+		            print_int(BUFFER_MAPA,7,79,0, attr);
+		            break;
+
+
+		        case 0x09:
+		            attr = (C_FG_WHITE | C_BG_LIGHT_GREY);
+		            print_int(BUFFER_MAPA,8,79,0, attr);
+		            break;
+
+		        case 0x0a:  
+		            attr = (C_FG_WHITE | C_BG_RED);
+		            print_int(BUFFER_MAPA,9,79,0, attr);
+		            break;
+		        case 0x0b:  
+		            attr = (C_FG_WHITE | C_BG_BROWN);
+		            print_int(BUFFER_MAPA,0,79,0, attr);
+		            break;
+		        case 0x32:  //M
+		        	attr = (C_FG_WHITE | C_BG_BROWN);
+		         	print(BUFFER_MAPA,m,79,0, attr);
+		            break;
+		        case 0x12://    E
+	         		attr = (C_FG_WHITE | C_BG_BROWN);
+	         		print(BUFFER_ESTADO,e,79,0, attr);
+	                scheduler.mostrarEstado = 1;
+	                cargarBufferEstado();
+	                return;
+		    }
+		    cargarBufferMapa();
+		    return;
+		}
+
 }
 
 
@@ -363,6 +436,7 @@ void sched_inicializar() {
 	scheduler.tarea_actual = 7;
 	scheduler.bandera_actual = 7;
 	scheduler.banderasVivas=8;
+	scheduler.mostrarEstado = 1;
 	tareasRestantes = 3;
 	corriendoTareas = 1;
 	corriendoBandera = 0;
@@ -489,4 +563,15 @@ unsigned short matar_bandera(){
 	//tenemos que saltar a la idle desde acá, 
 	matarBanderaEnBuffer();
 	return 0xc0;
+}
+
+
+
+void actualizarPantalla(){
+	if(scheduler.mostrarEstado == 1){
+		cargarBufferEstado();
+	}
+	if(scheduler.mostrarEstado == 0){
+		cargarBufferMapa();
+	}
 }

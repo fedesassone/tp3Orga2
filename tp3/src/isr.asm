@@ -25,9 +25,10 @@ extern debug_info
 
 extern cargarBufferMapa
 extern cargarBufferEstado
-extern muestroMapa
+;extern muestroMapa
 
 extern handler_teclado
+extern actualizarPantalla
 
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -144,15 +145,17 @@ _isr32:
 
   call fin_intr_pic1
   
+  call actualizarPantalla
   ;cmp byte [muestroMapa],0x1
   ;je .muestroMapa
   ;.muestroEst:
   ;call cargarBufferEstado
   ;jmp .sigo
   ;.muestroMapa:
-  xchg bx,bx
-  call cargarBufferMapa
-  .sigo:
+  ;xchg bx,bx
+  ;call cargarBufferMapa
+  ;.sigo:
+
   call proximo_reloj
   ;schedulizar
   ;xchg bx,bx
@@ -196,19 +199,19 @@ _isr80:
          push ebx
          push eax
 
-        xchg bx,bx
+        ;xchg bx,bx
         call llamada
 
         add esp,12
         
-        cmp byte [muestroMapa],0x1
-        je .muestroMapa
-        .muestroEst:
-        call cargarBufferEstado
-        jmp .sigo
-        .muestroMapa:
-        call cargarBufferMapa
-        .sigo:
+        ; cmp byte [muestroMapa],0x1
+        ; je .muestroMapa
+        ; .muestroEst:
+        ; call cargarBufferEstado
+        ; jmp .sigo
+        ; .muestroMapa:
+        ; call cargarBufferMapa
+        ; .sigo:
 
         xor eax, eax
         mov ax, 0xc0
