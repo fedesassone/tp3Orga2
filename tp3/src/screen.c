@@ -143,6 +143,45 @@ void iniciarBufferEstado(){
             y++;
         }
     }
+//inicio buffers bandera
+    ca (*estado)       [VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    ca (*bufferbandera)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BANDERA_BUFFER;
+    //inicializo vars
+    //int x = 2+(id_Bandera* 12);
+    x = 2;
+    
+    int j;
+    int cont;
+    for (i = 0; i < 8; ++i){
+        
+        if(i<4){
+            y=2;
+            x = 2 + (i*12);    
+        }
+        if(i>3){
+            y=9;
+            x = 2 + ((i-4)*12);    
+        }
+        print    (BUFFER_ESTADO,"NAVIO ",x,y,(C_FG_WHITE | C_BG_LIGHT_GREY));
+        print_int(BUFFER_ESTADO,i+1, x+6, y, (C_FG_WHITE | C_BG_LIGHT_GREY));
+        y++;
+        cont = 0;
+        for (j = 0; j < 50; ++j){
+           estado[y][x].c = bufferbandera[y][x].c;
+           estado[y][x].a = bufferbandera[y][x].a;
+           x++;
+           cont++;
+           if(cont==10){
+                x = 2 + (i*12);
+                if(i>3)x = 2 + ((i-4)*12); 
+                cont = 0;
+                y++;
+             }
+        }
+    }
+
+
+
 //registros derecha
     x=51;
     y=2;
@@ -160,7 +199,6 @@ void iniciarBufferEstado(){
     print(BUFFER_ESTADO,regs[19],x,y,(C_BG_BLACK|C_FG_WHITE));
 
 //estados  
-
 
     y = 16;
     for (i = 0; i < 8; ++i){
