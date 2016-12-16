@@ -85,7 +85,7 @@ _isr%1:
 
     call tarea_actual
     mov dword [debug_info + 12], eax        ;id tarea actual 
-    xchg bx,bx
+    ;xchg bx,bx
     call actualizarBufferEstado_UltimoProblema
 
     call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
@@ -144,21 +144,22 @@ _isr32:
 
   call fin_intr_pic1
   
-  cmp byte [muestroMapa],0x1
-  je .muestroMapa
-  .muestroEst:
-  call cargarBufferEstado
-  jmp .sigo
-  .muestroMapa:
+  ;cmp byte [muestroMapa],0x1
+  ;je .muestroMapa
+  ;.muestroEst:
+  ;call cargarBufferEstado
+  ;jmp .sigo
+  ;.muestroMapa:
+  xchg bx,bx
   call cargarBufferMapa
   .sigo:
   call proximo_reloj
   ;schedulizar
-  xchg bx,bx
+  ;xchg bx,bx
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
-  xchg bx,bx
+  ;xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
   
 
@@ -212,7 +213,7 @@ _isr80:
         xor eax, eax
         mov ax, 0xc0
         mov [tss_selector], ax
-        xchg bx,bx
+        ;xchg bx,bx
         jmp far [tss_offset] ;saltamos a la idle por el resto del quantum
         
 
@@ -227,7 +228,7 @@ _isr80:
   ;xchg bx,bx
   call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
   mov [tss_selector], ax
-  xchg bx,bx
+  ;xchg bx,bx
   jmp far [tss_offset]
   ;salto a idle
 

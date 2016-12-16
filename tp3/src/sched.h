@@ -35,6 +35,7 @@ typedef struct str_sched_t
 }__attribute__((__packed__)) sched_t;
 
 extern sched_t scheduler;
+extern unsigned short muestroMapa;
 
 unsigned int tarea_actual();
 

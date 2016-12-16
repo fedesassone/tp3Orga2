@@ -253,8 +253,8 @@ void iniciarBufferMapa(){
         }
     }
     
-    int MarInicioX = 16;
-    int MarInicioY = 3;
+    //int MarInicioX = 16;
+    //int MarInicioY = 3;
 
 ///////lleno el mar
     for(i=0; i<1664;i++){
@@ -272,20 +272,23 @@ void iniciarBufferMapa(){
     int j;
     for (j=0;j<8;j++)
     {
-    	 x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
+    	 /*x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
     	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
          print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED); 
      
          x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
     	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
      
-         print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED);     
+         print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED);*/
+         print_int(BUFFER_MAPA,j+1,((scheduler.paginasTareas[j].p1)/0x1000)%80,((scheduler.paginasTareas[j].p1)/0x1000)/80,C_FG_WHITE | C_BG_RED);
+         print_int(BUFFER_MAPA,j+1,((scheduler.paginasTareas[j].p2)/0x1000)%80,((scheduler.paginasTareas[j].p2)/0x1000)/80,C_FG_WHITE | C_BG_RED);      
          
     }
 
 ///////pongo anclas de tareas en tierra
         //estan todas en 0, no es nec
-        print_int(BUFFER_MAPA,8,0,0,C_FG_WHITE | C_BG_RED);     
+        char * p = "x";
+        print(BUFFER_MAPA,p,0,0,C_FG_WHITE | C_BG_RED);     
 }
 
 int damePosX(int x,int y,unsigned int pagina )
