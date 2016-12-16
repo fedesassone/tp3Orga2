@@ -107,9 +107,10 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	if (corriendoBandera == 1)//si una bandera llama a la syscall 0x50, se muere esa bandera y su tarea
 	{
 			corriendoBandera = 0;
-			scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
-			scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
-			scheduler.banderasVivas--;
+			//scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
+			//scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
+			//scheduler.banderasVivas--;
+			matar_bandera();
 	}
 	else
 	{
