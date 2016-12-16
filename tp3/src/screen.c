@@ -45,7 +45,8 @@ struct {
   
 } __attribute__((__packed__)) debug_info;
 
-
+unsigned char relojito[4] = {'\\','|','/','-'};
+unsigned char ciclito = 0;
 
 void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dest;
@@ -511,7 +512,86 @@ void matarBanderaEnBuffer(){
     print(BUFFER_ESTADO,"BANDERA RIP",55,y,(C_FG_WHITE | C_BG_RED));   
 }
 
+void actualizarRelojes(){
+    //void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr
+    ca (*D_EST)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    ca (*D_MAP)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_MAPA;
 
+    D_EST[78][24].a =(C_BG_BLACK|C_FG_WHITE) ;
+    D_EST[79][24].c = relojito[ciclito];
+    
+    D_MAP[79][24].a =(C_BG_BLACK|C_FG_WHITE) ;
+    D_MAP[79][24].c = relojito[ciclito];
+    int i;
+    int x=4;
+    char nums[8]={'1','2','3','4','5','6','7','8'};
+    for (i = 0; i < 8; ++i)
+    {
+        if(scheduler.tareas[i].viva ==1 ){
+
+            D_EST[24][x+(i*3)].a =(C_BG_LIGHT_GREY|C_FG_BLACK) ;
+            D_EST[24][x+(i*3)].c = nums[i];
+            D_MAP[24][x+(i*3)].a =(C_BG_LIGHT_GREY|C_FG_BLACK) ;
+            D_MAP[24][x+(i*3)].c = nums[i];
+
+            D_EST[24][(x+1)+(i*3)].a =(C_BG_LIGHT_GREY|C_FG_BLACK) ;
+            D_EST[24][(x+1)+(i*3)].c = relojito[ciclito];
+            D_MAP[24][(x+1)+(i*3)].a =(C_BG_LIGHT_GREY|C_FG_BLACK) ;
+            D_MAP[24][(x+1)+(i*3)].c = relojito[ciclito];
+
+
+        }
+        if(scheduler.tareas[i].viva ==0 ){
+
+            D_EST[24][x+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_EST[24][x+(i*3)].c = nums[i];
+            D_MAP[24][x+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_MAP[24][x+(i*3)].c = nums[i];
+
+            D_EST[24][(x+1)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_EST[24][(x+1)+(i*3)].c = relojito[ciclito];
+            D_MAP[24][(x+1)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_MAP[24][(x+1)+(i*3)].c = relojito[ciclito];
+
+
+        }
+
+
+        if(scheduler.banderas[i].viva ==1 ){
+
+            D_EST[24][(x+28)+(i*3)].a =(C_BG_MAGENTA|C_FG_BLACK) ;
+            D_EST[24][(x+28)+(i*3)].c = nums[i];
+            D_MAP[24][(x+28)+(i*3)].a =(C_BG_MAGENTA|C_FG_BLACK) ;
+            D_MAP[24][(x+28)+(i*3)].c = nums[i];
+
+            D_EST[24][(x+29)+(i*3)].a =(C_BG_MAGENTA|C_FG_BLACK) ;
+            D_EST[24][(x+29)+(i*3)].c = relojito[ciclito];
+            D_MAP[24][(x+29)+(i*3)].a =(C_BG_MAGENTA|C_FG_BLACK) ;
+            D_MAP[24][(x+29)+(i*3)].c = relojito[ciclito];
+           
+        }   
+
+        if(scheduler.banderas[i].viva ==0 ){
+
+            D_EST[24][(x+28)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_EST[24][(x+28)+(i*3)].c = nums[i];
+            D_MAP[24][(x+28)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_MAP[24][(x+28)+(i*3)].c = nums[i];
+
+            D_EST[24][(x+29)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_EST[24][(x+29)+(i*3)].c = ' ';
+            D_MAP[24][(x+29)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
+            D_MAP[24][(x+29)+(i*3)].c = ' ';
+       
+        }   
+
+
+    }
+
+    ciclito++;
+    if(ciclito ==4)ciclito=0;
+
+}
 
 
 

@@ -26,7 +26,7 @@ extern debug_info
 extern cargarBufferMapa
 extern cargarBufferEstado
 ;extern muestroMapa
-
+extern actualizarRelojes
 extern handler_teclado
 extern actualizarPantalla
 
@@ -144,7 +144,7 @@ _isr32:
   pushfd
 
   call fin_intr_pic1
-  
+  call actualizarRelojes
   call actualizarPantalla
   ;cmp byte [muestroMapa],0x1
   ;je .muestroMapa
@@ -156,7 +156,7 @@ _isr32:
   ;call cargarBufferMapa
   ;.sigo:
 
-  call proximo_reloj
+  ;call proximo_reloj
   ;schedulizar
   ;xchg bx,bx
   call atender_reloj ;call atender reloj 
@@ -241,21 +241,21 @@ _isr80:
   iret
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
-proximo_reloj:
-    pushad
+; proximo_reloj:
+;     pushad
 
-    inc DWORD [reloj_numero]
-    mov ebx, [reloj]
-    cmp ebx, 0x4
-    jl .ok
-        mov DWORD [reloj_numero], 0x0
-        mov ebx, 0
-    .ok:
-        add ebx, reloj
-        imprimir_texto_mp ebx, 1, 0x0f, 24, 79
-        ;imprimir_texto_mp INT_1, INT_len_1, 0x07, 5, 0
-    popad
-    ret
+;     inc DWORD [reloj_numero]
+;     mov ebx, [reloj]
+;     cmp ebx, 0x4
+;     jl .ok
+;         mov DWORD [reloj_numero], 0x0
+;         mov ebx, 0
+;     .ok:
+;         add ebx, reloj
+;         imprimir_texto_mp ebx, 1, 0x0f, 24, 79
+;         ;imprimir_texto_mp INT_1, INT_len_1, 0x07, 5, 0
+;     popad
+;     ret
 
 INT_0: db 'Divide Error          ', 0
 INT_len_0 equ    $ - INT_0
