@@ -19,6 +19,7 @@ unsigned int tareasRestantes;
 unsigned short corriendoTareas;
 unsigned short corriendoBandera;
 unsigned short muestroMapa;
+unsigned int ultimoMisil = 2;//arranco con un valor cualquiera para saber si es el primer cañon que tiran
 sched_t scheduler;
 
 unsigned int tarea_actual(){
@@ -363,7 +364,21 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		if ( eax == SYS_CANONEAR )
 		{
 			//syscall_canonear(ebx,ecx);//ver lo de que es relativa
-			
+			if ( ultimoMisil == 2)//si es el primer misil que tiran
+			{
+				char * p = " ";
+				ultimoMisil = ebx;
+				print(BUFFER_MAPA,p,(ultimoMisil/0x1000)%80,(ultimoMisil/0x1000)/80,C_BG_MAGENTA );
+
+			}
+			else
+			{
+				char * p= " ";
+				print(BUFFER_MAPA,p,(ultimoMisil/0x1000)%80,(ultimoMisil/0x1000)/80,C_BG_CYAN );//pinto la direccion anterior como mar
+				ultimoMisil = ebx;
+				print(BUFFER_MAPA,p,(ultimoMisil/0x1000)%80,(ultimoMisil/0x1000)/80,C_BG_MAGENTA );
+
+			}
 			//unsigned int dir_absoluta = 0x40000000 + ecx;
 			unsigned int dir_absoluta = ecx;
 			unsigned int i;
