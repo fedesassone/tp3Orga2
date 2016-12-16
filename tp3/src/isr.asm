@@ -85,7 +85,7 @@ _isr%1:
 
     call tarea_actual
     mov dword [debug_info + 12], eax        ;id tarea actual 
-
+    xchg bx,bx
     call actualizarBufferEstado_UltimoProblema
 
     call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
@@ -154,7 +154,7 @@ _isr32:
   .sigo:
   call proximo_reloj
   ;schedulizar
-  ;xchg bx,bx
+  xchg bx,bx
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
@@ -195,7 +195,7 @@ _isr80:
          push ebx
          push eax
 
-        ;xchg bx,bx
+        xchg bx,bx
         call llamada
 
         add esp,12
@@ -212,7 +212,7 @@ _isr80:
         xor eax, eax
         mov ax, 0xc0
         mov [tss_selector], ax
-        ;xchg bx,bx
+        xchg bx,bx
         jmp far [tss_offset] ;saltamos a la idle por el resto del quantum
         
 
@@ -227,7 +227,7 @@ _isr80:
   ;xchg bx,bx
   call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
   mov [tss_selector], ax
-  ;xchg bx,bx
+  xchg bx,bx
   jmp far [tss_offset]
   ;salto a idle
 
