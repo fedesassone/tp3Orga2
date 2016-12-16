@@ -257,6 +257,10 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 			unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p1;//me guardo las posiciones viejas
 			unsigned int posvieja2 = scheduler.paginasTareas[scheduler.tarea_actual].p2;
 			//actualizo las paginas
+			scheduler.paginasTareas[scheduler.tarea_actual].p1 = ebx;
+			scheduler.paginasTareas[scheduler.tarea_actual].p2 = ecx;
+
+
 			
 			int cuantas;
 			//primero meto la nueva
@@ -264,7 +268,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 			//int x;
 			//int y;
 			cuantas = cuantasMeApuntan(ebx);
-			if(cuantas == 0)//si no tenia ninguna apuntando, pongo tarea_actual
+			if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 			{
 				    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
 	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
@@ -272,7 +276,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)/80,C_FG_WHITE | C_BG_RED);
 				    
 			}
-			if (cuantas == 1)// si tenia una apuntando, pongo la X
+			if (cuantas == 2)// si tenia una apuntando, pongo la X
 			{
 					/*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
 	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);*/
@@ -280,7 +284,6 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	           		print(BUFFER_MAPA,p,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)/80,C_FG_WHITE | C_BG_BROWN);
 			}
 			//si tenia mas de una, ya tiene una X asi que no tengo que hacer nada
-			scheduler.paginasTareas[scheduler.tarea_actual].p1 = ebx;
 			//sacar de donde apuntaba
 			//ya la saqué entonces si me queda 
 			//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
@@ -309,7 +312,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 						//int x;
 			//int y;
 			cuantas = cuantasMeApuntan(ecx);
-			if(cuantas == 0)//si no tenia ninguna apuntando, pongo tarea_actual
+			if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 			{
 				    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
 	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
@@ -317,7 +320,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,((scheduler.paginasTareas[scheduler.tarea_actual].p2)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p2)/0x1000)/80,C_FG_WHITE | C_BG_RED);
 				    
 			}
-			if (cuantas == 1)// si tenia una apuntando, pongo la X
+			if (cuantas == 2)// si tenia una apuntando, pongo la X
 			{
 					/*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
 	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);*/
@@ -348,7 +351,6 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	           	print_int(BUFFER_MAPA,ind+1,(posvieja2/0x1000)%80,(posvieja2/0x1000)/80,C_FG_WHITE | C_BG_RED); 
 
 			}
-			scheduler.paginasTareas[scheduler.tarea_actual].p2 = ecx;
 			//si le quedan dos o mas va a seguir con una X
 			actualizarBufferEstado_Paginas();
 
