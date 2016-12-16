@@ -1,0 +1,172 @@
+por que hay un sti en isr?
+
+
+las paginas de las tareas no arrancaban en el mar (las poniamos en la 10000 cuando el mar empieza en la 100000)
+
+la tarea 1 llama a fondear
+
+if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
+		{
+			//syscall_fondear(ebx);
+			unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
+			mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+	//AGREGO ESTO		scheduler.paginasTareas[scheduler.tarea_actual].p3 = ebx;//ponemos en la pagina 3 de la tarea actual a ebx
+
+		}
+
+agrego eso para actualizar la pagina 3 (la del ancla) de la tarea_actual
+
+salto a la idle desp de la int 80
+
+paso a la tarea 2
+
+la tarea 2 llama a navegar
+
+actualizarBufferEstado_Paginas(); estaba apenas entraba a navegar. 
+lo pongo mas abajo asi primero se cambian las paginas y despues se actualiza
+
+copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual*2), ebx);
+le agrego *2
+
+en cuantasMeApuntan corrijo el for 
+for (i=0;i<8;i++) (tenia i<7)
+
+en dameIndTareaPos corrijo el for 
+for (i=0;i<8;i++) (tenia i<7)
+
+agrego que copia la segunda pagina
+
+paso a la tarea 3
+
+llama a cañonear
+
+hago c despues de entrar a cañonear y va a la isr13
+
+salto a la primera bandera
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la segunda bandera
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la cuarta bandera
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la quinta bandera
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la sexta bandera
+
+llama a fondear
+
+pongo corriendoBandera = 0
+
+mato a la bandera y a su tarea
+
+paso a correr la bandera 7
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a correr la bandera 8
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la tarea 4
+
+pisa su codigo. muere la tarea 4. invalid opcode
+
+paso a la tarea 5
+
+muere porque llama a la 102 OJO, DICE QUE MUERE POR INVALID OPCODE. QUIZAS PODRIAMOS PONER QUE LLAMA A LA SYSCALL 66
+
+paso a la tarea 7(la 6 ya estaba muerta)
+
+muere por div por cero
+
+paso a la primera bandera
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la segunda bandera 
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la bandera 8
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la tarea 8
+
+navega
+
+paso a la idle
+
+paso a la tarea 2
+
+navega
+
+paso a la bandera 1 //ERRORRR SOLO CORRIO 2 TAREAS
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la bandera 2
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la bandera 8
+
+llama a int 102 para decir que termino
+
+paso a la idle
+
+paso a la tarea 8
+
+navega
+
+paso a la tarea 1
+
+llama a fondear
+
+paso a la tarea 2
+
+navega
+
+paso a la bandera 1
+
+
+
+
+
+
+
+
+
+
+
+
+
