@@ -36,7 +36,7 @@ void cargarBufferMapa();
 void iniciarBufferEstado();
 void cargarBufferEstado();
 void matarEnBuffer();
-
+void matarBanderaEnBuffer();
 int damePosX(int x,int y,unsigned int pagina );
 int damePosY(int x,int y,unsigned int pagina );
 

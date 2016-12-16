@@ -400,6 +400,22 @@ void matarEnBuffer(){
     print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));
 }
 
+void matarBanderaEnBuffer(){
+
+    ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    int i;
+    int x=2;
+    int y=16+scheduler.bandera_actual;
+    //pone en rojo
+    for (i = 2; i < 79; ++i)
+    {
+        d[y][x].a = (C_FG_WHITE | C_BG_RED);
+        x++;
+    }
+    //imprime mensaje
+    x=50;
+    print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));   
+}
 
 
 

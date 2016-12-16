@@ -357,7 +357,7 @@ unsigned short atender_reloj(){
 	//corriendo banderas
 	if ( corriendoBandera == 1){
 		corriendoBandera = 0;
-		return matar_tarea(); //estaba corriendo bandera y me corto el clock
+		return matar_bandera(); //estaba corriendo bandera y me corto el clock
 	}
 	//si estoy en 0,0; vengo de la idle y estoy ciclando banderas
 	corriendoBandera = 1;
@@ -373,4 +373,15 @@ unsigned short matar_tarea()
 	//tenemos que saltar a la idle desde acá, 
 	matarEnBuffer();
 	return 0xc0; //selector de idle
+}
+
+unsigned short matar_bandera(){
+
+	scheduler.tareas[scheduler.bandera_actual].viva = 0; //mato tarea
+	scheduler.banderas[scheduler.bandera_actual].viva = 0;//mato bandera
+	scheduler.banderasVivas--;
+	//return atender_sched();
+	//tenemos que saltar a la idle desde acá, 
+	matarBanderaEnBuffer();
+	return 0xc0;
 }
