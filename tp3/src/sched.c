@@ -280,15 +280,16 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 			actualizarBufferEstado_Paginas();
 
 			 //Remapeo 
-    		mmu_mapear_pagina( DIR_VIRTUAL_TAREA, rcr3(), ebx);
-    		mmu_mapear_pagina( DIR_VIRTUAL_TAREA + 0x1000, rcr3(), ecx);
+    		//mmu_mapear_pagina( DIR_VIRTUAL_TAREA, rcr3(), ebx);
+    		//mmu_mapear_pagina( DIR_VIRTUAL_TAREA + 0x1000, rcr3(), ecx);
 
 		}
 		if ( eax == SYS_CANONEAR )
 		{
 			//syscall_canonear(ebx,ecx);//ver lo de que es relativa
 			
-			unsigned int dir_absoluta = 0x40000000 + ecx;
+			//unsigned int dir_absoluta = 0x40000000 + ecx;
+			unsigned int dir_absoluta = ecx;
 			unsigned int i;
 		    for(i = 0; i<97; i+=1)
 		    {
