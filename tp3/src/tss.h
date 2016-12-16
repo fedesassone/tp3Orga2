@@ -56,6 +56,7 @@ extern tss tarea_idle;
 extern tss tarea_dibujar;
 
 extern tss tss_banderas[CANT_TAREAS];
+extern unsigned int pilas_cero_bandera[CANT_TAREAS];
 
 void tss_inicializar();
 void tss_iniciarTareas();

@@ -158,7 +158,7 @@ _isr32:
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
-  ;xchg bx,bx
+  xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
   
 

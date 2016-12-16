@@ -256,8 +256,9 @@ unsigned short atender_int66(){
 
 void sched_inicializar() {
 	scheduler.tarea_actual = 7;
-	scheduler.bandera_actual = 7;
+	scheduler.bandera_actual = 0;
 	scheduler.banderasVivas=8;
+	scheduler.ultimaViva=7;
 	tareasRestantes = 3;
 	corriendoTareas = 1;
 	corriendoBandera = 0;
@@ -312,7 +313,7 @@ unsigned short sched_proxima_bandera() {
 		return sched_proximo_indice();
 	}   
 	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
-	if (scheduler.bandera_actual == 8 )//si estaba en la ultima viva, paso a la primera yreinicio banderas
+	if (scheduler.bandera_actual == ultimaViva )//si estaba en la ultima viva, paso a la primera yreinicio banderas
 	{
 		
 		scheduler.bandera_actual = 0;
@@ -326,7 +327,7 @@ unsigned short sched_proxima_bandera() {
 	    
 	    	tss_banderas[i].esp = 0x40001FFC; // 0x40001FFC
 	    	tss_banderas[i].ebp = 0x40001FFC; // 0x40001FFC
-
+	    	tss_banderas[i].esp0 = pilas_cero_bandera[i];
 	    	id_tarea = id_tarea + 0x2000;
 	 
 		}
@@ -366,9 +367,16 @@ unsigned short atender_reloj(){
 
 unsigned short matar_tarea()
 {
+	int ultima = scheduler.bandera_actual;
 	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;
+	while ( scheduler.banderas[ultima].viva == 0 && ultima!=0 )
+	{
+		ultima = scheduler.bandera_actual + 1 ;
+		
+	}// salgo del while con la proxima bandera viva
+	scheduler.ultimaViva = ultima;
 	//return atender_sched();
 	//tenemos que saltar a la idle desde acá, 
 	matarEnBuffer();

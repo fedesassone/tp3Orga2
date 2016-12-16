@@ -16,6 +16,8 @@ tss tarea_idle;
 tss tss_navios[CANT_TAREAS];
 tss tss_banderas[CANT_TAREAS];
 
+unsigned int pilas_cero_bandera[CANT_TAREAS];
+
 void tss_inicializar() {
 
 		// IDLE
@@ -196,6 +198,7 @@ void tss_iniciarTareas(){
         tss_banderas[j]. dtrap   =0x0;
         //seteamos
 		tss_banderas[j].esp0 = pila_cero_fisica + 0x500;
+        pilas_cero_bandera[j] = pila_cero_fisica + 0x500;
 		tss_banderas[j].ss0 = (GDT_IDX_DATA_0 << 3);  // creo que va (GDT_IDX_DATA_0 << 3) | 3 
 	    tss_banderas[j].cr3 = cr3_paCadaTarea;
 
