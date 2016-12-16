@@ -160,17 +160,25 @@ void iniciarBufferEstado(){
     print(BUFFER_ESTADO,regs[19],x,y,(C_BG_BLACK|C_FG_WHITE));
 
 //estados  
-    x=1;
-    y=16;
-    for(i=0; i<624 ; i++){
-        p[y][x].c = ' ';
-        p[y][x].a = (C_FG_BLACK | C_BG_CYAN);
-        x++;
-        if(x == 79){
-            x=1;
-            y++;
-        }
+
+
+    y = 16;
+    for (i = 0; i < 8; ++i){
+        //numero
+        print_int(BUFFER_ESTADO,i+1, 1, y, (C_FG_BLACK|C_BG_CYAN));
+        //caract
+        print(BUFFER_ESTADO, "P1:",3 ,y,(C_BG_CYAN | C_FG_BLACK ));    
+        print(BUFFER_ESTADO, "P2:",15,y,(C_BG_CYAN | C_FG_BLACK ));    
+        print(BUFFER_ESTADO, "P3:",29,y,(C_BG_CYAN | C_FG_BLACK ));
+
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p1 ,8,6 ,y,(C_BG_BLACK|C_FG_WHITE));    
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p2 ,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p3 ,8,32,y,(C_BG_BLACK|C_FG_WHITE)); 
+
+        y++;
     }
+
+
 }
 
 void cargarBufferEstado(){
@@ -332,18 +340,24 @@ void actualizarBufferEstado_UltimoProblema(){
     unsigned int y = 1;
 
     char *error = debug_info.error;
-    ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    //ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
     //error
     print(BUFFER_ESTADO, error,x,y,(C_BG_CYAN | C_FG_BLACK ));
     
-    x=71;
-    char texto[7] = {'N','A','V','I','O',' ', ((char)debug_info.tareaId) + 1};    
-    //navio i
-    for (i = 0; i < 7; ++i){
-        d[y][x].c = texto[i];
-        d[y][x].a = (C_BG_CYAN | C_FG_BLACK );
-        x++;         
-    }
+    // x=71;
+    // char texto[6] = {'N','A','V','I','O',' '};    
+    // //navio i
+    // for (i = 0; i < 7; ++i){
+    //     d[y][x].c = texto[i];
+    //     d[y][x].a = (C_BG_CYAN | C_FG_BLACK );
+    //     x++;         
+    // }
+
+    //print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr)
+    print(BUFFER_ESTADO, "NAVIO ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
+    //print_int(unsigned int dest, unsigned int n, unsigned int x, unsigned int y, unsigned short attr)
+    print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,y,(C_BG_CYAN | C_FG_BLACK ));
+
     //registros der
     x=55;
     y=2;
@@ -364,23 +378,20 @@ void actualizarBufferEstado_UltimoProblema(){
     print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
 }
 
-void actualizarBufferEstado_Paginas(){
-    int i;
-    unsigned int y = 16;
-    for (i = 0; i < 8; ++i){
-        //numero
-        print_int(BUFFER_ESTADO,i+1, 1, y, (C_FG_BLACK|C_BG_CYAN));
-        //caract
-        print(BUFFER_ESTADO, "P1:",3 ,y,(C_BG_CYAN | C_FG_BLACK ));    
-        print(BUFFER_ESTADO, "P2:",15,y,(C_BG_CYAN | C_FG_BLACK ));    
-        print(BUFFER_ESTADO, "P3:",29,y,(C_BG_CYAN | C_FG_BLACK ));    
-        //pags
-        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p1 ,8,6 ,y,(C_BG_BLACK|C_FG_WHITE));    
-        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p2 ,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
-        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[i].p3 ,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
+void actualizarBufferEstado_Paginas(){ 
 
-        y++;
-    }
+    //actualiza en buffer las direcciones de pag de la tarea act
+
+    //int i;
+    unsigned int y = 16 + scheduler.tarea_actual;
+    //for (i = 0; i < 8; ++i){
+        //pags
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[scheduler.tarea_actual].p1 ,8,6 ,y,(C_BG_BLACK|C_FG_WHITE));    
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[scheduler.tarea_actual].p2 ,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
+        print_hex(BUFFER_ESTADO,scheduler.paginasTareas[scheduler.tarea_actual].p3 ,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
+
+      //  y++;
+    //}
     
 }
 
@@ -414,7 +425,7 @@ void matarBanderaEnBuffer(){
     }
     //imprime mensaje
     x=50;
-    print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));   
+    print(BUFFER_ESTADO,"BANDERA RIP",55,y,(C_FG_WHITE | C_BG_RED));   
 }
 
 

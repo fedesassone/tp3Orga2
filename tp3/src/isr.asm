@@ -253,43 +253,43 @@ proximo_reloj:
     popad
     ret
 
-INT_0: db 'Divide Error', 0
+INT_0: db 'Divide Error          ', 0
 INT_len_0 equ    $ - INT_0
-INT_1: db 'RESERVED', 0
+INT_1: db 'RESERVED              ', 0
 INT_len_1 equ    $ - INT_1
-INT_2: db 'NMI Interrupt', 0
+INT_2: db 'NMI Interrupt         ', 0
 INT_len_2 equ    $ - INT_2
-INT_3: db 'BreakPoint', 0
+INT_3: db 'BreakPoint            ', 0
 INT_len_3 equ    $ - INT_3
-INT_4: db 'Overflow', 0
+INT_4: db 'Overflow              ', 0
 INT_len_4 equ    $ - INT_4
-INT_5: db 'BOUND Range Exceeded', 0
+INT_5: db 'BOUND Range Exceeded  ', 0
 INT_len_5 equ    $ - INT_5
-INT_6: db 'Invalid Opcode' , 0
+INT_6: db 'Invalid Opcode        ' , 0
 INT_len_6 equ    $ - INT_6
-INT_7: db 'Device Not Available', 0
+INT_7: db 'Device Not Available  ', 0
 INT_len_7 equ    $ - INT_7
-INT_8: db 'Doble Fault', 0
+INT_8: db 'Doble Fault           ', 0
 INT_len_8 equ    $ - INT_8
-INT_9: db 'Coprocessor Segment Overrun (reserved)', 0
+INT_9: db 'Segment Overrun       ', 0
 INT_len_9 equ    $ - INT_9
-INT_10: db 'Invalid TSS', 0
+INT_10: db 'Invalid TSS          ', 0
 INT_len_10 equ    $ - INT_10
-INT_11: db 'Segment Not Present', 0
+INT_11: db 'Segment Not Present  ', 0
 INT_len_11 equ    $ - INT_11
-INT_12: db 'Stack-Segment Fault', 0
+INT_12: db 'Stack-Segment Fault  ', 0
 INT_len_12 equ    $ - INT_12
-INT_13: db 'General Protection', 0
+INT_13: db 'General Protection   ', 0
 INT_len_13 equ    $ - INT_13
-INT_14: db 'Page Fault', 0
+INT_14: db 'Page Fault           ', 0
 INT_len_14 equ    $ - INT_14
-INT_15: db 'Intel Reserved.', 0
+INT_15: db 'Intel Reserved       ', 0
 INT_len_15 equ    $ - INT_15
-INT_16: db 'X-87 FPU Floating-Point Error', 0
+INT_16: db 'FPU Floating-Point   ', 0
 INT_len_16 equ    $ - INT_16
-INT_17: db 'Alignment Check Fault', 0
+INT_17: db 'AlignmentCheck Fault ', 0
 INT_len_17 equ    $ - INT_17
-INT_18: db 'Machine Check ', 0
+INT_18: db 'Machine Check        ', 0
 INT_len_18 equ    $ - INT_18
-INT_19: db 'SIMD Floating Point', 0
+INT_19: db 'SIMD Floating Point  ', 0
 INT_len_19 equ    $ - INT_19

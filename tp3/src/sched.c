@@ -124,7 +124,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
 		{
 			//syscall_navegar(ebx,ecx);
-			
+					actualizarBufferEstado_Paginas();
 			copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual), ebx); //copia la primera pagina de codigo a ebx
 			copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual) + 0x1000, ecx); //copia la segunda pagina de codigo a ecx
 			//scheduler.paginas.p1=(unsigned int)ebx;
