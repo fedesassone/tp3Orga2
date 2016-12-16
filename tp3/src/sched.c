@@ -103,6 +103,7 @@ void handler_teclado(unsigned char scan_code){
 
 void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 {
+
 	if (corriendoBandera == 1)//si una bandera llama a la syscall 0x50, se muere esa bandera y su tarea
 	{
 			corriendoBandera = 0;
@@ -240,6 +241,8 @@ int dameIndTareaEnPos(unsigned int direccion)
 	return res;
 }
 unsigned short atender_int66(){
+	//actualizarBufferEstado_Bandera_i();
+	//cargarBufferEstado();cargarBufferMapa
 	if(corriendoBandera==1){
 		//scheduler.bandera_actual = scheduler.bandera_actual+1;
 		//if(scheduler.bandera_actual ==)
@@ -302,7 +305,7 @@ unsigned short sched_proximo_indice() {
 }
 
 unsigned short sched_proxima_bandera() {
-	//actualizarBufferEstado_Bandera_i(scheduler.bandera_actual);
+
 	if(scheduler.banderasPorCiclar==0){
 		corriendoTareas = 1;
 		//tareasRestantes = 3;

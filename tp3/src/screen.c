@@ -149,7 +149,6 @@ void iniciarBufferEstado(){
     //inicializo vars
     //int x = 2+(id_Bandera* 12);
     x = 2;
-    
     int j;
     int cont;
     for (i = 0; i < 8; ++i){
@@ -179,7 +178,6 @@ void iniciarBufferEstado(){
              }
         }
     }
-
 
 
 //registros derecha
@@ -339,38 +337,82 @@ void cargarBufferMapa(){
     }
 }
 
-void actualizarBufferEstado_Bandera_i(char id_Bandera){
-    int i;
-    ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
-    ca (*s)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BANDERA_BUFFER;
+void actualizarBufferEstado_Bandera_i(){
+
+//inicio buffers bandera
+    int i = scheduler.bandera_actual; //un id 0..7
+
+
+    ca (*estado)       [VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    ca (*bufferbandera)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BANDERA_BUFFER;
     //inicializo vars
-    int x = 2+(id_Bandera* 12);
+    //int x = 2+(id_Bandera* 12);
+    int x = 2;
     int y;
     int j;
+    int cont;
 
-    int cont=0;
-    if(id_Bandera<4)y=3;
-    if(id_Bandera>3)y=10;
-    char texto[7] = {'N','A','V','I','O',' ', id_Bandera+1};
-    for(j=0; j<7;j++){
-        d[y-1][x+3].c = texto[j];
-        d[y-1][x+3].a = (C_FG_WHITE | C_BG_LIGHT_GREY);
-        j++;
-    }
-    //actualizo buffer estado
-    for(i=0;i<50;i++){
-        d[y][x].c = s[y][x].c;
-        d[y][x].a = s[y][x].a;
-        x++;
-        cont++;
-        if(cont==5){
-            x = 2+(id_Bandera* 12);
-            cont = 0;
-            y++;
+        if(i<4){
+            y=2;
+            x = 2 + (i*12);    
         }
-    } //fijarse donde se llama
+        if(i>3){
+            y=9;
+            x = 2 + ((i-4)*12);    
+        }
+        //print    (BUFFER_ESTADO,"NAVIO ",x,y,(C_FG_WHITE | C_BG_LIGHT_GREY));
+        //print_int(BUFFER_ESTADO,i+1, x+6, y, (C_FG_WHITE | C_BG_LIGHT_GREY));
+        y++;
+        cont = 0;
+        for (j = 0; j < 50; ++j){
+           estado[y][x].c = bufferbandera[y][x].c;
+           estado[y][x].a = bufferbandera[y][x].a;
+           x++;
+           cont++;
+           if(cont==10){
+                x = 2 + (i*12);
+                if(i>3)x = 2 + ((i-4)*12); 
+                cont = 0;
+                y++;
+             }
+        }
+    
 
-}
+
+
+
+
+    // int i;
+    // ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    // ca (*s)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BANDERA_BUFFER;
+    // //inicializo vars
+    // int x = 2+(id_Bandera* 12);
+    // int y;
+    // int j;
+
+    // int cont=0;
+    // if(id_Bandera<4)y=3;
+    // if(id_Bandera>3)y=10;
+    // char texto[7] = {'N','A','V','I','O',' ', id_Bandera+1};
+    // for(j=0; j<7;j++){
+    //     d[y-1][x+3].c = texto[j];
+    //     d[y-1][x+3].a = (C_FG_WHITE | C_BG_LIGHT_GREY);
+    //     j++;
+    // }
+    // //actualizo buffer estado
+    // for(i=0;i<50;i++){
+    //     d[y][x].c = s[y][x].c;
+    //     d[y][x].a = s[y][x].a;
+    //     x++;
+    //     cont++;
+    //     if(cont==5){
+    //         x = 2+(id_Bandera* 12);
+    //         cont = 0;
+    //         y++;
+    //     }
+    // } //fijarse donde se llama
+
+} 
 
 void actualizarBufferEstado_UltimoProblema(){
     unsigned int i;
