@@ -228,7 +228,7 @@ _isr80:
   _isr102:
   pushad
   pushfd
-  ;xchg bx,bx
+  xchg bx,bx
   call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
   mov [tss_selector], ax
   ;xchg bx,bx

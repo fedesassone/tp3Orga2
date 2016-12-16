@@ -159,6 +159,29 @@ navega
 paso a la bandera 1
 
 
+-------------------------------------------------
+
+primera iteracion
+
+bandera 1 ss:esp(0): 0x0098:0x00036500 eip: 0x40000040 ebp: 0x40001ffc  esp: 0x40001ffc
+bandera 2 ss:esp(0): 0x0098:0x0003c500 eip: 0x4000006a ebp: 0x40001ffc  esp: 0x40001ffc
+bandera 3 ss:esp(0): 0x0098:0x00042500 eip: 0x400000e9 ebp: 0x40001ffc  esp: 0x40001ffc
+bandera 4 ss:esp(0): 0x0098:0x00048500 eip: 0x40000027 ebp: 0x40001ffc  esp: 0x40001ffc
+bandera 5 ss:esp(0): 0x0098:0x0004e500 eip: 0x4000001b ebp: 0x40001ffc  esp: 0x40001ffc
+bandera 7 ss:esp(0): 0x0098:0x0005a500 eip: 0x40000020 ebp: 0x40001ffc  esp: 0x40001ffc
+bandera 8 ss:esp(0): 0x0098:0x00060500 eip: 0x4000004d ebp: 0x40001ffc  esp: 0x40001ffc
+
+segunda iteracion
+
+bandera 1 ss:esp(0): 0x0098:0x00036500 eip: 0x40000040 ebp: 0x40001ffc  esp: 0x40001ffc
+
+
+
+
+
+ 
+
+
 
 
 
