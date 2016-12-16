@@ -196,8 +196,9 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 			unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
 			mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
 			unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p3;
+			scheduler.paginasTareas[scheduler.tarea_actual].p3 = ebx;
 			cuantas = cuantasMeApuntan(ebx);
-			if(cuantas == 0)//si no tenia ninguna apuntando, pongo tarea_actual
+			if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 			{
 				    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
 	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
@@ -205,7 +206,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)/80,C_FG_WHITE | C_BG_RED);
 				    
 			}
-			if (cuantas == 1)// si tenia una apuntando, pongo la X
+			if (cuantas == 2)// si tenia una apuntando, pongo la X
 			{
 					/*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
 	    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);*/
@@ -213,7 +214,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	           		print(BUFFER_MAPA,p,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)/80,C_FG_WHITE | C_BG_BROWN);
 			}
 			//si tenia mas de una, ya tiene una X asi que no tengo que hacer nada
-			scheduler.paginasTareas[scheduler.tarea_actual].p3 = ebx;
+			
 			//sacar de donde apuntaba
 			//ya la saqué entonces si me queda 
 			//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
@@ -226,7 +227,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 					/*x = damePosX(16,3,posvieja1);
 	    	 		y = damePosY(16,3,posvieja1);*/
 	    	 		char * p = " ";
-	           		print(BUFFER_MAPA,p,(posvieja1/0x1000)%80,(posvieja1/0x1000)/80,C_BG_CYAN);
+	           		print(BUFFER_MAPA,p,(posvieja1/0x1000)%80,(posvieja1/0x1000)/80,C_BG_GREEN);
 
 			}
 			if ( cuantas == 1)//si tenia una,pongo ese indice
