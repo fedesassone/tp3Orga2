@@ -433,17 +433,19 @@ int dameIndTareaEnPos(unsigned int direccion)
 	}
 	return res;
 }
-unsigned short atender_int66(){
+unsigned short atender_int66(unsigned int dir_bandera_buffer){
+	//;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera 
 	//actualizarBufferEstado_Bandera_i();
 	//cargarBufferEstado();cargarBufferMapa
 	if(corriendoBandera==1){
 		//scheduler.bandera_actual = scheduler.bandera_actual+1;
 		//if(scheduler.bandera_actual ==)
+		actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
 		corriendoBandera = 0;
 		return (GDT_TAREA_IDLE<<3);
 	}	
 	if ( corriendoTareas == 1){
-		return matar_tarea();
+		return matar_tarea(); //agregar que debe matar la bandera corresp
 	}
 	return 0; //nunca llega acá
 }
@@ -563,6 +565,7 @@ unsigned short atender_reloj(){
 
 unsigned short matar_tarea()
 {
+	//debo matar la bandera corresp tambien
 	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;

@@ -229,7 +229,10 @@ _isr80:
   pushad
   pushfd
   xchg bx,bx
+  ;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera 
+  push eax
   call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
+  sub esp, 4
   mov [tss_selector], ax
   ;xchg bx,bx
   jmp far [tss_offset]

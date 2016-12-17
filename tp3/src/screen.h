@@ -41,7 +41,7 @@ int damePosX(int x,int y,unsigned int pagina );
 int damePosY(int x,int y,unsigned int pagina );
 
 
-void actualizarBufferEstado_Bandera_i();
+void actualizarBufferEstado_Bandera_i(unsigned int dir_bandera_buffer);
 void actualizarBufferEstado_UltimoProblema();
 void actualizarBufferEstado_Paginas();
 void actualizarRelojes();

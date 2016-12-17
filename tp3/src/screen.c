@@ -108,6 +108,9 @@ void iniciarBufferEstado(){
                 y++;
             }
     }
+    const char* a = " // Pabellon de Aragon -1 // F. Sassone - G. Teren";
+    print(BUFFER_ESTADO,a,0,0,(C_FG_WHITE | C_BG_BLUE)); 
+
 //fondo gris
     x=0;
     y=1;
@@ -232,9 +235,7 @@ void cargarBufferEstado(){
             x=0;
             y++;
         }
-    }
-    const char* a = " // Pabellon de Aragon -1 // F. Sassone - G. Teren";
-    print(VIDEO,a,0,0,(C_FG_WHITE | C_BG_BLUE));    
+    }   
 }
 
 void iniciarBufferMapa(){
@@ -341,14 +342,14 @@ void cargarBufferMapa(){
     }
 }
 
-void actualizarBufferEstado_Bandera_i(){
+void actualizarBufferEstado_Bandera_i(unsigned int dir_bandera_buffer){
 
 //inicio buffers bandera
     int i = scheduler.bandera_actual; //un id 0..7
 
 
     ca (*estado)       [VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
-    ca (*bufferbandera)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BANDERA_BUFFER;
+    ca (*bufferbandera)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dir_bandera_buffer;
     //inicializo vars
     //int x = 2+(id_Bandera* 12);
     int x = 2;
@@ -514,14 +515,21 @@ void matarBanderaEnBuffer(){
 
 void actualizarRelojes(){
     //void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr
+    //escribe abajo a la der el reloj de clock, abajo los de tareas y a la izq copia el de idle
     ca (*D_EST)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
     ca (*D_MAP)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_MAPA;
+    ca (*S_VID)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
-    D_EST[78][24].a =(C_BG_BLACK|C_FG_WHITE) ;
-    D_EST[79][24].c = relojito[ciclito];
-    
-    D_MAP[79][24].a =(C_BG_BLACK|C_FG_WHITE) ;
-    D_MAP[79][24].c = relojito[ciclito];
+    D_EST[24][79].a = (C_BG_BLACK|C_FG_WHITE) ;
+    D_EST[24][79].c = relojito[ciclito];
+    D_EST[24][0].a  = S_VID[24][0].a;
+    D_EST[24][0].c  = S_VID[24][0].c;
+
+    D_MAP[24][79].a =(C_BG_BLACK|C_FG_WHITE) ;
+    D_MAP[24][79].c = relojito[ciclito];
+    D_MAP[24][0].a  = S_VID[24][0].a;
+    D_MAP[24][0].c  = S_VID[24][0].c;
+
     int i;
     int x=4;
     char nums[8]={'1','2','3','4','5','6','7','8'};
@@ -549,9 +557,9 @@ void actualizarRelojes(){
             D_MAP[24][x+(i*3)].c = nums[i];
 
             D_EST[24][(x+1)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
-            D_EST[24][(x+1)+(i*3)].c = relojito[ciclito];
+            //D_EST[24][(x+1)+(i*3)].c = relojito[ciclito];
             D_MAP[24][(x+1)+(i*3)].a =(C_BG_RED|C_FG_WHITE) ;
-            D_MAP[24][(x+1)+(i*3)].c = relojito[ciclito];
+            //D_MAP[24][(x+1)+(i*3)].c = relojito[ciclito];
 
 
         }

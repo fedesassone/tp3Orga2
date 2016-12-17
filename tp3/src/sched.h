@@ -41,7 +41,7 @@ extern unsigned short muestroMapa;
 
 unsigned int tarea_actual();
 
-unsigned short atender_int66();
+unsigned short atender_int66(unsigned int dir_bandera_buffer);
 void sched_inicializar();
 unsigned short sched_proximo_indice();
 unsigned short sched_proxima_bandera(); 
