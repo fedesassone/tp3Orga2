@@ -439,11 +439,27 @@ unsigned short atender_int66(unsigned int dir_bandera_buffer){
 	//;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera 
 	//actualizarBufferEstado_Bandera_i();
 	//cargarBufferEstado();cargarBufferMapa
+
+
 	if(corriendoBandera==1){
+		
+		int id_bandera = 0x1000 *(scheduler.bandera_actual);
+		//REINICIO LAS BANDERAS
+		
+			unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_bandera + 0x1FFC);
+			tss_banderas[scheduler.bandera_actual].eip = 0x40000000 + *(dir_bandera);
+	    
+	    	tss_banderas[scheduler.bandera_actual].esp = 0x40001FFC; // 0x40001FFC
+	    	tss_banderas[scheduler.bandera_actual].ebp = 0x40001FFC; // 0x40001FFC
+	    	tss_banderas[scheduler.bandera_actual].esp0 = pilas_cero_bandera[scheduler.bandera_actual];
+	    	tss_banderas[scheduler.bandera_actual].eflags = 0x202;
 		//scheduler.bandera_actual = scheduler.bandera_actual+1;
 		//if(scheduler.bandera_actual ==)
-		actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
+		//actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
+		//actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
+		//if(scheduler.mostrarEstado ==1)cargarBufferEstado();
 		corriendoBandera = 0;
+		//corriendoBandera = 0;
 		return (GDT_TAREA_IDLE<<3);
 	}	
 	if ( corriendoTareas == 1){
@@ -504,7 +520,7 @@ unsigned short sched_proximo_indice() {
 
 unsigned short sched_proxima_bandera() {
 
-			int i;
+		/*	int i;
 		int id_tarea = 0x0000;
 		//REINICIO LAS BANDERAS
 		for (i=0;i<8;i++)
@@ -549,7 +565,7 @@ unsigned short sched_proxima_bandera() {
 	        tss_banderas[i]. dtrap	=0x0;
 	    	id_tarea = id_tarea + 0x2000;
 	 
-		}
+		}*/
 
 	if(scheduler.banderasPorCiclar==0){
 		corriendoTareas = 1;
