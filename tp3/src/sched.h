@@ -53,4 +53,7 @@ void actualizarPantalla();
 
 int dameIndTareaEnPos(unsigned int direccion);
 int cuantasMeApuntan(unsigned int direccion);
+
+unsigned int tarea_o_bandera_actual();
+unsigned short matar();
 #endif	/* !__SCHED_H__ */

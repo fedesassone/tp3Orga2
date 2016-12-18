@@ -19,6 +19,8 @@ extern atender_int66
 extern matar_tarea
 ;; Scheduler
 extern tarea_actual 
+extern tarea_o_bandera_actual
+extern matar
 ;; SCREEN
 extern actualizarBufferEstado_UltimoProblema
 extern debug_info
@@ -84,14 +86,16 @@ _isr%1:
     pop ax                                  ; eflags
     mov dword [debug_info + 88], eax
 
-    call tarea_actual
-    mov dword [debug_info + 12], eax        ;id tarea actual 
+    ;call tarea_actual
+    call tarea_o_bandera_actual ;me devuelve el id de la tarea o de la bandera actual
+    mov dword [debug_info + 12], eax        ;id tarea o bandera  actual 
     ;xchg bx,bx
     call actualizarBufferEstado_UltimoProblema
 
-    call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
+    ;call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
                      ; y devuelve en ax el selector de idle
-    
+    call matar ;se fija si la que produjo la int fue una tarea o una bandera y la mata. 
+                ;devuelve en ax el selector de la idle
 
     mov [tss_selector], ax
     sti
@@ -162,7 +166,7 @@ _isr32:
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
-  ;xchg bx,bx
+  xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
   
 
@@ -228,7 +232,7 @@ _isr80:
   _isr102:
   pushad
   pushfd
-  xchg bx,bx
+  ;xchg bx,bx
   ;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera 
   push eax
   call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0

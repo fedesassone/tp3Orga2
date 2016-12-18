@@ -25,6 +25,31 @@ sched_t scheduler;
 unsigned int tarea_actual(){
 	return (unsigned int) scheduler.tarea_actual;
 }
+unsigned int tarea_o_bandera_actual()
+{
+	if ( corriendoBandera == 1)
+	{
+		return scheduler.bandera_actual;
+	}
+	if ( corriendoTareas == 1)
+	{
+		return scheduler.tarea_actual;
+	}
+	return 0;//nunca llega aca 
+}
+
+unsigned short matar()
+{
+	if ( corriendoBandera == 1 )
+	{
+		return matar_bandera();
+	}
+	if ( corriendoTareas == 1 )
+	{
+		return matar_tarea();
+	}
+	return 0;//nunca llega aca 
+}
 
 
 void handler_teclado(unsigned char scan_code){
@@ -520,7 +545,7 @@ unsigned short sched_proximo_indice() {
 
 unsigned short sched_proxima_bandera() {
 
-		/*	int i;
+			int i;
 		int id_tarea = 0x0000;
 		//REINICIO LAS BANDERAS
 		for (i=0;i<8;i++)
@@ -551,7 +576,7 @@ unsigned short sched_proxima_bandera() {
 	        tss_banderas[i]. ecx		=0x0;
 	        tss_banderas[i]. edx		=0x0;
 	        tss_banderas[i]. ebx		=0x0;
-	        tss_banderas[i]. ebp		=0x0;
+	        //tss_banderas[i]. ebp		=0x0;
 	        tss_banderas[i]. esi		=0x0;
 	        tss_banderas[i]. edi		=0x0;
 	        tss_banderas[i].	unused4	=0x0;
@@ -565,7 +590,7 @@ unsigned short sched_proxima_bandera() {
 	        tss_banderas[i]. dtrap	=0x0;
 	    	id_tarea = id_tarea + 0x2000;
 	 
-		}*/
+		}
 
 	if(scheduler.banderasPorCiclar==0){
 		corriendoTareas = 1;
