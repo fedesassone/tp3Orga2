@@ -658,6 +658,7 @@ unsigned short matar_bandera(){
 	scheduler.tareas[scheduler.bandera_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.bandera_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;
+	corriendoBandera = 0;
 	//return atender_sched();
 	//tenemos que saltar a la idle desde acá, 
 	matarBanderaEnBuffer();
