@@ -56,4 +56,6 @@ int cuantasMeApuntan(unsigned int direccion);
 
 unsigned int tarea_o_bandera_actual();
 unsigned short matar();
+
+void reiniciarBanderas();
 #endif	/* !__SCHED_H__ */

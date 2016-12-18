@@ -216,14 +216,14 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		//scheduler.paginas.idTarea = scheduler.tarea_actual +1;
 		if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
 		{
-
+			unsigned int posnueva = ebx;
 			//unsigned int posvieja1;
 			//syscall_fondear(ebx);
 			unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
-			mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,ebx,1,0);
+			mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,posnueva,1,0);
 			unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p3;
-			scheduler.paginasTareas[scheduler.tarea_actual].p3 = ebx;
-			cuantas = cuantasMeApuntan(ebx);
+			scheduler.paginasTareas[scheduler.tarea_actual].p3 = posnueva;
+			cuantas = cuantasMeApuntan(posnueva);
 			if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 			{
 				    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
@@ -417,7 +417,6 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 		actualizarBufferEstado_Paginas();
 	}
 
-
 int cuantasMeApuntan(unsigned int direccion)
 {
 	int i;
@@ -543,9 +542,9 @@ unsigned short sched_proximo_indice() {
     return scheduler.tareas[scheduler.tarea_actual].tss_selector;
 }
 
-unsigned short sched_proxima_bandera() {
-
-			int i;
+void reiniciarBanderas()
+{
+	int i;
 		int id_tarea = 0x0000;
 		//REINICIO LAS BANDERAS
 		for (i=0;i<8;i++)
@@ -591,6 +590,60 @@ unsigned short sched_proxima_bandera() {
 	    	id_tarea = id_tarea + 0x2000;
 	 
 		}
+}
+
+unsigned short sched_proxima_bandera() {
+	int a = 2;
+	a=a;
+	reiniciarBanderas();
+	//LAS REINICIO EN INT66
+			/*int i;
+		int id_tarea = 0x0000;
+		//REINICIO LAS BANDERAS
+		for (i=0;i<8;i++)
+		{
+			unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_tarea + 0x1FFC);
+			tss_banderas[i].eip = 0x40000000 + *(dir_bandera);
+	    
+	    	tss_banderas[i].esp = 0x40001FFC; // 0x40001FFC
+	    	tss_banderas[i].ebp = 0x40001FFC; // 0x40001FFC
+	    	tss_banderas[i].esp0 = pilas_cero_bandera[i];
+	    	tss_banderas[i].eflags = 0x202;
+	    	tss_banderas[i].es = (GDT_IDX_DATA_3 << 3) | 3;
+	    	tss_banderas[i].cs = (GDT_IDX_CODE_3 << 3) | 3;//aca creo que va (GDT_IDX_CODE_3 << 3) | 3 ( RPL = 3 )
+	    	tss_banderas[i].ss = (GDT_IDX_DATA_3 << 3) | 3;
+	    	tss_banderas[i].ds = (GDT_IDX_DATA_3 << 3) | 3;
+	    	tss_banderas[i].fs = (GDT_IDX_DATA_3 << 3) | 3;// no seria << en vez de |?
+	    	tss_banderas[i].gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
+	    	tss_banderas[i].	ptl     =0x0;
+	        tss_banderas[i].	unused0	=0x0;
+	        tss_banderas[i].	unused1	=0x0;
+	        tss_banderas[i]. esp1	=0x0;
+	        tss_banderas[i].	ss1		=0x0;
+	        tss_banderas[i].	unused2	=0x0;
+	        tss_banderas[i]. esp2	=0x0;
+	        tss_banderas[i].	ss2		=0x0;
+	        tss_banderas[i].	unused3	=0x0;
+	        tss_banderas[i]. eax		=0x0;
+	        tss_banderas[i]. ecx		=0x0;
+	        tss_banderas[i]. edx		=0x0;
+	        tss_banderas[i]. ebx		=0x0;
+	        //tss_banderas[i]. ebp		=0x0;
+	        tss_banderas[i]. esi		=0x0;
+	        tss_banderas[i]. edi		=0x0;
+	        tss_banderas[i].	unused4	=0x0;
+	        tss_banderas[i].	unused5	=0x0;
+	        tss_banderas[i].	unused6	=0x0;        
+	        tss_banderas[i].	unused7	=0x0;        
+	        tss_banderas[i]. unused8	=0x0;        
+	        tss_banderas[i]. unused9	=0x0;
+	        tss_banderas[i]. ldt		=0x0;
+	        tss_banderas[i]. unused10=0x0;
+	        tss_banderas[i]. dtrap	=0x0;
+	    	id_tarea = id_tarea + 0x2000;
+	 
+		}*/
+
 
 	if(scheduler.banderasPorCiclar==0){
 		corriendoTareas = 1;
