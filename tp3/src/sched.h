@@ -55,7 +55,7 @@ unsigned short matar_bandera_porInt50();
 
 int dameIndTareaEnPos(unsigned int direccion);
 int cuantasMeApuntan(unsigned int direccion);
-
+unsigned char fueErrorBandera();
 unsigned int tarea_o_bandera_actual();
 unsigned short matar();
 

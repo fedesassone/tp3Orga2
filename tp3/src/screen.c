@@ -423,7 +423,7 @@ void actualizarBufferEstado_UltimoProblema(){
     //print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr)
     print(BUFFER_ESTADO, "NAVIO ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
     //print_int(unsigned int dest, unsigned int n, unsigned int x, unsigned int y, unsigned short attr)
-    print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,y,(C_BG_CYAN | C_FG_BLACK ));
+
 
     //registros der
     x=55;
@@ -443,6 +443,14 @@ void actualizarBufferEstado_UltimoProblema(){
     }
     y=y+3;
     print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
+    unsigned char a = fueErrorBandera();
+    if(a == 1){
+        print_int(BUFFER_ESTADO, scheduler.bandera_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
+        print(BUFFER_ESTADO, error,55,16+scheduler.bandera_actual,(C_FG_WHITE | C_BG_RED)); //falta escribir el error arriba
+    }
+    if(a!=1){
+    print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
+    }
 }
 
 void actualizarBufferEstado_Paginas(){ 
@@ -664,7 +672,7 @@ void matarEnBuffer_porInt66(){
     int y=16+scheduler.tarea_actual;
     print(BUFFER_ESTADO,"Syscall 66    ",55,y,(C_FG_WHITE | C_BG_RED));
 
-    print(BUFFER_ESTADO,"Syscall 66",50,1,(C_BG_CYAN | C_FG_BLACK ));
+    print(BUFFER_ESTADO,"Syscall 66    ",50,1,(C_BG_CYAN | C_FG_BLACK ));
     print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
 
 }

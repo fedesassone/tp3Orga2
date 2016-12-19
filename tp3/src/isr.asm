@@ -82,8 +82,8 @@ _isr%1:
     mov word [debug_info + 84], ax          ;ss
     
     xor eax, eax
-    pushf                                   ; obtenemos el registro
-    pop ax                                  ; eflags
+    pushfd                                   ; obtenemos el registro
+    pop eax                                  ; eflags
     mov dword [debug_info + 88], eax
 
     ;call tarea_actual
@@ -92,11 +92,12 @@ _isr%1:
     ;xchg bx,bx
     call actualizarBufferEstado_UltimoProblema
 
+
     ;call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
                      ; y devuelve en ax el selector de idle
     call matar ;se fija si la que produjo la int fue una tarea o una bandera y la mata. 
                 ;devuelve en ax el selector de la idle
-
+    ;call actualizarBufferEstado_UltimoProblema
     mov [tss_selector], ax
     sti
     jmp far [tss_offset] ;paso a la proxima tarea o bandera segun corresponda
@@ -162,11 +163,11 @@ _isr32:
 
   ;call proximo_reloj
   ;schedulizar
-  ;xchg bx,bx
+  
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
-  ;xchg bx,bx
+  xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
   
 
@@ -198,14 +199,64 @@ _isr33:
 _isr80:
         pushad
         pushfd
+        ; ;;;;Guardo registros 
+
+        mov dword [debug_info + 00], eax        ;eax
+        ;mov eax, INT_%1 
+        ;mov dword [debug_info + 04], eax        ;la direccion de memoria del error
+        ;mov dword [debug_info + 08], INT_len_%1 ;len del error
+        mov dword [debug_info + 16], ebx        ;ebx
+        mov dword [debug_info + 20], ecx        ;ecx
+        mov dword [debug_info + 24], edx        ;edx
+        mov dword [debug_info + 28], esi        ;esi
+        mov dword [debug_info + 32], edi        ;edi
+        mov dword [debug_info + 36], ebp        ;ebp
+        mov dword [debug_info + 40], esp        ;esp
+       
+        mov eax, [esp+12] ; eip
+        mov dword [debug_info + 44], eax        ;eip
+        mov eax, cr0
+        mov dword [debug_info + 48], eax        ;cr0          
+        mov eax, cr2
+        mov dword [debug_info + 52], eax        ;cr2
+        mov eax, cr3
+        mov dword [debug_info + 56], eax        ;cr3
+        mov eax, cr4
+        mov dword [debug_info + 60], eax        ;cr4
+        
+
+        xor eax, eax
+        mov ax, cs
+        mov word [debug_info + 64], ax          ;cs
+        mov ax, ds
+        mov word [debug_info + 68], ax          ;ds
+        mov ax, es
+        mov word [debug_info + 72], ax          ;es
+        mov ax, fs
+        mov word [debug_info + 76], ax          ;fs
+        mov ax, gs
+        mov word [debug_info + 80], ax          ;gs
+        mov ax, ss
+        mov word [debug_info + 84], ax          ;ss
+        
+        xor eax, eax
+        pushfd                                ; obtenemos el registro
+        pop eax                                  ; eflags
+        mov dword [debug_info + 88], eax
+
+        mov eax, [debug_info +00] ; restauro el eax que me pasan en syscall50
+        mov ebx, [debug_info + 16];
+        mov ecx, [debug_info + 20]
 
          push ecx
          push ebx
          push eax
 
-        ;xchg bx,bx
-        call llamada
+        ;
 
+
+
+        call llamada
         add esp,12
         
         ; cmp byte [muestroMapa],0x1
@@ -233,7 +284,52 @@ _isr80:
   pushad
   pushfd
   ;xchg bx,bx
-  ;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera 
+  ;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera
+        mov dword [debug_info + 00], eax        ;eax
+        ;mov eax, INT_%1 
+        ;mov dword [debug_info + 04], eax        ;la direccion de memoria del error
+        ;mov dword [debug_info + 08], INT_len_%1 ;len del error
+        mov dword [debug_info + 16], ebx        ;ebx
+        mov dword [debug_info + 20], ecx        ;ecx
+        mov dword [debug_info + 24], edx        ;edx
+        mov dword [debug_info + 28], esi        ;esi
+        mov dword [debug_info + 32], edi        ;edi
+        mov dword [debug_info + 36], ebp        ;ebp
+        mov dword [debug_info + 40], esp        ;esp
+       
+        mov eax, [esp+12] ; eip
+        mov dword [debug_info + 44], eax        ;eip
+        mov eax, cr0
+        mov dword [debug_info + 48], eax        ;cr0          
+        mov eax, cr2
+        mov dword [debug_info + 52], eax        ;cr2
+        mov eax, cr3
+        mov dword [debug_info + 56], eax        ;cr3
+        mov eax, cr4
+        mov dword [debug_info + 60], eax        ;cr4
+        
+
+        xor eax, eax
+        mov ax, cs
+        mov word [debug_info + 64], ax          ;cs
+        mov ax, ds
+        mov word [debug_info + 68], ax          ;ds
+        mov ax, es
+        mov word [debug_info + 72], ax          ;es
+        mov ax, fs
+        mov word [debug_info + 76], ax          ;fs
+        mov ax, gs
+        mov word [debug_info + 80], ax          ;gs
+        mov ax, ss
+        mov word [debug_info + 84], ax          ;ss
+        
+        xor eax, eax
+        pushfd                                   ; obtenemos el registro
+        pop eax                                  ; eflags
+        mov dword [debug_info + 88], eax
+
+        mov eax, [debug_info +00]  
+
   push eax
   call atender_int66 ; me fijo si la llamó una tarea. Si es así, borro la tarea y a su bandera.Ademas pongo corriendoBandera en 0
   sub esp, 4
@@ -248,7 +344,9 @@ _isr80:
   iret
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
-; proximo_reloj:
+; 
+
+;proximo_reloj:
 ;     pushad
 
 ;     inc DWORD [reloj_numero]

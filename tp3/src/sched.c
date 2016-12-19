@@ -22,6 +22,11 @@ unsigned short muestroMapa;
 unsigned int ultimoMisil = 2;//arranco con un valor cualquiera para saber si es el primer cañon que tiran
 sched_t scheduler;
 
+unsigned char fueErrorBandera(){
+	if(corriendoBandera==1)return 1;
+	return 0;
+}
+
 unsigned int tarea_actual(){
 	return (unsigned int) scheduler.tarea_actual;
 }
