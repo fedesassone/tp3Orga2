@@ -23,8 +23,8 @@ unsigned int ultimoMisil = 2;//arranco con un valor cualquiera para saber si es 
 sched_t scheduler;
 
 unsigned char fueErrorBandera(){
-	if(corriendoBandera==1)return 1;
-	return 0;
+	if(corriendoTareas==1)return 0;
+	return 1;
 }
 
 unsigned int tarea_actual(){

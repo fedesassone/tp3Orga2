@@ -89,7 +89,7 @@ _isr%1:
     ;call tarea_actual
     call tarea_o_bandera_actual ;me devuelve el id de la tarea o de la bandera actual
     mov dword [debug_info + 12], eax        ;id tarea o bandera  actual 
-    ;xchg bx,bx
+    xchg bx,bx
     call actualizarBufferEstado_UltimoProblema
 
 
@@ -167,7 +167,7 @@ _isr32:
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
-  xchg bx,bx
+  ;xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
   
 

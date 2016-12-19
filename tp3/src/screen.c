@@ -445,10 +445,14 @@ void actualizarBufferEstado_UltimoProblema(){
     print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
     unsigned char a = fueErrorBandera();
     if(a == 1){
+            //print(BUFFER_ESTADO, "ENTRA ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
+
         print_int(BUFFER_ESTADO, scheduler.bandera_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
         print(BUFFER_ESTADO, error,55,16+scheduler.bandera_actual,(C_FG_WHITE | C_BG_RED)); //falta escribir el error arriba
     }
     if(a!=1){
+                    //print(BUFFER_ESTADO, "ENTRA ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
+
     print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
     }
 }
