@@ -162,11 +162,11 @@ _isr32:
 
   ;call proximo_reloj
   ;schedulizar
-  xchg bx,bx
+  ;xchg bx,bx
   call atender_reloj ;call atender reloj 
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
-  xchg bx,bx
+  ;xchg bx,bx
   jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
   
 
@@ -203,7 +203,7 @@ _isr80:
          push ebx
          push eax
 
-        xchg bx,bx
+        ;xchg bx,bx
         call llamada
 
         add esp,12
