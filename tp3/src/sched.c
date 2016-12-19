@@ -209,7 +209,8 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 			//scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 			//scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
 			//scheduler.banderasVivas--;
-			matar_bandera();
+			matar_bandera_porInt50();
+			return;
 	}
 	else
 	{
@@ -466,13 +467,9 @@ int dameIndTareaEnPos(unsigned int direccion)
 	return res;
 }
 unsigned short atender_int66(unsigned int dir_bandera_buffer){
-	//;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera 
-	actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
-	//cargarBufferEstado();cargarBufferMapa
-
-
+	unsigned int buff = dir_bandera_buffer;
 	if(corriendoBandera==1){
-		
+		actualizarBufferEstado_Bandera_i(buff);
 		int id_bandera = 0x1000 *(scheduler.bandera_actual);
 		//REINICIO LAS BANDERAS
 		
@@ -493,7 +490,7 @@ unsigned short atender_int66(unsigned int dir_bandera_buffer){
 		return (GDT_TAREA_IDLE<<3);
 	}	
 	if ( corriendoTareas == 1){
-		return matar_tarea(); //agregar que debe matar la bandera corresp
+		return matar_tarea_porInt66(); //agregar que debe matar la bandera corresp
 	}
 	return 0; //nunca llega acá
 }
@@ -724,6 +721,18 @@ unsigned short matar_bandera(){
 	return 0xc0;
 }
 
+unsigned short matar_bandera_porInt50(){
+
+	scheduler.tareas[scheduler.bandera_actual].viva = 0; //mato tarea
+	scheduler.banderas[scheduler.bandera_actual].viva = 0;//mato bandera
+	scheduler.banderasVivas--;
+	corriendoBandera = 0;
+	//return atender_sched();
+	//tenemos que saltar a la idle desde acá, 
+	matarBanderaEnBuffer_porInt50();
+	return 0xc0;
+}
+
 
 
 void actualizarPantalla(){
@@ -733,4 +742,16 @@ void actualizarPantalla(){
 	if(scheduler.mostrarEstado == 0){
 		cargarBufferMapa();
 	}
+}
+
+unsigned short matar_tarea_porInt66()
+{
+	//debo matar la bandera corresp tambien
+	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
+	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
+	scheduler.banderasVivas--;
+	//return atender_sched();
+	//tenemos que saltar a la idle desde acá, 
+	matarEnBuffer_porInt66();
+	return 0xc0; //selector de idle
 }

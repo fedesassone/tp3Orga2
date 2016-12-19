@@ -50,6 +50,8 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx);
 unsigned short matar_tarea();
 unsigned short matar_bandera();
 void actualizarPantalla();
+unsigned short matar_tarea_porInt66();
+unsigned short matar_bandera_porInt50();
 
 int dameIndTareaEnPos(unsigned int direccion);
 int cuantasMeApuntan(unsigned int direccion);

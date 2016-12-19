@@ -47,6 +47,9 @@ struct {
 
 unsigned char relojito[4] = {'\\','|','/','-'};
 unsigned char ciclito = 0;
+unsigned char banderasIniciadas[8] = {0,0,0,0,0,0,0,0};
+
+ca primero;
 
 void print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dest;
@@ -343,28 +346,68 @@ void cargarBufferMapa(){
 }
 
 void actualizarBufferEstado_Bandera_i(unsigned int dir_bandera_buffer){
-
-//inicio buffers bandera
+    ////inicio vars
     int i = scheduler.bandera_actual; //un id 0..7
-
-
-    //ca (*estado)       [VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
-    //ca (*bufferbandera)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dir_bandera_buffer;
-        
-    int x=0;
-    int y=0;
-    ca(*d)[VIDEO_COLS] = (ca(*)[VIDEO_COLS]) VIDEO_SCREEN;
-    ca(*s)[VIDEO_COLS] = (ca(*)[VIDEO_COLS]) dir_bandera_buffer;
-    for(i=0;i<2000;i++){
-        d[y][x].c = s[y][x].c;
-        d[y][x].a = s[y][x].a;
-        x++;
-        if (x == VIDEO_COLS) {
-            x = 0;
-            y++;
-        }
+    ca (*estado)       [VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    ca (*bufferbandera)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) dir_bandera_buffer;
+    int x;
+    int y;
+    int j;
+    int cont;
+    if(i<4){
+        y=2;
+        x = 2 + (i*12);    
     }
-}
+    if(i>3){
+        y=9;
+        x = 2 + ((i-4)*12);    
+    }
+    y++;
+    cont = 0;
+    ////caso primera corrida bandera
+    if(banderasIniciadas[i] == 0){
+        banderasIniciadas[i] =1;
+        for (j = 0; j < 50; ++j){
+           estado[y][x].c = bufferbandera[0][j].c;
+           estado[y][x].a = bufferbandera[0][j].a;
+           x++;
+           cont++;
+           if(cont==10){
+                x = 2 + (i*12);
+                if(i>3)x = 2 + ((i-4)*12); 
+                cont = 0;
+                y++;
+             }
+        }
+        return; ////copie bandera del buffer y salgo
+    }
+    ////caso entro a una bandera y la actualizo
+    primero.c = estado[y][x].c;
+    primero.a = estado[y][x].a;
+    for (j = 0; j < 50; ++j){
+       estado[y][x].c = estado[y][x+1].c;
+       estado[y][x].a = estado[y][x+1].a;
+       x++;
+       cont++;
+       if(cont==10){
+            if(i<4){
+                estado[y][x-1].c = estado[y+1][2 + (i*12)].c;
+                estado[y][x-1].a = estado[y+1][2 + (i*12)].a;
+                x = 2 + (i*12);
+            }
+            if(i>3){
+                estado[y][x-1].c = estado[y+1][2 + ((i-4)*12)].c;
+                estado[y][x-1].a = estado[y+1][2 + ((i-4)*12)].a;
+                x = 2 + ((i-4)*12);
+            }
+            cont = 0;
+            y++;
+         }
+    }
+    estado[y-1][x+9].c = primero.c;
+    estado[y-1][x+9].a = primero.a;
+
+} 
 
 
 void actualizarBufferEstado_UltimoProblema(){
@@ -377,15 +420,6 @@ void actualizarBufferEstado_UltimoProblema(){
     //error
     print(BUFFER_ESTADO, error,x,y,(C_BG_CYAN | C_FG_BLACK ));
     
-    // x=71;
-    // char texto[6] = {'N','A','V','I','O',' '};    
-    // //navio i
-    // for (i = 0; i < 7; ++i){
-    //     d[y][x].c = texto[i];
-    //     d[y][x].a = (C_BG_CYAN | C_FG_BLACK );
-    //     x++;         
-    // }
-
     //print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr)
     print(BUFFER_ESTADO, "NAVIO ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
     //print_int(unsigned int dest, unsigned int n, unsigned int x, unsigned int y, unsigned short attr)
@@ -442,10 +476,43 @@ void matarEnBuffer(){
     //imprime mensaje
     x=50;
     print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));
+    print(BUFFER_ESTADO,"Tarea  :",46,y,(C_FG_WHITE | C_BG_RED));
+
+
+    //mata su bandera
+
+
+    ////mata bandera (pone todo rojo)
+    i = scheduler.tarea_actual;
+
+    if(i<4){
+        y=2;
+        x = 2 + (i*12);    
+    }
+    if(i>3){
+        y=9;
+        x = 2 + ((i-4)*12);    
+    }
+    y++;
+    int cont = 0;
+    int j;
+    for (j = 0; j < 50; ++j){
+       d[y][x].c = 'X';
+       d[y][x].a = (C_FG_WHITE | C_BG_RED);
+       x++;
+       cont++;
+       if(cont==10){
+            x = 2 + (i*12);
+            if(i>3)x = 2 + ((i-4)*12); 
+            cont = 0;
+            y++;
+         }
+    }
+
 }
 
 void matarBanderaEnBuffer(){
-
+    ////pone roja la tarea
     ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
     int i;
     int x=2;
@@ -456,9 +523,51 @@ void matarBanderaEnBuffer(){
         d[y][x].a = (C_FG_WHITE | C_BG_RED);
         x++;
     }
-    //imprime mensaje
-    x=50;
-    print(BUFFER_ESTADO,"BANDERA RIP",55,y,(C_FG_WHITE | C_BG_RED));   
+    ////imprime mensaje de error en paginas 
+    print(BUFFER_ESTADO,"Bandera: ",46,y,(C_FG_WHITE | C_BG_RED));    
+    //print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));   
+
+    ////mata bandera (pone todo rojo)
+    i = scheduler.bandera_actual;
+
+    if(i<4){
+        y=2;
+        x = 2 + (i*12);    
+    }
+    if(i>3){
+        y=9;
+        x = 2 + ((i-4)*12);    
+    }
+    y++;
+    int cont = 0;
+    int j;
+    for (j = 0; j < 50; ++j){
+       d[y][x].c = 'X';
+       d[y][x].a = (C_FG_WHITE | C_BG_RED);
+       x++;
+       cont++;
+       if(cont==10){
+            x = 2 + (i*12);
+            if(i>3)x = 2 + ((i-4)*12); 
+            cont = 0;
+            y++;
+         }
+    }
+    actualizarBufferEstado_UltimoProblema();
+
+
+}
+
+
+
+void matarBanderaEnBuffer_porInt50(){
+    matarBanderaEnBuffer();
+    actualizarBufferEstado_UltimoProblema();
+    int y=16+scheduler.bandera_actual;
+    print(BUFFER_ESTADO,"Syscall 50",55,y,(C_FG_WHITE | C_BG_RED)); 
+    print(BUFFER_ESTADO,"Syscall 50",50,1,(C_BG_CYAN | C_FG_BLACK ));
+    print_int(BUFFER_ESTADO, scheduler.bandera_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));  
+
 }
 
 void actualizarRelojes(){
@@ -548,6 +657,18 @@ void actualizarRelojes(){
     if(ciclito ==4)ciclito=0;
 
 }
+
+void matarEnBuffer_porInt66(){
+    matarEnBuffer();
+    actualizarBufferEstado_UltimoProblema();
+    int y=16+scheduler.tarea_actual;
+    print(BUFFER_ESTADO,"Syscall 66    ",55,y,(C_FG_WHITE | C_BG_RED));
+
+    print(BUFFER_ESTADO,"Syscall 66",50,1,(C_BG_CYAN | C_FG_BLACK ));
+    print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
+
+}
+
 
 
 
