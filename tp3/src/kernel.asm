@@ -24,9 +24,7 @@ extern cargarBufferEstado
 extern iniciarBufferMapa
 extern cargarBufferMapa
 
-;; MMU
 
-;extern mmu_inicializar_table_kernel
 
 ;; TSS 
 extern tss_inicializar
@@ -77,9 +75,7 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
-; TSS_idle
-;tss_selector_idle: dw 0xc0   ;descriptor de tss
-;tss_offset_idle:   dd 0x0 
+
 
 
 ;;
@@ -142,17 +138,12 @@ BITS 32
   
 ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
-  
-
-
-
 
     ; inicializar el manejador de memoria
     call mmu_inicializar
     ; inicializar el directorio de paginas
     call mmu_inicializar_dir_kernel
-    ;call mmu_inicializar_table_kernel
-    ; inicializar memoria de tareas
+
 
     ;habilitar paginacion
     mov eax, BASE_PAGE_DIRECTORY
@@ -164,20 +155,16 @@ BITS 32
     ; inicializar tarea idle
     call tss_inicializar
     ; inicializar todas las tsss
-            ;xchg bx,bx
-
-    call tss_iniciarTareas
-    ; inicializar entradas de la gdt de las tss
-    
+    call tss_iniciarTareas    
     ; inicializar el scheduler
     call sched_inicializar
     ; inicializar la IDT
     call idt_inicializar
-
+    ; inicializar buffer de estado
     call iniciarBufferEstado
-
+    ; 
     call cargarBufferEstado
-
+    ;inicializar buffer de mapa
     call iniciarBufferMapa
 
     call cargarBufferMapa
@@ -198,14 +185,7 @@ BITS 32
     shl ax, 3
 
     ltr ax
-    ; saltar a la tarea idle
-    ;xchg bx,bx
-    ;xor eax,eax
-    ;mov ax, 0x1A
-    ;shl ax, 3
-        ;xchg bx,bx
-        ;11010-000
-    ;jmp 0xd0:0 ;salto a la primer tarea
+
     
     jmp 0xc0:0 ;salto a la idle
 

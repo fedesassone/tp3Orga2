@@ -277,56 +277,19 @@ void iniciarBufferMapa(){
     int j;
     for (j=0;j<8;j++)
     {
-    	 /*x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
-    	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p1);
-         print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED); 
-     
-         x = damePosX(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
-    	 y = damePosY(MarInicioX,MarInicioY,scheduler.paginasTareas[j].p2);
-     
-         print_int(BUFFER_MAPA,j+1,x,y,C_FG_WHITE | C_BG_RED);*/
+
          print_int(BUFFER_MAPA,j+1,((scheduler.paginasTareas[j].p1)/0x1000)%80,((scheduler.paginasTareas[j].p1)/0x1000)/80,C_FG_WHITE | C_BG_RED);
          print_int(BUFFER_MAPA,j+1,((scheduler.paginasTareas[j].p2)/0x1000)%80,((scheduler.paginasTareas[j].p2)/0x1000)/80,C_FG_WHITE | C_BG_RED);      
          
     }
 
 ///////pongo anclas de tareas en tierra
-        //estan todas en 0, no es nec
+        
         char * p = "x";
         print(BUFFER_MAPA,p,0,0,C_FG_WHITE | C_BG_RED);     
 }
 
-int damePosX(int x,int y,unsigned int pagina )
-{
-		int i;
-	    int pos = (pagina - 0x10000)/0x1000;
-        for(i=0; i<pos;i++)
-        {
-        	x++;
-	        if (x == VIDEO_COLS) {
-	            x = 0;
-	            y++;
-	        }
-    	}
-    	return x;
-    
-}
 
-int damePosY(int x,int y,unsigned int pagina )
-{
-		int i;
-	    int pos = (pagina - 0x10000)/0x1000;
-        for(i=0; i<pos;i++)
-        {
-        	x++;
-	        if (x == VIDEO_COLS) {
-	            x = 0;
-	            y++;
-	        }
-    	}
-    	return y;
-    
-}
 
 void cargarBufferMapa(){
     int i;
@@ -416,14 +379,11 @@ void actualizarBufferEstado_UltimoProblema(){
     unsigned int y = 1;
 
     char *error = debug_info.error;
-    //ca (*d)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) BUFFER_ESTADO;
+    
     //error
     print(BUFFER_ESTADO, error,x,y,(C_BG_CYAN | C_FG_BLACK ));
     
-    //print(unsigned int dest, const char * text, unsigned int x, unsigned int y, unsigned short attr)
     print(BUFFER_ESTADO, "NAVIO ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
-    //print_int(unsigned int dest, unsigned int n, unsigned int x, unsigned int y, unsigned short attr)
-
 
     //registros der
     x=55;
@@ -445,13 +405,11 @@ void actualizarBufferEstado_UltimoProblema(){
     print_hex(BUFFER_ESTADO,nums[19],8,x,y,(C_BG_BLACK|C_FG_WHITE));
     unsigned char a = fueErrorBandera();
     if(a == 1){
-            //print(BUFFER_ESTADO, "ENTRA ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
 
         print_int(BUFFER_ESTADO, scheduler.bandera_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
         print(BUFFER_ESTADO, error,55,16+scheduler.bandera_actual,(C_FG_WHITE | C_BG_RED)); //falta escribir el error arriba
     }
     if(a!=1){
-                    //print(BUFFER_ESTADO, "ENTRA ", 71, 1,(C_BG_CYAN | C_FG_BLACK ) );
 
     print_int(BUFFER_ESTADO, scheduler.tarea_actual+1,77,1,(C_BG_CYAN | C_FG_BLACK ));
     }
@@ -461,16 +419,12 @@ void actualizarBufferEstado_Paginas(){
 
     //actualiza en buffer las direcciones de pag de la tarea act
 
-    //int i;
+
     unsigned int y = 16 + scheduler.tarea_actual;
-    //for (i = 0; i < 8; ++i){
-        //pags
+
         print_hex(BUFFER_ESTADO,scheduler.paginasTareas[scheduler.tarea_actual].p1 ,8,6 ,y,(C_BG_BLACK|C_FG_WHITE));    
         print_hex(BUFFER_ESTADO,scheduler.paginasTareas[scheduler.tarea_actual].p2 ,8,18,y,(C_BG_BLACK|C_FG_WHITE));    
         print_hex(BUFFER_ESTADO,scheduler.paginasTareas[scheduler.tarea_actual].p3 ,8,32,y,(C_BG_BLACK|C_FG_WHITE));    
-
-      //  y++;
-    //}
     
 }
 
@@ -537,7 +491,6 @@ void matarBanderaEnBuffer(){
     }
     ////imprime mensaje de error en paginas 
     print(BUFFER_ESTADO,"Bandera: ",46,y,(C_FG_WHITE | C_BG_RED));    
-    //print(BUFFER_ESTADO,debug_info.error,55,y,(C_FG_WHITE | C_BG_RED));   
 
     ////mata bandera (pone todo rojo)
     i = scheduler.bandera_actual;

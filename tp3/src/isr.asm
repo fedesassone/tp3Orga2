@@ -89,15 +89,14 @@ _isr%1:
     ;call tarea_actual
     call tarea_o_bandera_actual ;me devuelve el id de la tarea o de la bandera actual
     mov dword [debug_info + 12], eax        ;id tarea o bandera  actual 
-    xchg bx,bx
+    
     call actualizarBufferEstado_UltimoProblema
 
 
-    ;call matar_tarea ; mata a la tarea que provoco la interrupcion y a su bandera o viceversa
-                     ; y devuelve en ax el selector de idle
+    
     call matar ;se fija si la que produjo la int fue una tarea o una bandera y la mata. 
                 ;devuelve en ax el selector de la idle
-    ;call actualizarBufferEstado_UltimoProblema
+    
     mov [tss_selector], ax
     sti
     jmp far [tss_offset] ;paso a la proxima tarea o bandera segun corresponda
@@ -151,24 +150,14 @@ _isr32:
   call fin_intr_pic1
   call actualizarRelojes
   call actualizarPantalla
-  ;cmp byte [muestroMapa],0x1
-  ;je .muestroMapa
-  ;.muestroEst:
-  ;call cargarBufferEstado
-  ;jmp .sigo
-  ;.muestroMapa:
-  ;xchg bx,bx
-  ;call cargarBufferMapa
-  ;.sigo:
 
-  ;call proximo_reloj
   ;schedulizar
   
-  call atender_reloj ;call atender reloj 
+  call atender_reloj  
   ;esto me devuelve un selector tss
   mov [tss_selector], ax
   ;xchg bx,bx
-  jmp far [tss_offset] ; volvi de anteder reloj salto tareasig
+  jmp far [tss_offset] ; salto a la tarea o bandera siguiente
   
 
   ; listo?
@@ -202,9 +191,7 @@ _isr80:
         ; ;;;;Guardo registros 
 
         mov dword [debug_info + 00], eax        ;eax
-        ;mov eax, INT_%1 
-        ;mov dword [debug_info + 04], eax        ;la direccion de memoria del error
-        ;mov dword [debug_info + 08], INT_len_%1 ;len del error
+
         mov dword [debug_info + 16], ebx        ;ebx
         mov dword [debug_info + 20], ecx        ;ecx
         mov dword [debug_info + 24], edx        ;edx
@@ -252,21 +239,9 @@ _isr80:
          push ebx
          push eax
 
-        ;
-
-
-
         call llamada
         add esp,12
         
-        ; cmp byte [muestroMapa],0x1
-        ; je .muestroMapa
-        ; .muestroEst:
-        ; call cargarBufferEstado
-        ; jmp .sigo
-        ; .muestroMapa:
-        ; call cargarBufferMapa
-        ; .sigo:
 
         xor eax, eax
         mov ax, 0xc0
@@ -286,9 +261,7 @@ _isr80:
   ;xchg bx,bx
   ;cuando entro aca, si soy bandera tengo en eax la direcc del buffer bandera
         mov dword [debug_info + 00], eax        ;eax
-        ;mov eax, INT_%1 
-        ;mov dword [debug_info + 04], eax        ;la direccion de memoria del error
-        ;mov dword [debug_info + 08], INT_len_%1 ;len del error
+
         mov dword [debug_info + 16], ebx        ;ebx
         mov dword [debug_info + 20], ecx        ;ecx
         mov dword [debug_info + 24], edx        ;edx
@@ -342,25 +315,7 @@ _isr80:
   popad
   
   iret
-;; Funciones Auxiliares
-;; -------------------------------------------------------------------------- ;;
-; 
-
-;proximo_reloj:
-;     pushad
-
-;     inc DWORD [reloj_numero]
-;     mov ebx, [reloj]
-;     cmp ebx, 0x4
-;     jl .ok
-;         mov DWORD [reloj_numero], 0x0
-;         mov ebx, 0
-;     .ok:
-;         add ebx, reloj
-;         imprimir_texto_mp ebx, 1, 0x0f, 24, 79
-;         ;imprimir_texto_mp INT_1, INT_len_1, 0x07, 5, 0
-;     popad
-;     ret
+;;Mensajes de error
 
 INT_0: db 'Divide Error          ', 0
 INT_len_0 equ    $ - INT_0
