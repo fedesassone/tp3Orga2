@@ -28,7 +28,6 @@ typedef struct str_sched_t
 	unsigned char bandera_actual;
 	unsigned char banderasPorCiclar;
 	unsigned char banderasVivas;
-	unsigned char ultimaViva;
 	unsigned char mostrarEstado;
 	sched_tarea tareas[8];
 	sched_tarea banderas[8];

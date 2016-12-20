@@ -211,53 +211,46 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 	if (corriendoBandera == 1)//si una bandera llama a la syscall 0x50, se muere esa bandera y su tarea
 	{
 			corriendoBandera = 0;
-			//scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
-			//scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
-			//scheduler.banderasVivas--;
+
 			matar_bandera_porInt50();
 			return;
 	}
 	else
 	{
-			//scheduler.paginas.idTarea = scheduler.tarea_actual +1;
-			if ( eax == SYS_FONDEAR) //cambia ancla, actualiza pag, hay que llamar a buffer
+			
+			if ( eax == SYS_FONDEAR)
 			{
 				unsigned int posnueva = ebx;
-				//unsigned int posvieja1;
-				//syscall_fondear(ebx);
-				unsigned int directorio_tareas = rcr3(); //rcr3 creo que devuelve la dir fisica del cr3 actual
+
+				unsigned int directorio_tareas = rcr3(); 
 				mmu_mapear_pagina(TASK_ANCLA,directorio_tareas,posnueva,1,0);
 				unsigned int posvieja1 = scheduler.paginasTareas[scheduler.tarea_actual].p3;
 				scheduler.paginasTareas[scheduler.tarea_actual].p3 = posnueva;
 				cuantas = cuantasMeApuntan(posnueva);
 				if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 				{
-					    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,x,y,C_FG_WHITE | C_BG_RED);*/
+
 		           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)/80,C_FG_WHITE | C_BG_RED);
 					    
 				}
 				if (cuantas == 2)// si tenia una apuntando, pongo la X
 				{
-						/*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);*/
+						
 		    	 		char * p = "x";
 		           		print(BUFFER_MAPA,p,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p3)/0x1000)/80,C_FG_WHITE | C_BG_BROWN);
 				}
 				//si tenia mas de una, ya tiene una X asi que no tengo que hacer nada
 				
 				//sacar de donde apuntaba
-				//ya la saqué entonces si me queda 
+				
 				//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
 				//si a esa pos apuntaba solo la actual, poner en azul esa pos
 				//si apuntaban mas de dos, no hacerle nada
-				//cuantas = cuantas;
+				
 				unsigned int cuantas = cuantasMeApuntan(posvieja1);
-				if (cuantas == 0)//si no le queda ninguna apuntando la pongo en azul
+				if (cuantas == 0)//si no le queda ninguna apuntando la pongo en verde
 				{
-						/*x = damePosX(16,3,posvieja1);
-		    	 		y = damePosY(16,3,posvieja1);*/
+			
 		    	 		char * p = " ";
 		           		print(BUFFER_MAPA,p,(posvieja1/0x1000)%80,(posvieja1/0x1000)/80,C_BG_GREEN);
 
@@ -265,8 +258,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 				if ( cuantas == 1)//si tenia una,pongo ese indice
 				{
 					int ind = dameIndTareaEnPos(posvieja1);
-					/*x = damePosX(16,3,posvieja1);
-			 		y = damePosY(16,3,posvieja1);*/
+					
 		           	print_int(BUFFER_MAPA,ind,(posvieja1/0x1000)%80,(posvieja1/0x1000)/80,C_FG_WHITE | C_BG_RED); 
 
 				}
@@ -274,26 +266,19 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 				}
 			
 			
-			if ( eax == SYS_NAVEGAR)// actualiza pag, hay que llamar a buffer
+			if ( eax == SYS_NAVEGAR)
 			{
-				//syscall_navegar(ebx,ecx);
+				
 				unsigned int pagina1nueva = ebx;
 				unsigned int pagina2nueva = ecx;
-				unsigned int prueba = rcr3();
-				prueba = prueba;
-				//copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual*2), pagina1nueva); //copia la primera pagina de codigo a ebx
-				//copiarCodigo(0x10000 + (0x1000*scheduler.tarea_actual*2) + 0x1000, pagina2nueva); //copia la segunda pagina de codigo a ecx
-	 			copiarCodigo(scheduler.paginasTareas[scheduler.tarea_actual].p1, pagina1nueva); //copia la primera pagina de codigo a ebx
-	 			copiarCodigo(scheduler.paginasTareas[scheduler.tarea_actual].p2, pagina2nueva); //copia la segunda pagina de codigo a ecx
-	 			//Remapeo 
-	 			//if (scheduler.tarea_actual != 7)
-	 			//{
+				
+				
+	 			copiarCodigo(scheduler.paginasTareas[scheduler.tarea_actual].p1, pagina1nueva); //copia la primera pagina de codigo 
+	 			copiarCodigo(scheduler.paginasTareas[scheduler.tarea_actual].p2, pagina2nueva); //copia la segunda pagina de codigo 
+
 	    		mmu_mapear_pagina( DIR_VIRTUAL_TAREA, rcr3(), pagina1nueva,1,1);
 	    		mmu_mapear_pagina( DIR_VIRTUAL_TAREA + 0x1000, rcr3(), pagina2nueva,1,1);
-	    		//}
-				//scheduler.paginas.p1=(unsigned int)ebx;
-				//scheduler.paginas.p2=(unsigned int)ecx;
-				//scheduler.paginas.p3=(unsigned int)ebx;
+
 				//sacar de donde apuntaba
 				//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
 				//si a esa pos apuntaba solo la actual, poner en azul esa pos
@@ -309,35 +294,30 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 				int cuantas;
 				//primero meto la nueva
 				//PRIMERA PAGINA
-				//int x;
-				//int y;
+
 				cuantas = cuantasMeApuntan(pagina1nueva);
 				if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 				{
-					    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,x,y,C_FG_WHITE | C_BG_RED);*/
+					   
 		           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)/80,C_FG_WHITE | C_BG_RED);
 					    
 				}
 				if (cuantas == 2)// si tenia una apuntando, pongo la X
 				{
-						/*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);*/
+						
 		    	 		char * p = "x";
 		           		print(BUFFER_MAPA,p,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p1)/0x1000)/80,C_FG_WHITE | C_BG_BROWN);
 				}
 				//si tenia mas de una, ya tiene una X asi que no tengo que hacer nada
 				//sacar de donde apuntaba
-				//ya la saqué entonces si me queda 
+				//ya la saqué 
 				//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
 				//si a esa pos apuntaba solo la actual, poner en azul esa pos
 				//si apuntaban mas de dos, no hacerle nada
 				cuantas = cuantasMeApuntan(posvieja1);
 				if (cuantas == 0)//si no le queda ninguna apuntando la pongo en azul
 				{
-						/*x = damePosX(16,3,posvieja1);
-		    	 		y = damePosY(16,3,posvieja1);*/
+				
 		    	 		char * p = " ";
 		           		print(BUFFER_MAPA,p,(posvieja1/0x1000)%80,(posvieja1/0x1000)/80,C_BG_CYAN);
 
@@ -345,44 +325,38 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 				if ( cuantas == 1)//si tenia una,pongo ese indice
 				{
 					int ind = dameIndTareaEnPos(posvieja1);
-					/*x = damePosX(16,3,posvieja1);
-			 		y = damePosY(16,3,posvieja1);*/
+				
 		           	print_int(BUFFER_MAPA,ind+1,(posvieja1/0x1000)%80,(posvieja1/0x1000)/80,C_FG_WHITE | C_BG_RED); 
 
 				}
 				//si le quedan dos o mas va a seguir con una X
 				//SEGUNDA PAGINA
 				
-							//int x;
-				//int y;
+
 				cuantas = cuantasMeApuntan(pagina2nueva);
 				if(cuantas == 1)//si no tenia ninguna apuntando, pongo tarea_actual
 				{
-					    /*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,x,y,C_FG_WHITE | C_BG_RED);*/
+
 		           		print_int(BUFFER_MAPA,scheduler.tarea_actual+1,((scheduler.paginasTareas[scheduler.tarea_actual].p2)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p2)/0x1000)/80,C_FG_WHITE | C_BG_RED);
 					    
 				}
 				if (cuantas == 2)// si tenia una apuntando, pongo la X
 				{
-						/*x = damePosX(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);
-		    	 		y = damePosY(16,3,scheduler.paginasTareas[scheduler.tarea_actual].p1);*/
+
 		    	 		char * p = "x";
 		           		print(BUFFER_MAPA,p,((scheduler.paginasTareas[scheduler.tarea_actual].p2)/0x1000)%80,((scheduler.paginasTareas[scheduler.tarea_actual].p2)/0x1000)/80,C_FG_WHITE | C_BG_BROWN);
 				}
 				//si tenia mas de una, ya tiene una X asi que no tengo que hacer nada
 
 				//sacar de donde apuntaba
-				//ya la saqué entonces si me queda 
+				//ya la saqué entonces 
 				//si a esa pos apuntaban dos nada mas, poner el numero de la otra que apuntaba.
 				//si a esa pos apuntaba solo la actual, poner en azul esa pos
 				//si apuntaban mas de dos, no hacerle nada
 				cuantas = cuantasMeApuntan(posvieja2);
 				if (cuantas == 0)//si no le queda ninguna apuntando la pongo en azul
 				{
-						/*x = damePosX(16,3,posvieja1);
-		    	 		y = damePosY(16,3,posvieja1);*/
+					
 		    	 		char * p = " ";
 		           		print(BUFFER_MAPA,p,(posvieja2/0x1000)%80,(posvieja2/0x1000)/80,C_BG_CYAN);
 
@@ -390,8 +364,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 				if ( cuantas == 1)//si tenia una,pongo ese indice
 				{
 					int ind = dameIndTareaEnPos(posvieja2);
-					/*x = damePosX(16,3,posvieja1);
-			 		y = damePosY(16,3,posvieja1);*/
+					
 		           	print_int(BUFFER_MAPA,ind+1,(posvieja2/0x1000)%80,(posvieja2/0x1000)/80,C_FG_WHITE | C_BG_RED); 
 
 				}
@@ -417,7 +390,7 @@ void llamada (unsigned int eax,unsigned int ebx, unsigned int ecx)
 					print(BUFFER_MAPA,p,(ultimoMisil/0x1000)%80,(ultimoMisil/0x1000)/80,C_BG_MAGENTA );
 
 				}
-				//unsigned int dir_absoluta = 0x40000000 + ecx;
+				
 				unsigned int dir_absoluta = ecx;
 				unsigned int i;
 			    for(i = 0; i<97; i+=1)
@@ -476,7 +449,7 @@ unsigned short atender_int66(unsigned int dir_bandera_buffer){
 	if(corriendoBandera==1){
 		actualizarBufferEstado_Bandera_i(buff);
 		int id_bandera = 0x1000 *(scheduler.bandera_actual);
-		//REINICIO LAS BANDERAS
+		//REINICIO LA BANDERA
 		
 			unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_bandera + 0x1FFC);
 			tss_banderas[scheduler.bandera_actual].eip = 0x40000000 + *(dir_bandera);
@@ -485,17 +458,13 @@ unsigned short atender_int66(unsigned int dir_bandera_buffer){
 	    	tss_banderas[scheduler.bandera_actual].ebp = 0x40001FFC; // 0x40001FFC
 	    	tss_banderas[scheduler.bandera_actual].esp0 = pilas_cero_bandera[scheduler.bandera_actual];
 	    	tss_banderas[scheduler.bandera_actual].eflags = 0x202;
-		//scheduler.bandera_actual = scheduler.bandera_actual+1;
-		//if(scheduler.bandera_actual ==)
-		//actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
-		//actualizarBufferEstado_Bandera_i(dir_bandera_buffer);
-		//if(scheduler.mostrarEstado ==1)cargarBufferEstado();
+
 		corriendoBandera = 0;
-		//corriendoBandera = 0;
+
 		return (GDT_TAREA_IDLE<<3);
 	}	
 	if ( corriendoTareas == 1){
-		return matar_tarea_porInt66(); //agregar que debe matar la bandera corresp
+		return matar_tarea_porInt66(); 
 	}
 	return 0; //nunca llega acá
 }
@@ -513,7 +482,7 @@ void sched_inicializar() {
 	muestroMapa =0;
 	unsigned short i = 0x0;
 	for(i=0; i< 8; i++){
-		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + 2*i) << 3) | 0; //consultar 
+		scheduler.tareas[i].tss_selector = ((GDT_TAREA_1 + 2*i) << 3) | 0; 
 		scheduler.tareas[i].id = 0;
 		scheduler.tareas[i].viva = 1;
 
@@ -531,7 +500,7 @@ void sched_inicializar() {
 		scheduler.paginasTareas[i].p3 = 0x0;
 
 	}
-	//scheduler.paginasTareas[1].p1 = 0x12000;
+	
 }
 
 unsigned short sched_proximo_indice() {
@@ -565,11 +534,11 @@ void reiniciarBanderas()
 	    	tss_banderas[i].esp0 = pilas_cero_bandera[i];
 	    	tss_banderas[i].eflags = 0x202;
 	    	tss_banderas[i].es = (GDT_IDX_DATA_3 << 3) | 3;
-	    	tss_banderas[i].cs = (GDT_IDX_CODE_3 << 3) | 3;//aca creo que va (GDT_IDX_CODE_3 << 3) | 3 ( RPL = 3 )
+	    	tss_banderas[i].cs = (GDT_IDX_CODE_3 << 3) | 3;
 	    	tss_banderas[i].ss = (GDT_IDX_DATA_3 << 3) | 3;
 	    	tss_banderas[i].ds = (GDT_IDX_DATA_3 << 3) | 3;
-	    	tss_banderas[i].fs = (GDT_IDX_DATA_3 << 3) | 3;// no seria << en vez de |?
-	    	tss_banderas[i].gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
+	    	tss_banderas[i].fs = (GDT_IDX_DATA_3 << 3) | 3;
+	    	tss_banderas[i].gs = (GDT_IDX_DATA_3 << 3) | 3;
 	    	tss_banderas[i].	ptl     =0x0;
 	        tss_banderas[i].	unused0	=0x0;
 	        tss_banderas[i].	unused1	=0x0;
@@ -583,7 +552,7 @@ void reiniciarBanderas()
 	        tss_banderas[i]. ecx		=0x0;
 	        tss_banderas[i]. edx		=0x0;
 	        tss_banderas[i]. ebx		=0x0;
-	        //tss_banderas[i]. ebp		=0x0;
+	      
 	        tss_banderas[i]. esi		=0x0;
 	        tss_banderas[i]. edi		=0x0;
 	        tss_banderas[i].	unused4	=0x0;
@@ -601,64 +570,13 @@ void reiniciarBanderas()
 }
 
 unsigned short sched_proxima_bandera() {
-	int a = 2;
-	a=a;
-	reiniciarBanderas();
-	//LAS REINICIO EN INT66
-			/*int i;
-		int id_tarea = 0x0000;
-		//REINICIO LAS BANDERAS
-		for (i=0;i<8;i++)
-		{
-			unsigned int *dir_bandera= (unsigned int *)(0x10000 + id_tarea + 0x1FFC);
-			tss_banderas[i].eip = 0x40000000 + *(dir_bandera);
-	    
-	    	tss_banderas[i].esp = 0x40001FFC; // 0x40001FFC
-	    	tss_banderas[i].ebp = 0x40001FFC; // 0x40001FFC
-	    	tss_banderas[i].esp0 = pilas_cero_bandera[i];
-	    	tss_banderas[i].eflags = 0x202;
-	    	tss_banderas[i].es = (GDT_IDX_DATA_3 << 3) | 3;
-	    	tss_banderas[i].cs = (GDT_IDX_CODE_3 << 3) | 3;//aca creo que va (GDT_IDX_CODE_3 << 3) | 3 ( RPL = 3 )
-	    	tss_banderas[i].ss = (GDT_IDX_DATA_3 << 3) | 3;
-	    	tss_banderas[i].ds = (GDT_IDX_DATA_3 << 3) | 3;
-	    	tss_banderas[i].fs = (GDT_IDX_DATA_3 << 3) | 3;// no seria << en vez de |?
-	    	tss_banderas[i].gs = (GDT_IDX_DATA_3 << 3) | 3;//chequear esto
-	    	tss_banderas[i].	ptl     =0x0;
-	        tss_banderas[i].	unused0	=0x0;
-	        tss_banderas[i].	unused1	=0x0;
-	        tss_banderas[i]. esp1	=0x0;
-	        tss_banderas[i].	ss1		=0x0;
-	        tss_banderas[i].	unused2	=0x0;
-	        tss_banderas[i]. esp2	=0x0;
-	        tss_banderas[i].	ss2		=0x0;
-	        tss_banderas[i].	unused3	=0x0;
-	        tss_banderas[i]. eax		=0x0;
-	        tss_banderas[i]. ecx		=0x0;
-	        tss_banderas[i]. edx		=0x0;
-	        tss_banderas[i]. ebx		=0x0;
-	        //tss_banderas[i]. ebp		=0x0;
-	        tss_banderas[i]. esi		=0x0;
-	        tss_banderas[i]. edi		=0x0;
-	        tss_banderas[i].	unused4	=0x0;
-	        tss_banderas[i].	unused5	=0x0;
-	        tss_banderas[i].	unused6	=0x0;        
-	        tss_banderas[i].	unused7	=0x0;        
-	        tss_banderas[i]. unused8	=0x0;        
-	        tss_banderas[i]. unused9	=0x0;
-	        tss_banderas[i]. ldt		=0x0;
-	        tss_banderas[i]. unused10=0x0;
-	        tss_banderas[i]. dtrap	=0x0;
-	    	id_tarea = id_tarea + 0x2000;
-	 
-		}*/
 
+	reiniciarBanderas();
 
 	if(scheduler.banderasPorCiclar==0){
 		corriendoTareas = 1;
-		//tareasRestantes = 3;
 		tareasRestantes = 2;
 		corriendoBandera = 0;
-		//return (GDT_TAREA_IDLE<<3); vengo de la idle,ya habiendo corrido la ultima bandera, tengo que saltar a la proxima tarea
 		return sched_proximo_indice();
 	}   
 	scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
@@ -674,7 +592,7 @@ unsigned short sched_proxima_bandera() {
 		scheduler.bandera_actual = scheduler.bandera_actual + 1 ;
 
 	}// salgo del while con la proxima bandera viva
-    //fijarse si es la ultima
+    
     scheduler.banderasPorCiclar--;
     return scheduler.banderas[scheduler.bandera_actual].tss_selector;
 }
@@ -708,8 +626,6 @@ unsigned short matar_tarea()
 	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;
-	//return atender_sched();
-	//tenemos que saltar a la idle desde acá, 
 	matarEnBuffer();
 	return 0xc0; //selector de idle
 }
@@ -720,8 +636,7 @@ unsigned short matar_bandera(){
 	scheduler.banderas[scheduler.bandera_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;
 	corriendoBandera = 0;
-	//return atender_sched();
-	//tenemos que saltar a la idle desde acá, 
+
 	matarBanderaEnBuffer();
 	return 0xc0;
 }
@@ -731,9 +646,7 @@ unsigned short matar_bandera_porInt50(){
 	scheduler.tareas[scheduler.bandera_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.bandera_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;
-	corriendoBandera = 0;
-	//return atender_sched();
-	//tenemos que saltar a la idle desde acá, 
+	corriendoBandera = 0; 
 	matarBanderaEnBuffer_porInt50();
 	return 0xc0;
 }
@@ -755,8 +668,6 @@ unsigned short matar_tarea_porInt66()
 	scheduler.tareas[scheduler.tarea_actual].viva = 0; //mato tarea
 	scheduler.banderas[scheduler.tarea_actual].viva = 0;//mato bandera
 	scheduler.banderasVivas--;
-	//return atender_sched();
-	//tenemos que saltar a la idle desde acá, 
 	matarEnBuffer_porInt66();
 	return 0xc0; //selector de idle
 }
